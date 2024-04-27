@@ -1,0 +1,103 @@
+:root {
+    --bg-dark: #302e2b;
+    --clr-dark: #262522;
+    --clr-dark: #0e1514;
+    --clr-dark: #e2e2e2;
+    --clr-dark: #989795;
+    --clr-dark: #ffffff14;
+    --clr-dark: #ffffffb8;
+    --sq-light: #ebecd0;
+    --sq-dark: #739552;
+    --highlight: #fde90f7d;
+}
+
+*,
+*::before,
+*::after {
+    font-family: sans-serif;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+body{
+    width: 100vw;
+    height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-dark);
+}
+
+#board {
+    margin: 10px;
+    aspect-ratio: 1;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(20px, 70px));
+    grid-template-rows: repeat(8, auto);
+    border-radius: 5px;
+    user-select: none;
+    min-width: 300px;
+}
+
+.square{
+    aspect-ratio: 1;
+    font-size: 12px;
+    font-weight: 600;
+    position: relative;
+}
+
+.square.light{
+    background-color: var(--sq-light);
+    color: var(--sq-dark);
+}
+.square.dark{
+    background-color: var(--sq-dark);
+    color: var(--sq-light);
+}
+
+
+.piece{
+    width: 100%;
+    height: 100%;
+    background-size: 100%;
+}
+.piece.wp{
+    background-image: url(../assets/pieces/wp.png);
+}
+.piece.wr{
+    background-image: url(../assets/pieces/wr.png);
+}
+.piece.wn{
+    background-image: url(../assets/pieces/wn.png);
+}
+.piece.wb{
+    background-image: url(../assets/pieces/wb.png);
+}
+.piece.wq{
+    background-image: url(../assets/pieces/wq.png);
+}
+.piece.wk{
+    background-image: url(../assets/pieces/wk.png);
+}
+.piece.bp{
+    background-image: url(../assets/pieces/bp.png);
+}
+.piece.br{
+    background-image: url(../assets/pieces/br.png);
+}
+.piece.bn{
+    background-image: url(../assets/pieces/bn.png);
+}
+.piece.bb{
+    background-image: url(../assets/pieces/bb.png);
+}
+.piece.bq{
+    background-image: url(../assets/pieces/bq.png);
+}
+.piece.bk{
+    background-image: url(../assets/pieces/bk.png);
+}
