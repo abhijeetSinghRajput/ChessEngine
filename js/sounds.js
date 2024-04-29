@@ -1,0 +1,12 @@
+const CaptureSound = new Audio('./assets/sounds/capture.mp3');
+const CastleSound = new Audio('./assets/sounds/castle.mp3');
+const GameEndSound = new Audio('./assets/sounds/game-end.mp3');
+const GameStartSound = new Audio('./assets/sounds/game-start.mp3');
+const IllegalSound = new Audio('./assets/sounds/illegal.mp3');
+const CheckSound = new Audio('./assets/sounds/move-check.mp3');
+const EnemyMoveSound = new Audio('./assets/sounds/move-opponent.mp3');
+const SelfMoveSound = new Audio('./assets/sounds/move-self.mp3');
+const notifySound = new Audio('./assets/sounds/notify.mp3');
+const PremoveSound = new Audio('./assets/sounds/premove.mp3');
+const PromoteSound = new Audio('./assets/sounds/promote.mp3');
+const TenSecondsSound = new Audio('./assets/sounds/tenseconds.mp3');
