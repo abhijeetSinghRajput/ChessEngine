@@ -77,7 +77,7 @@ const SlidingPieces = [
     [Pieces.wr, Pieces.wb, Pieces.wq],
     [Pieces.br, Pieces.bb, Pieces.bq],
 ];
-const NonSlidingPiece = [
+const NonSlidingPieces = [
     [Pieces.wn, Pieces.wk],
     [Pieces.bn, Pieces.bk],
 ]

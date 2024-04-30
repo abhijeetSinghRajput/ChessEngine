@@ -217,7 +217,7 @@ function isUnderAttack(sq, attakingSide) {
     }
 
     //non sliding attack
-    for (const attakingPiece of NonSlidingPiece[attakingSide]) {
+    for (const attakingPiece of NonSlidingPieces[attakingSide]) {
         for (const direction of PieceDirections[attakingPiece]) {
             let targetSq = sq + direction;
 
