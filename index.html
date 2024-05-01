@@ -1,16 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+
+    <link rel="shortcut icon" href="./assets/icons/favIcon.png" type="image/x-icon">
     <link rel="stylesheet" href="./css/util.css">
     <link rel="stylesheet" href="./css/style.css">
 
     <title>chess engine</title>
 </head>
+
 <body>
-    <div id="board"></div>
+    <div class="container">
+        <div id="board"></div>
+
+        <!-- ---------- CONTROLLERS ---------- -->
+        <div class="game-controller">
+
+            <div class="header">
+                <div>
+                    <span>hash key : </span>
+                    <span id="hash-key">5300d2e1</span>
+                </div>
+            </div>
+
+            <div class="movelist"></div>
+
+            <div class="controller">
+                <div title="New Game" class="btn secondary new-game" onclick="showConfirmWindow('Start a new game?')"><i
+                        class="uil uil-plus"></i></div>
+                <div title="Move Back" class="btn secondary move-back" onclick="gui.undoMove()"><i class="uil uil-angle-left-b"></i></div>
+                <div title="Move Forward" class="btn secondary move-forward" onclick="moveForward()"><i class="uil uil-angle-right-b"></i>
+                </div>
+                <div title="Flip Board" class="btn secondary flip-board" onclick="flipBoard()"><i class="uil uil-repeat"></i></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="game-over">
+        <div class="close"><i class="uil uil-times"></i></div>
+        <div class="header">
+            <div class="title">
+                Draw
+            </div>
+            <div class="subtitle">by stalemate</div>
+        </div>
+        <div class="players">
+            <div class="player white">
+                <div class="profile-photo">
+                    <img src="./assets/avatar/acharya.png" alt="">
+                </div>
+                <p class="name">acharya</p>
+            </div>
+            <p>vs</p>
+            <div class="player black">
+                <div class="profile-photo">
+                    <img src="./assets/avatar/devki.png" alt="">
+                </div>
+                <p class="name">devki</p>
+            </div>
+        </div>
+        <div class="crowns">
+            <img class="crown" src="./assets/icons/crown-shadow.svg" alt="">
+            <img class="crown" src="./assets/icons/crown-shadow.svg" alt="">
+            <img class="crown dark" src="./assets/icons/crown-shadow.svg" alt="">
+        </div>
+        <div class="buttons">
+            <div class="btn primary bold">Share</div>
+            <div class="btn secondary" onclick="newGame()">New Game</div>
+            <div class="btn secondary">Game Review</div>
+        </div>
+    </div>
+
+    <div class="backdrop">
+
+        <!-- ---------- CONFIRM POPOVER ---------- -->
+        <div class="confirm-popover">
+            <div class="message"></div>
+            <div class="buttons">
+                <div class="btn secondary" id="cancel">Cancel</div>
+                <div class="btn primary" id="confirm">Yes</div>
+            </div>
+        </div>
+    </div>
+
 </body>
 <script src="./js/defs.js"></script>
 <script src="./js/sounds.js"></script>
@@ -23,4 +101,5 @@
 <script src="./js/gui/controlls.js"></script>
 
 <script src="./js/main.js"></script>
+
 </html>

@@ -27,22 +27,26 @@ function generateMoves() {
                 addEnPassantMove(buildMove(sq, sq + 11, 0, 0, EnPassantFlag));
             }
 
-            if (gameBoard.castlePermission & CastleBit.K) {
-                if (gameBoard.pieces[Squares.f1] == Pieces.empty && gameBoard.pieces[Squares.g1] == Pieces.empty) {
-                    if (gameBoard.checkSq == Squares.noSq && !isUnderAttack(Squares.f1, Color.black)) {
-                        addQuiteMove(buildMove(Squares.e1, Squares.g1, 0, 0, CastleFlag));
-                    }
-                }
-            }
-            if (gameBoard.castlePermission & CastleBit.Q) {
-                if (gameBoard.pieces[Squares.d1] == Pieces.empty && gameBoard.pieces[Squares.c1] == Pieces.empty && gameBoard.pieces[Squares.b1] == Pieces.empty) {
-                    if (gameBoard.checkSq == Squares.noSq && !isUnderAttack(Squares.d1, Color.black)) {
-                        addQuiteMove(buildMove(Squares.e1, Squares.c1, 0, 0, CastleFlag));
-                    }
-                }
-            }
-
         }
+
+
+        //castling
+
+        if (gameBoard.castlePermission & CastleBit.K) {
+            if (gameBoard.pieces[Squares.f1] == Pieces.empty && gameBoard.pieces[Squares.g1] == Pieces.empty) {
+                if (gameBoard.checkSq == Squares.noSq && !isUnderAttack(Squares.f1, Color.black)) {
+                    addQuiteMove(buildMove(Squares.e1, Squares.g1, 0, 0, CastleFlag));
+                }
+            }
+        }
+        if (gameBoard.castlePermission & CastleBit.Q) {
+            if (gameBoard.pieces[Squares.d1] == Pieces.empty && gameBoard.pieces[Squares.c1] == Pieces.empty && gameBoard.pieces[Squares.b1] == Pieces.empty) {
+                if (gameBoard.checkSq == Squares.noSq && !isUnderAttack(Squares.d1, Color.black)) {
+                    addQuiteMove(buildMove(Squares.e1, Squares.c1, 0, 0, CastleFlag));
+                }
+            }
+        }
+
     }
     else {
         for (const sq of gameBoard.pieceList[Pieces.bp]) {
@@ -71,26 +75,30 @@ function generateMoves() {
             if (sq - 11 == gameBoard.enPassantSq) {
                 addEnPassantMove(buildMove(sq, sq - 11, 0, 0, EnPassantFlag));
             }
-
-            if (gameBoard.castlePermission & CastleBit.k) {
-                if (gameBoard.pieces[Squares.f8] == Pieces.empty && gameBoard.pieces[Squares.g8] == Pieces.empty) {
-                    if (gameBoard.checkSq == Squares.noSq && !isUnderAttack(Squares.f8, Color.white)) {
-                        addQuiteMove(buildMove(Squares.e8, Squares.g8, 0, 0, CastleFlag));
-                    }
-                }
-            }
-            if (gameBoard.castlePermission & CastleBit.q) {
-                if (gameBoard.pieces[Squares.d8] == Pieces.empty && gameBoard.pieces[Squares.c8] == Pieces.empty && gameBoard.pieces[Squares.b8] == Pieces.empty) {
-                    if (gameBoard.checkSq == Squares.noSq && !isUnderAttack(Squares.d8, Color.white)) {
-                        addQuiteMove(buildMove(Squares.e8, Squares.g8, 0, 0, CastleFlag));
-                    }
-                }
-            }
-
         }
+
+
+        //castling
+        if (gameBoard.castlePermission & CastleBit.k) {
+            if (gameBoard.pieces[Squares.f8] == Pieces.empty && gameBoard.pieces[Squares.g8] == Pieces.empty) {
+                if (gameBoard.checkSq == Squares.noSq && !isUnderAttack(Squares.f8, Color.white)) {
+                    addQuiteMove(buildMove(Squares.e8, Squares.g8, 0, 0, CastleFlag));
+                }
+            }
+        }
+        if (gameBoard.castlePermission & CastleBit.q) {
+            if (gameBoard.pieces[Squares.d8] == Pieces.empty && gameBoard.pieces[Squares.c8] == Pieces.empty && gameBoard.pieces[Squares.b8] == Pieces.empty) {
+                if (gameBoard.checkSq == Squares.noSq && !isUnderAttack(Squares.d8, Color.white)) {
+                    addQuiteMove(buildMove(Squares.e8, Squares.g8, 0, 0, CastleFlag));
+                }
+            }
+        }
+
     }
+
     generateSlidingMoves();
     generateNonSlidingMoves();
+    
     return moves;
 }
 
@@ -108,10 +116,7 @@ function generateSlidingMoves() {
                         if (PieceColor[gameBoard.pieces[targetSq]] !== gameBoard.side) {
                             addQuiteMove(buildMove(sq, targetSq, gameBoard.pieces[targetSq], 0, 0));
                         }
-                        // there is a friendly piece
-                        else {
-                            break;
-                        }
+                        break;
                     }
                     targetSq += direction;
                 }
@@ -127,7 +132,7 @@ function generateNonSlidingMoves() {
             for (const direction of PieceDirections[piece]) {
 
                 let targetSq = sq + direction;
-                if (gameBoard.pieces[targetSq] == Squares.offBoard){
+                if (gameBoard.pieces[targetSq] == Squares.offBoard) {
                     continue;
                 }
                 if (gameBoard.pieces[targetSq] == Pieces.empty) {

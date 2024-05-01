@@ -86,7 +86,7 @@ function parseFen(fen) {
     }
 
     //assign a unique key for each different position
-    generatePositionKey();
+    gameBoard.positionKey = generatePositionKey();
 }
 
 
@@ -101,19 +101,22 @@ function parseFen(fen) {
 
 
 function generatePositionKey() {
+    let hashKey = 0;
     for (const sq of Sq64To120) {
         let piece = gameBoard.pieces[sq];
         if (piece !== Pieces.empty) {
-            hashPiece(sq, piece);
+            hashKey ^= PieceKeys[piece][sq];
         }
     }
-    hashCastle();
+    hashKey ^= CastleKeys[gameBoard.castlePermission];
+
     if (gameBoard.side === Color.white) {
-        hashSide();
+        hashKey ^= SideKey;
     }
     if (gameBoard.enPassantSq !== Squares.noSq) {
-        hashEnPassant();
+        hashKey ^= PieceKeys[Pieces.empty][gameBoard.enPassantSq];
     }
+    return hashKey;
 }
 
 function updateMaterial() {

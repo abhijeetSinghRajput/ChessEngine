@@ -215,7 +215,7 @@ function undoMove() {
         move,
     } = gameBoard.history.pop();
 
-    if (gameBoard.enPassantSq === Squares.noSq) {
+    if (gameBoard.enPassantSq != Squares.noSq) {
         hashEnPassant();
     }
     hashCastle();
@@ -225,7 +225,7 @@ function undoMove() {
     gameBoard.castlePermission = castlePermission;
     gameBoard.checkSq = checkSq;
 
-    if (gameBoard.enPassantSq === Squares.noSq) {
+    if (gameBoard.enPassantSq != Squares.noSq) {
         hashEnPassant();
     }
     hashCastle();
