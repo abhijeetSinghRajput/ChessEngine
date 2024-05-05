@@ -89,7 +89,7 @@ function generateMoves() {
         if (gameBoard.castlePermission & CastleBit.q) {
             if (gameBoard.pieces[Squares.d8] == Pieces.empty && gameBoard.pieces[Squares.c8] == Pieces.empty && gameBoard.pieces[Squares.b8] == Pieces.empty) {
                 if (gameBoard.checkSq == Squares.noSq && !isUnderAttack(Squares.d8, Color.white)) {
-                    addQuiteMove(buildMove(Squares.e8, Squares.g8, 0, 0, CastleFlag));
+                    addQuiteMove(buildMove(Squares.e8, Squares.c8, 0, 0, CastleFlag));
                 }
             }
         }
@@ -169,7 +169,9 @@ function addWhitePawnQuietMove(from, to) {
         addQuiteMove(buildMove(from, to, 0, Pieces.wb, 0));
         addQuiteMove(buildMove(from, to, 0, Pieces.wn, 0));
     }
-    addQuiteMove(buildMove(from, to, 0, 0, 0));
+    else{
+        addQuiteMove(buildMove(from, to, 0, 0, 0));
+    }
 }
 function addBlackPawnQuietMove(from, to) {
     //handling promotion move
@@ -179,7 +181,9 @@ function addBlackPawnQuietMove(from, to) {
         addQuiteMove(buildMove(from, to, 0, Pieces.bb, 0));
         addQuiteMove(buildMove(from, to, 0, Pieces.bn, 0));
     }
-    addQuiteMove(buildMove(from, to, 0, 0, 0));
+    else{
+        addQuiteMove(buildMove(from, to, 0, 0, 0));
+    }
 }
 
 
@@ -192,7 +196,9 @@ function addWhiteCaptureMove(from, to, capture) {
         addCaptureMove(buildMove(from, to, capture, Pieces.wb, 0));
         addCaptureMove(buildMove(from, to, capture, Pieces.wn, 0));
     }
-    addCaptureMove(buildMove(from, to, capture, 0, 0));
+    else{
+        addCaptureMove(buildMove(from, to, capture, 0, 0));
+    }
 }
 function addBlackCaptureMove(from, to, capture) {
     //handling promotion move
@@ -202,5 +208,7 @@ function addBlackCaptureMove(from, to, capture) {
         addCaptureMove(buildMove(from, to, capture, Pieces.bb, 0));
         addCaptureMove(buildMove(from, to, capture, Pieces.bn, 0));
     }
-    addCaptureMove(buildMove(from, to, capture, 0, 0));
+    else{
+        addCaptureMove(buildMove(from, to, capture, 0, 0));
+    }
 }
