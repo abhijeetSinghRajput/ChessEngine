@@ -83,7 +83,7 @@ body {
     aspect-ratio: 1;
     overflow: hidden;
     display: grid;
-    grid-template-columns: repeat(8, minmax(20px, 70px));
+    grid-template-columns: repeat(8, minmax(20px, 67px));
     grid-template-rows: repeat(8, auto);
     border-radius: 5px;
     user-select: none;

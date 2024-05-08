@@ -314,7 +314,6 @@ gui.doMove = function (move, { audio = true, userMove = true } = {}) {
 
 gui.undoMove = function () {
     promotionUl?.remove();
-
     if (gameBoard.history.length === 0) {
         return;
     }
@@ -385,6 +384,7 @@ gui.undoMove = function () {
     nodeList[currMoveNode]?.classList.add('selected');
 
     undoMoveHistory.push(move);
+    if (currMoveNode % 2 != 0) --ply;
 }
 
 
@@ -557,10 +557,12 @@ function moveForward() {
     if (undoMoveHistory.length === 0) {
         return;
     }
+    prevMoveNode = currMoveNode++;
+    if(currMoveNode % 2 == 0) ++ply;
+
     let move = undoMoveHistory.pop();
     gui.doMove(move, { userMove: false });
 
-    prevMoveNode = currMoveNode++;
     nodeList[prevMoveNode]?.classList.remove('selected');
     nodeList[currMoveNode].classList.add('selected');
 }
