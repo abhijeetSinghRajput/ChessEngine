@@ -406,7 +406,8 @@ gui.removePiece = function (sq) {
 
 gui.movePiece = function (from, to) {
     let piece = squareElements[Sq120To64[from]].querySelector('.piece');
-    squareElements[Sq120To64[to]].appendChild(piece);
+    if (piece)
+        squareElements[Sq120To64[to]]?.appendChild(piece);
 }
 
 // =====================================================
@@ -558,13 +559,13 @@ function moveForward() {
         return;
     }
     prevMoveNode = currMoveNode++;
-    if(currMoveNode % 2 == 0) ++ply;
+    if (currMoveNode % 2 == 0) ++ply;
 
     let move = undoMoveHistory.pop();
     gui.doMove(move, { userMove: false });
 
     nodeList[prevMoveNode]?.classList.remove('selected');
-    nodeList[currMoveNode].classList.add('selected');
+    nodeList[currMoveNode]?.classList.add('selected');
 }
 
 function parseMove(from, to, movelist) {
