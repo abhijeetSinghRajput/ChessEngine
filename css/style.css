@@ -104,6 +104,14 @@ body {
     background-color: var(--sq-dark);
     color: var(--sq-light);
 }
+.square.active {
+    transform: scale(1.1);
+    z-index: 10;
+    border: 2px solid rgb(254, 247, 164);
+    box-shadow: 0px 0px 4px rgb(255, 241, 82),
+        inset 0px 0px 4px rgb(255, 241, 82);
+}
+
 #board.flip .square ul.black,
 .square ul{
     position: absolute;

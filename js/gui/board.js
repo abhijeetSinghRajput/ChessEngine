@@ -36,7 +36,7 @@ gui.renderSquares = function () {
 }
 
 gui.renderPieces = function () {
-    document.querySelectorAll('.piece').forEach(piece=>piece.remove());
+    document.querySelectorAll('.piece').forEach(piece => piece.remove());
 
     //traverse the sq of internal board and add pieces on gui
     for (const sq of Sq64To120) {
@@ -54,6 +54,20 @@ gui.renderPieces = function () {
 // ================= BOARD INTERACTION =================
 // =====================================================
 
+let clickStart = false;
+
+gui.removeInteraction = function () {
+    pieceElements.forEach(piece => {
+        piece.removeEventListener('dragstart', dragStart);
+        piece.removeEventListener('click', clickOnPiece);
+    })
+    squareElements.forEach(square => {
+        square.removeEventListener('dragover', dragOver);
+        square.removeEventListener('drop', drop);
+        square.removeEventListener('dragleave', dragLeave);
+        square.removeEventListener('click', clickOnSquare);
+    })
+}
 
 gui.addInteraction = function () {
     pieceElements = document.querySelectorAll('.piece');
@@ -65,26 +79,36 @@ gui.addInteraction = function () {
 
     pieceElements.forEach(piece => {
         piece.addEventListener('dragstart', dragStart);
+        piece.addEventListener('click', clickOnPiece);
     })
 
     squareElements.forEach(square => {
         square.addEventListener('dragover', dragOver);
         square.addEventListener('drop', drop);
+        square.addEventListener('dragleave', dragLeave);
+        square.addEventListener('click', clickOnSquare);
     });
-    if(promotionMove){
+    if (promotionMove) {
         choosePromotionPiece(promotionMove);
     }
 }
 
-gui.removeInteraction = function () {
-    pieceElements.forEach(piece => {
-        piece.removeEventListener('dragstart', dragStart);
-    })
-    squareElements.forEach(square => {
-        square.removeEventListener('dragover', dragOver)
-        square.removeEventListener('drop', drop);
-    })
+function clickOnPiece(e) {
+    let piece = e.target;
+    if (fromSq && piece.classList[1][0] !== SideChar[gameBoard.side]) {
+        drop(e);
+    }
+    else {
+        clearMarker();
+        dragStart(e);
+    }
 }
+function clickOnSquare(e) {
+    if (!e.target.classList.contains('piece')) {
+        drop(e);
+    }
+}
+
 
 let fromSq, toSq, movelist, promotionMove = null;
 
@@ -98,18 +122,37 @@ function dragStart(e) {
     addMarker(fromSq, movelist);
 }
 
+let activeSquare = null;
 function dragOver(e) {
+    //select the square
+    let square = e.target;
+    if (!e.target.classList.contains('square')) {
+        square = e.target.parentElement;
+    }
+
+    //add over effect
+    activeSquare = square;
+    square.classList.add('active');
     e.preventDefault();
+}
+//drag leave trigger when we leave a square and enter 
+function dragLeave(e) {
+    if (activeSquare) {
+        activeSquare.classList.remove('active');
+        activeSquare = null;
+    }
 }
 
 function drop(e) {
+    clearMarker();
+
     let square = e.target;
     if (e.target.classList.contains('piece')) {
         square = e.target.parentElement;
     }
-    clearMarker();
     toSq = Squares[square.id];
     let move = parseMove(fromSq, toSq, movelist);
+    fromSq = null;
 
     if (move) {
         if (move & PromotionFlag) {
@@ -123,6 +166,8 @@ function drop(e) {
         addHighlight(toSq);
     }
 }
+//even drop outside the board clear the marker
+document.addEventListener('dragend', clearMarker);
 
 
 // =====================================================
@@ -166,7 +211,7 @@ function clearHighlight() {
 }
 
 function clearMarker() {
-    squareElements.forEach(square=>{
+    squareElements.forEach(square => {
         square.classList.remove('active', 'dot', 'attack', 'danger');
     })
 }
@@ -268,6 +313,8 @@ gui.doMove = function (move, { audio = true, userMove = true } = {}) {
 }
 
 gui.undoMove = function () {
+    promotionUl?.remove();
+
     if (gameBoard.history.length === 0) {
         return;
     }
@@ -348,6 +395,7 @@ gui.addPiece = function (sq, piece) {
     pieceElement.draggable = 'true';
 
     pieceElement.addEventListener('dragstart', dragStart);
+    pieceElement.addEventListener('click', clickOnPiece);
 
     squareElements[Sq120To64[sq]].appendChild(pieceElement);
 }
@@ -676,6 +724,7 @@ function choosePromotionPiece(move) {
             move = updatePromotion(move, promoteTo);
             promotionUl.remove();
             gui.doMove(move);
+            promotionMove = null;
         })
     })
 }
