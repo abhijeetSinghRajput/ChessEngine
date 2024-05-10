@@ -65,12 +65,12 @@ function movePiece(from, to) {
     let piece = gameBoard.pieces[from];
     
     if(piece == Pieces.wp){
-        whitePawnMask &= ~(1n << BigInt(Sq120To64[from]));
-        whitePawnMask |= (1n << BigInt(Sq120To64[to]));
+        PawnBitBoard[Color.white] &= ~(1n << BigInt(Sq120To64[from]));
+        PawnBitBoard[Color.white] |= (1n << BigInt(Sq120To64[to]));
     }
     else if(piece == Pieces.bp){
-        blackPawnMask &= ~(1n << BigInt(Sq120To64[from]));
-        blackPawnMask |= (1n << BigInt(Sq120To64[to]));
+        PawnBitBoard[Color.black] &= ~(1n << BigInt(Sq120To64[from]));
+        PawnBitBoard[Color.black] |= (1n << BigInt(Sq120To64[to]));
     }
 
     hashPiece(from, piece);
@@ -98,10 +98,10 @@ function addPiece(sq, piece) {
     gameBoard.pieceCount[piece]++;
 
     if(piece == Pieces.wp){
-        whitePawnMask |= (1n << BigInt(Sq120To64[sq]));
+        PawnBitBoard[Color.white] |= (1n << BigInt(Sq120To64[sq]));
     }
     else if(piece == Pieces.bp){
-        blackPawnMask |= (1n << BigInt(Sq120To64[sq]));
+        PawnBitBoard[Color.black] |= (1n << BigInt(Sq120To64[sq]));
     }
 }
 
@@ -122,10 +122,10 @@ function removePiece(sq) {
     gameBoard.pieceCount[piece]--;
 
     if(piece == Pieces.wp){
-        whitePawnMask &= ~(1n << BigInt(Sq120To64[sq]));
+        PawnBitBoard[Color.white] &= ~(1n << BigInt(Sq120To64[sq]));
     }
     else if(piece == Pieces.bp){
-        blackPawnMask &= ~(1n << BigInt(Sq120To64[sq]));
+        PawnBitBoard[Color.black] &= ~(1n << BigInt(Sq120To64[sq]));
     }
 }
 
