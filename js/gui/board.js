@@ -2,6 +2,10 @@ const gui = {};
 const graphicalBoard = document.getElementById('board');
 const hashKey = document.getElementById('hash-key');
 
+window.addEventListener('keydown', (e)=>{
+    if(e.key == 'ArrowRight') moveForward();
+    else if(e.key == 'ArrowLeft') gui.undoMove();
+})
 
 let squareElements;
 let pieceElements;
@@ -212,7 +216,7 @@ function clearHighlight() {
 
 function clearMarker() {
     squareElements.forEach(square => {
-        square.classList.remove('active', 'dot', 'attack', 'danger');
+        square.classList.remove('active', 'dot', 'attack');
     })
 }
 
@@ -311,6 +315,9 @@ gui.doMove = function (move, { audio = true, userMove = true } = {}) {
         }
     }
 }
+
+
+
 
 gui.undoMove = function () {
     promotionUl?.remove();
@@ -495,6 +502,9 @@ function drawMaterial() {
 
 
 function newGame() {
+    if(gameBoard.checkSq != Squares.noSq){
+        squareElements[Sq120To64[gameBoard.checkSq]].classList.remove('danger');
+    }
     resetGui();
     //no need to parse fen it it's already at starting position
     if (gameBoard.positionKey !== StartingHashKey) {

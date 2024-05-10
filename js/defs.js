@@ -1,6 +1,13 @@
 let StartingFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 const StartingHashKey = 0x5300d2e1;
 
+const FileMask = new Array(8);
+const RankMask = new Array(8);;
+let PawnBitBoard = [0n, 0n, 0n];
+const PassedPawnMask = new Array(2);
+const IsolatedMask = new Array(120);
+
+
 const Pieces = {
     empty: 0,
     wp: 1, wr: 2, wn: 3, wb: 4, wq: 5, wk: 6,

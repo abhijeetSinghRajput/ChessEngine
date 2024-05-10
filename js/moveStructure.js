@@ -1,4 +1,4 @@
-//move structure                       set bits
+//move structure                       set Mask
 // 0000 0000 0000 0000 0000 0111 1111   0x7f          from
 // 0000 0000 0000 0011 1111 1000 0000   0x7f          to
 // 0000 0000 0011 1100 0000 0000 0000   0xf           capture piece
@@ -63,6 +63,15 @@ function moveDetail(move) {
 
 function movePiece(from, to) {
     let piece = gameBoard.pieces[from];
+    
+    if(piece == Pieces.wp){
+        whitePawnMask &= ~(1n << BigInt(Sq120To64[from]));
+        whitePawnMask |= (1n << BigInt(Sq120To64[to]));
+    }
+    else if(piece == Pieces.bp){
+        blackPawnMask &= ~(1n << BigInt(Sq120To64[from]));
+        blackPawnMask |= (1n << BigInt(Sq120To64[to]));
+    }
 
     hashPiece(from, piece);
     gameBoard.pieces[from] = Pieces.empty;
@@ -76,7 +85,6 @@ function movePiece(from, to) {
             return;
         }
     }
-
 }
 function addPiece(sq, piece) {
     if (gameBoard.pieces[sq] !== Pieces.empty) {
@@ -88,6 +96,13 @@ function addPiece(sq, piece) {
     gameBoard.material[PieceColor[piece]] += PieceValue[piece];
     gameBoard.pieceList[piece].push(sq);
     gameBoard.pieceCount[piece]++;
+
+    if(piece == Pieces.wp){
+        whitePawnMask |= (1n << BigInt(Sq120To64[sq]));
+    }
+    else if(piece == Pieces.bp){
+        blackPawnMask |= (1n << BigInt(Sq120To64[sq]));
+    }
 }
 
 function removePiece(sq) {
@@ -105,6 +120,13 @@ function removePiece(sq) {
         }
     }
     gameBoard.pieceCount[piece]--;
+
+    if(piece == Pieces.wp){
+        whitePawnMask &= ~(1n << BigInt(Sq120To64[sq]));
+    }
+    else if(piece == Pieces.bp){
+        blackPawnMask &= ~(1n << BigInt(Sq120To64[sq]));
+    }
 }
 
 
