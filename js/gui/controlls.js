@@ -44,3 +44,7 @@ confirmBtn.addEventListener('click', () => {
     removeBackdrop();
     newGame();
 })
+
+function flipBoard() {
+    graphicalBoard.classList.toggle('flipped');
+}

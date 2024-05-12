@@ -43,7 +43,7 @@ function moveTo(move) {
 function moveCapturePiece(move) {
     return (move >> 14) & 0xf;
 }
-function movePormotionPiece(move) {
+function movePromotionPiece(move) {
     return (move >> 18) & 0xf;
 }
 
@@ -53,7 +53,7 @@ function moveDetail(move) {
     console.log('from :', SquaresChar[moveFrom(move)]);
     console.log('to :', SquaresChar[moveTo(move)]);
     console.log('capture :', PieceChar[moveCapturePiece(move)]);
-    console.log('promotion :', PieceChar[movePormotionPiece(move)]);
+    console.log('promotion :', PieceChar[movePromotionPiece(move)]);
 
     if (move & EnPassantFlag) console.log('flag : enPassant');
     if (move & PawnStartFlag) console.log('flag : pawn start');
@@ -201,7 +201,7 @@ function doMove(move) {
 
     if (move & PromotionFlag) {
         removePiece(to);
-        addPiece(to, movePormotionPiece(move));
+        addPiece(to, movePromotionPiece(move));
     }
 
     gameBoard.side ^= 1;
@@ -226,7 +226,7 @@ function doMove(move) {
 
 function undoMove() {
     if (gameBoard.history.length === 0) {
-        return;
+        return null;
     }
 
     const {
@@ -285,7 +285,7 @@ function undoMove() {
     }
     if (move & PromotionFlag) {
         removePiece(from);
-        addPiece(from, PieceColor[movePormotionPiece(move)] === Color.white ? Pieces.wp : Pieces.bp);
+        addPiece(from, PieceColor[movePromotionPiece(move)] === Color.white ? Pieces.wp : Pieces.bp);
     }
 
     return move;

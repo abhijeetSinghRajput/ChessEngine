@@ -13,6 +13,7 @@
     user-select: none;
 }
 
+
 .btn i::before {
     font-size: 22px;
     font-weight: 800;
@@ -23,10 +24,12 @@
     border-color: #45753c;
     color: white;
 }
-.btn.primary:hover{
+
+.btn.primary:hover {
     filter: brightness(120%);
 }
-.btn.bold{
+
+.btn.bold {
     font-weight: 800;
     font-size: 16px;
     border-radius: 10px;
@@ -40,10 +43,678 @@
 
 .btn.secondary {
     background-color: #32312f;
-    border-color:  #2c2b28;
+    border-color: #2c2b28;
+}
+
+.highlight ,
+.capture-hint,
+.hint,
+.check{
+    width: 12.5%;
+    height: 12.5%;
+    position: absolute;
+    z-index: 2;
+}
+
+.highlight {
+    background-color: var(--highlight);
+    z-index: 1;
+}
+.capture-hint{
+    border: 6px solid var(--alpha-dark);
+    border-radius: 50%;
+}
+.hint{
+    padding: 4.2%;
+    border-radius: 50%;
+    background-color: var(--alpha-dark);
+    background-clip: content-box;
+}
+.check{
+    background-color: rgba(255, 0, 0, 0.5);
 }
 
 .btn.secondary:hover {
     color: white;
     background-color: #454441;
+}
+
+
+
+
+.piece.wp {
+    background-image: url(../assets/pieces/wp.png);
+}
+
+.piece.wr {
+    background-image: url(../assets/pieces/wr.png);
+}
+
+.piece.wn {
+    background-image: url(../assets/pieces/wn.png);
+}
+
+.piece.wb {
+    background-image: url(../assets/pieces/wb.png);
+}
+
+.piece.wq {
+    background-image: url(../assets/pieces/wq.png);
+}
+
+.piece.wk {
+    background-image: url(../assets/pieces/wk.png);
+}
+
+.piece.bp {
+    background-image: url(../assets/pieces/bp.png);
+}
+
+.piece.br {
+    background-image: url(../assets/pieces/br.png);
+}
+
+.piece.bn {
+    background-image: url(../assets/pieces/bn.png);
+}
+
+.piece.bb {
+    background-image: url(../assets/pieces/bb.png);
+}
+
+.piece.bq {
+    background-image: url(../assets/pieces/bq.png);
+}
+
+.piece.bk {
+    background-image: url(../assets/pieces/bk.png);
+}
+
+
+.promotion-window.file-a{
+    transform: translateX(0%);
+}
+.promotion-window.file-b{
+    transform: translateX(100%);
+}
+.promotion-window.file-c{
+    transform: translateX(200%);
+}
+.promotion-window.file-d{
+    transform: translateX(300%);
+}
+.promotion-window.file-e{
+    transform: translateX(400%);
+}
+.promotion-window.file-f{
+    transform: translateX(500%);
+}
+.promotion-window.file-g{
+    transform: translateX(600%);
+}
+.promotion-window.file-h{
+    transform: translateX(700%);
+}
+.flipped .promotion-window.file-a{
+    transform: translateX(700%);
+}
+.flipped .promotion-window.file-b{
+    transform: translateX(600%);
+}
+.flipped .promotion-window.file-c{
+    transform: translateX(500%);
+}
+.flipped .promotion-window.file-d{
+    transform: translateX(400%);
+}
+.flipped .promotion-window.file-e{
+    transform: translateX(34px);
+}
+.flipped .promotion-window.file-f{
+    transform: translateX(200%);
+}
+.flipped .promotion-window.file-g{
+    transform: translateX(100%);
+}
+.flipped .promotion-window.file-h{
+    transform: translateX(0%);
+}
+
+.flipped #a1 {
+    transform: translate(700%, 0%);
+}
+
+.flipped #b1 {
+    transform: translate(600%, 0%);
+}
+
+.flipped #c1 {
+    transform: translate(500%, 0%);
+}
+
+.flipped #d1 {
+    transform: translate(400%, 0%);
+}
+
+.flipped #e1 {
+    transform: translate(300%, 0%);
+}
+
+.flipped #f1 {
+    transform: translate(200%, 0%);
+}
+
+.flipped #g1 {
+    transform: translate(100%, 0%);
+}
+
+.flipped #h1 {
+    transform: translate(0%, 0%);
+}
+
+
+
+
+.flipped #a2 {
+    transform: translate(700%, 100%);
+}
+
+.flipped #b2 {
+    transform: translate(600%, 100%);
+}
+
+.flipped #c2 {
+    transform: translate(500%, 100%);
+}
+
+.flipped #d2 {
+    transform: translate(400%, 100%);
+}
+
+.flipped #e2 {
+    transform: translate(300%, 100%);
+}
+
+.flipped #f2 {
+    transform: translate(200%, 100%);
+}
+
+.flipped #g2 {
+    transform: translate(100%, 100%);
+}
+
+.flipped #h2 {
+    transform: translate(0%, 100%);
+}
+
+
+
+
+.flipped #a3 {
+    transform: translate(700%, 200%);
+}
+
+.flipped #b3 {
+    transform: translate(600%, 200%);
+}
+
+.flipped #c3 {
+    transform: translate(500%, 200%);
+}
+
+.flipped #d3 {
+    transform: translate(400%, 200%);
+}
+
+.flipped #e3 {
+    transform: translate(300%, 200%);
+}
+
+.flipped #f3 {
+    transform: translate(200%, 200%);
+}
+
+.flipped #g3 {
+    transform: translate(100%, 200%);
+}
+
+.flipped #h3 {
+    transform: translate(0%, 200%);
+}
+
+
+
+
+.flipped #a4 {
+    transform: translate(700%, 300%);
+}
+
+.flipped #b4 {
+    transform: translate(600%, 300%);
+}
+
+.flipped #c4 {
+    transform: translate(500%, 300%);
+}
+
+.flipped #d4 {
+    transform: translate(400%, 300%);
+}
+
+.flipped #e4 {
+    transform: translate(300%, 300%);
+}
+
+.flipped #f4 {
+    transform: translate(200%, 300%);
+}
+
+.flipped #g4 {
+    transform: translate(100%, 300%);
+}
+
+.flipped #h4 {
+    transform: translate(0%, 300%);
+}
+
+
+
+
+.flipped #a5 {
+    transform: translate(700%, 400%);
+}
+
+.flipped #b5 {
+    transform: translate(600%, 400%);
+}
+
+.flipped #c5 {
+    transform: translate(500%, 400%);
+}
+
+.flipped #d5 {
+    transform: translate(400%, 400%);
+}
+
+.flipped #e5 {
+    transform: translate(300%, 400%);
+}
+
+.flipped #f5 {
+    transform: translate(200%, 400%);
+}
+
+.flipped #g5 {
+    transform: translate(100%, 400%);
+}
+
+.flipped #h5 {
+    transform: translate(0%, 400%);
+}
+
+
+
+
+.flipped #a6 {
+    transform: translate(700%, 500%);
+}
+
+.flipped #b6 {
+    transform: translate(600%, 500%);
+}
+
+.flipped #c6 {
+    transform: translate(500%, 500%);
+}
+
+.flipped #d6 {
+    transform: translate(400%, 500%);
+}
+
+.flipped #e6 {
+    transform: translate(300%, 500%);
+}
+
+.flipped #f6 {
+    transform: translate(200%, 500%);
+}
+
+.flipped #g6 {
+    transform: translate(100%, 500%);
+}
+
+.flipped #h6 {
+    transform: translate(0%, 500%);
+}
+
+
+
+
+.flipped #a7 {
+    transform: translate(700%, 600%);
+}
+
+.flipped #b7 {
+    transform: translate(600%, 600%);
+}
+
+.flipped #c7 {
+    transform: translate(500%, 600%);
+}
+
+.flipped #d7 {
+    transform: translate(400%, 600%);
+}
+
+.flipped #e7 {
+    transform: translate(300%, 600%);
+}
+
+.flipped #f7 {
+    transform: translate(200%, 600%);
+}
+
+.flipped #g7 {
+    transform: translate(100%, 600%);
+}
+
+.flipped #h7 {
+    transform: translate(0%, 600%);
+}
+
+
+
+
+.flipped #a8 {
+    transform: translate(700%, 700%);
+}
+
+.flipped #b8 {
+    transform: translate(600%, 700%);
+}
+
+.flipped #c8 {
+    transform: translate(500%, 700%);
+}
+
+.flipped #d8 {
+    transform: translate(400%, 700%);
+}
+
+.flipped #e8 {
+    transform: translate(300%, 700%);
+}
+
+.flipped #f8 {
+    transform: translate(200%, 700%);
+}
+
+.flipped #g8 {
+    transform: translate(100%, 700%);
+}
+
+.flipped #h8 {
+    transform: translate(0%, 700%);
+}
+
+
+#a1 {
+    transform: translate(0%, 700%);
+}
+
+#b1 {
+    transform: translate(100%, 700%);
+}
+
+#c1 {
+    transform: translate(200%, 700%);
+}
+
+#d1 {
+    transform: translate(300%, 700%);
+}
+
+#e1 {
+    transform: translate(400%, 700%);
+}
+
+#f1 {
+    transform: translate(500%, 700%);
+}
+
+#g1 {
+    transform: translate(600%, 700%);
+}
+
+#h1 {
+    transform: translate(700%, 700%);
+}
+
+
+#a2 {
+    transform: translate(0%, 600%);
+}
+
+#b2 {
+    transform: translate(100%, 600%);
+}
+
+#c2 {
+    transform: translate(200%, 600%);
+}
+
+#d2 {
+    transform: translate(300%, 600%);
+}
+
+#e2 {
+    transform: translate(400%, 600%);
+}
+
+#f2 {
+    transform: translate(500%, 600%);
+}
+
+#g2 {
+    transform: translate(600%, 600%);
+}
+
+#h2 {
+    transform: translate(700%, 600%);
+}
+
+
+#a3 {
+    transform: translate(0%, 500%);
+}
+
+#b3 {
+    transform: translate(100%, 500%);
+}
+
+#c3 {
+    transform: translate(200%, 500%);
+}
+
+#d3 {
+    transform: translate(300%, 500%);
+}
+
+#e3 {
+    transform: translate(400%, 500%);
+}
+
+#f3 {
+    transform: translate(500%, 500%);
+}
+
+#g3 {
+    transform: translate(600%, 500%);
+}
+
+#h3 {
+    transform: translate(700%, 500%);
+}
+
+
+#a4 {
+    transform: translate(0%, 400%);
+}
+
+#b4 {
+    transform: translate(100%, 400%);
+}
+
+#c4 {
+    transform: translate(200%, 400%);
+}
+
+#d4 {
+    transform: translate(300%, 400%);
+}
+
+#e4 {
+    transform: translate(400%, 400%);
+}
+
+#f4 {
+    transform: translate(500%, 400%);
+}
+
+#g4 {
+    transform: translate(600%, 400%);
+}
+
+#h4 {
+    transform: translate(700%, 400%);
+}
+
+
+#a5 {
+    transform: translate(0%, 300%);
+}
+
+#b5 {
+    transform: translate(100%, 300%);
+}
+
+#c5 {
+    transform: translate(200%, 300%);
+}
+
+#d5 {
+    transform: translate(300%, 300%);
+}
+
+#e5 {
+    transform: translate(400%, 300%);
+}
+
+#f5 {
+    transform: translate(500%, 300%);
+}
+
+#g5 {
+    transform: translate(600%, 300%);
+}
+
+#h5 {
+    transform: translate(700%, 300%);
+}
+
+
+#a6 {
+    transform: translate(0%, 200%);
+}
+
+#b6 {
+    transform: translate(100%, 200%);
+}
+
+#c6 {
+    transform: translate(200%, 200%);
+}
+
+#d6 {
+    transform: translate(300%, 200%);
+}
+
+#e6 {
+    transform: translate(400%, 200%);
+}
+
+#f6 {
+    transform: translate(500%, 200%);
+}
+
+#g6 {
+    transform: translate(600%, 200%);
+}
+
+#h6 {
+    transform: translate(700%, 200%);
+}
+
+#a7 {
+    transform: translate(0%, 100%);
+}
+
+#b7 {
+    transform: translate(100%, 100%);
+}
+
+#c7 {
+    transform: translate(200%, 100%);
+}
+
+#d7 {
+    transform: translate(300%, 100%);
+}
+
+#e7 {
+    transform: translate(400%, 100%);
+}
+
+#f7 {
+    transform: translate(500%, 100%);
+}
+
+#g7 {
+    transform: translate(600%, 100%);
+}
+
+#h7 {
+    transform: translate(700%, 100%);
+}
+
+#a8 {
+    transform: translate(0%, 0%);
+}
+
+#b8 {
+    transform: translate(100%, 0%);
+}
+
+#c8 {
+    transform: translate(200%, 0%);
+}
+
+#d8 {
+    transform: translate(300%, 0%);
+}
+
+#e8 {
+    transform: translate(400%, 0%);
+}
+
+#f8 {
+    transform: translate(500%, 0%);
+}
+
+#g8 {
+    transform: translate(600%, 0%);
+}
+
+#h8 {
+    transform: translate(700%, 0%);
 }

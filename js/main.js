@@ -1,11 +1,9 @@
 (function main() {
     init();
-    // StartingFen = 'r3k2r/p1ppqpb11/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ';
+    // StartingFen = 'r3k2r/pPppqpb11/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ';
     // StartingFen = '2k1r2r/Bpq3pp/3b4/3Bp3/8/7b/PPP1QP2/R3R1K1 w - -';
     parseFen(StartingFen);
-    gui.renderSquares();
     gui.renderPieces();
-    hashKey.textContent = gameBoard.positionKey.toString(16);
     // printBoard();
     // console.log(evalPosition());
 

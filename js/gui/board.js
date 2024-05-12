@@ -1,109 +1,43 @@
-const gui = {};
 const graphicalBoard = document.getElementById('board');
-const hashKey = document.getElementById('hash-key');
+const hashKey = document.querySelector('#hash-key');
+const gui = {};
+const guiPieces = {};
 
-window.addEventListener('keydown', (e)=>{
-    if(e.key == 'ArrowRight') moveForward();
-    else if(e.key == 'ArrowLeft') gui.undoMove();
-})
-
-let squareElements;
-let pieceElements;
-
-// =====================================================
-// =================== GUI RENDERING ===================
-// =====================================================
-
-gui.renderSquares = function () {
-    squareElements = [];
-
-    for (let rank = Rank1; rank <= Rank8; ++rank) {
-        for (let file = FileA; file <= FileH; ++file) {
-            const square = document.createElement('div');
-            const squareColor = (rank + file) % 2 ? 'dark' : 'light';
-
-            square.classList.add('square', squareColor);
-            square.id = FileChar[file] + (rank + 1);
-
-            if (file === FileA) {
-                square.innerHTML += `<span class="num">${rank + 1}</span>`
-            }
-            if (rank === Rank1) {
-                square.innerHTML += `<span class="alpha">${FileChar[file]}</span>`
-            }
-
-            squareElements.push(square);
-            graphicalBoard.appendChild(square);
-            square.style.gridRow = 8 - rank;
-        }
-    }
-}
+// =================================================================
+// ===================== Board Initializaation =====================
+// =================================================================
 
 gui.renderPieces = function () {
-    document.querySelectorAll('.piece').forEach(piece => piece.remove());
-
-    //traverse the sq of internal board and add pieces on gui
     for (const sq of Sq64To120) {
-        if (gameBoard.pieces[sq] !== Pieces.empty) {
-            gui.addPiece(sq, gameBoard.pieces[sq]);
+        if (gameBoard.pieces[sq] != Pieces.empty) {
+            gui.addPiece(SquaresChar[sq], gameBoard.pieces[sq]);
         }
     }
-
-    this.addInteraction();
-}
-
-
-
-// =====================================================
-// ================= BOARD INTERACTION =================
-// =====================================================
-
-let clickStart = false;
-
-gui.removeInteraction = function () {
-    pieceElements.forEach(piece => {
-        piece.removeEventListener('dragstart', dragStart);
-        piece.removeEventListener('click', clickOnPiece);
-    })
-    squareElements.forEach(square => {
-        square.removeEventListener('dragover', dragOver);
-        square.removeEventListener('drop', drop);
-        square.removeEventListener('dragleave', dragLeave);
-        square.removeEventListener('click', clickOnSquare);
-    })
-}
-
-gui.addInteraction = function () {
-    pieceElements = document.querySelectorAll('.piece');
-    squareElements = document.querySelectorAll('.square');
-    gui.removeInteraction();
-    if (promotionMove) {
-        squareElements[Sq120To64[moveTo(promotionMove)]].querySelector('ul')?.remove();
+    if(gameBoard.checkSq != Squares.noSq){
+        addMarker(SquaresChar[gameBoard.checkSq], 'check');
     }
+    hashKey.textContent = gameBoard.positionKey.toString(16);
+    gui.addBoardInteraction();
+}
 
-    pieceElements.forEach(piece => {
+gui.addBoardInteraction = function () {
+    for (const square in guiPieces) {
+        let piece = guiPieces[square];
         piece.addEventListener('dragstart', dragStart);
         piece.addEventListener('click', clickOnPiece);
-    })
-
-    squareElements.forEach(square => {
-        square.addEventListener('dragover', dragOver);
-        square.addEventListener('drop', drop);
-        square.addEventListener('dragleave', dragLeave);
-        square.addEventListener('click', clickOnSquare);
-    });
-    if (promotionMove) {
-        choosePromotionPiece(promotionMove);
     }
+    graphicalBoard.addEventListener('dragover', dragOver);
+    graphicalBoard.addEventListener('drop', drop);
+    graphicalBoard.addEventListener('click', clickOnSquare);
 }
 
-function clickOnPiece(e) {
+function clickOnPiece(e){
     let piece = e.target;
-    if (fromSq && piece.classList[1][0] !== SideChar[gameBoard.side]) {
+    if(fromSq && piece.classList[1][0] != SideChar[gameBoard.side]){
         drop(e);
     }
-    else {
-        clearMarker();
+    else{
+        removeHints();
         dragStart(e);
     }
 }
@@ -114,317 +48,335 @@ function clickOnSquare(e) {
 }
 
 
-let fromSq, toSq, movelist, promotionMove = null;
+gui.addPiece = function (square, piece) {
+    const pieceElement = document.createElement('div');
+    const pieceName = SideChar[PieceColor[piece]] + PieceType[piece];
+
+    pieceElement.classList.add('piece', pieceName);
+    pieceElement.id = square;
+    pieceElement.draggable = true;
+
+    //add piece events listener
+    pieceElement.addEventListener('dragstart', dragStart);
+    pieceElement.addEventListener('click', clickOnPiece);
+
+    guiPieces[pieceElement.id] = pieceElement;
+    graphicalBoard.appendChild(pieceElement);
+}
+
+gui.removePiece = function (square) {
+    guiPieces[square]?.remove();
+    delete guiPieces[square];
+}
+
+gui.movePiece = function (from, to) {
+    guiPieces[from].id = to;
+    guiPieces[to] = guiPieces[from];
+    delete guiPieces[from];
+}
+
+
+
+
+// =================================================================
+// ============================ Events =============================
+// =================================================================
+
+let fromSq, toSq, moveList;
+const promotionWindow = document.querySelectorAll('.promotion-window');
+
+promotionWindow.forEach(promo => {
+    promo.addEventListener('click', (e) => {
+        let piece = Pieces[e.target.classList[1]];
+        promotionMove = updatePromotion(promotionMove, piece);
+        promotionWindow[gameBoard.side].style.display = 'none';
+        gui.doMove(promotionMove);
+    })
+})
 
 function dragStart(e) {
-    let square = e.target.parentElement;
-    fromSq = Squares[square.id];
-    movelist = generateMoves();
-
-    clearHighlight();
-    addHighlight(fromSq);
-    addMarker(fromSq, movelist);
+    fromSq = getSquare(e);
+    moveList = generateMoves();
+    showHints(fromSq, moveList);
 }
 
-let activeSquare = null;
-function dragOver(e) {
-    //select the square
-    let square = e.target;
-    if (!e.target.classList.contains('square')) {
-        square = e.target.parentElement;
-    }
-
-    //add over effect
-    activeSquare = square;
-    square.classList.add('active');
-    e.preventDefault();
-}
-//drag leave trigger when we leave a square and enter 
-function dragLeave(e) {
-    if (activeSquare) {
-        activeSquare.classList.remove('active');
-        activeSquare = null;
-    }
-}
 
 function drop(e) {
-    clearMarker();
-
-    let square = e.target;
-    if (e.target.classList.contains('piece')) {
-        square = e.target.parentElement;
+    removeHints();
+    toSq = getSquare(e);
+    const move = parseMove(fromSq, toSq, moveList);
+    if (move & PromotionFlag) {
+        promotionMove = move;
+        let file = fileOf(moveTo(move));
+        promotionWindow[gameBoard.side].classList.add(`file-${FileChar[file]}`);
+        promotionWindow[gameBoard.side].style.display = 'flex';
     }
-    toSq = Squares[square.id];
-    let move = parseMove(fromSq, toSq, movelist);
-    fromSq = null;
-
-    if (move) {
-        if (move & PromotionFlag) {
-            promotionMove = move;
-            choosePromotionPiece(move);
-        }
-        else {
-            gui.doMove(move);
-            promotionMove = null;
-        }
-        addHighlight(toSq);
-    }
-}
-//even drop outside the board clear the marker
-document.addEventListener('dragend', clearMarker);
-
-
-// =====================================================
-// ===================== HIGHLIGHT =====================
-// =====================================================
-
-
-const highlightSq = [];
-
-function addHighlight(sq) {
-    let square = squareElements[Sq120To64[sq]];
-    if (square.classList.contains('danger')) {
-        return;
-    }
-    square.classList.add('highlight');
-    highlightSq.push(square);
-}
-
-function addMarker(from, movelist) {
-    for (const { move } of movelist) {
-        if (moveFrom(move) === from) {
-            if (!doMove(move)) {
-                continue;
-            }
-            undoMove();
-            let to = moveTo(move);
-            if (move & CaptureFlag) {
-                squareElements[Sq120To64[to]].classList.add('attack');
-            }
-            else {
-                squareElements[Sq120To64[to]].classList.add('dot');
-            }
-        }
+    else {
+        gui.doMove(move);
     }
 }
 
-function clearHighlight() {
-    while (highlightSq.length > 0) {
-        highlightSq.pop().classList.remove('highlight');
-    }
-}
-
-function clearMarker() {
-    squareElements.forEach(square => {
-        square.classList.remove('active', 'dot', 'attack');
-    })
+function dragOver(e) {
+    e.preventDefault();
 }
 
 
-// =====================================================
-// =================== MOVE HANDING ====================
-// =====================================================
 
 
-gui.doMove = function (move, { audio = true, userMove = true } = {}) {
-    if (!move) {
-        return;
-    }
+// =================================================================
+// =========================== Play Move ===========================
+// =================================================================
 
-    const from = moveFrom(move);
-    const to = moveTo(move);
-    const side = gameBoard.side;
+gui.doMove = function (move, { userMove = true } = {}) {
+    if (!move) return;
 
+    let fromSq = SquaresChar[moveFrom(move)];
+    let toSq = SquaresChar[moveTo(move)];
 
     if (move & EnPassantFlag) {
-        if (side === Color.white) {
-            this.removePiece(to - 10);
+        if (gameBoard.side == Color.white) {
+            this.removePiece(SquaresChar[Squares[toSq] - 10]);
         }
         else {
-            this.removePiece(to + 10);
+            this.removePiece(SquaresChar[Squares[toSq] + 10]);
         }
-        CaptureSound.play();
-    } else if (move & CastleFlag) {
-        switch (to) {
-            case Squares.g1: this.movePiece(Squares.h1, Squares.f1); break;
-            case Squares.c1: this.movePiece(Squares.a1, Squares.d1); break;
-
-            case Squares.g8: this.movePiece(Squares.h8, Squares.f8); break;
-            case Squares.c8: this.movePiece(Squares.a8, Squares.d8); break;
-                CastleSound.play();
+    }
+    else if (move & CastleFlag) {
+        switch (toSq) {
+            case 'g1': this.movePiece('h1', 'f1'); break;
+            case 'c1': this.movePiece('a1', 'd1'); break;
+            case 'g8': this.movePiece('h8', 'f8'); break;
+            case 'c8': this.movePiece('a8', 'd8'); break;
             default: break;
         }
-        CastleSound.play();
     }
 
     if (move & CaptureFlag) {
-        CaptureSound.play();
-        this.removePiece(to);
+        this.removePiece(toSq);
     }
-
-    if (!(move & EnPassantFlag) && !(move & CastleFlag) && !(move & CaptureFlag) && !(move & PromotionFlag)) {
-        if (side === Color.white) {
-            SelfMoveSound.play();
-        }
-        else {
-            EnemyMoveSound.play();
-        }
-    }
-    this.movePiece(from, to);
-
     if (move & PromotionFlag) {
-        PromoteSound.play();
-        this.removePiece(to);
-        this.addPiece(to, movePormotionPiece(move));
+        this.removePiece(fromSq);
+        this.addPiece(fromSq, movePromotionPiece(move));
     }
-
-    //current player in check
-    if (gameBoard.checkSq !== Squares.noSq) {
-        squareElements[Sq120To64[gameBoard.checkSq]].classList.remove('danger');
-    }
-
+    this.movePiece(fromSq, toSq);
     doMove(move);
-    hashKey.textContent = gameBoard.positionKey.toString(16);
+    playSound(move);
 
-    //giving opponent a check
-    if (gameBoard.checkSq !== Squares.noSq) {
-        CheckSound.play();
-        squareElements[Sq120To64[gameBoard.checkSq]].classList.add('danger');
+
+    if (gameBoard.checkSq != Squares.noSq) {
+        addMarker(SquaresChar[gameBoard.checkSq], 'check');
+    }
+    else {
+        document.querySelector('.check')?.remove();
     }
 
     if (userMove) {
         if (isGameOver()) {
-            addRecord(moveNotation(move, resultSubTitle.textContent == 'by checkmate'));
-            gui.removeInteraction();
-
-            GameEndSound.play();
-            gameOver.classList.add('active');
+            let checkMate;
+            addRecord(moveNotation(move), checkMate);
+            return;
         }
-        else {
-            // removing the undo move before adding new one.
-            let temp = nodeList.length - currMoveNode - 1;
-            while (temp--) {
-                let node = nodeList.pop();
-                if (node.classList.contains('white')) {
-                    node.parentElement.remove();
-                }
-                node.remove();
-            }
-
-            addRecord(moveNotation(move));
-        }
+        addRecord(moveNotation(move));
     }
+    hashKey.textContent = gameBoard.positionKey.toString(16);
 }
 
-
-
-
 gui.undoMove = function () {
-    promotionUl?.remove();
-    if (gameBoard.history.length === 0) {
-        return;
-    }
     const move = undoMove();
-    hashKey.textContent = gameBoard.positionKey.toString(16);
+    if (!move) return;
 
-    const from = moveFrom(move);
-    const to = moveTo(move);
-
+    let fromSq = SquaresChar[moveFrom(move)];
+    let toSq = SquaresChar[moveTo(move)];
 
     if (move & EnPassantFlag) {
-        if (gameBoard.side === Color.white) {
-            this.addPiece(to - 10, Pieces.bp);
+        if (gameBoard.side == Color.white) {
+            this.addPiece(SquaresChar[Squares[toSq] - 10], Pieces.bp);
         }
         else {
-            this.addPiece(to + 10, Pieces.wp);
+            this.addPiece(SquaresChar[Squares[toSq] + 10], Pieces.wp);
         }
-        CaptureSound.play();
     }
     else if (move & CastleFlag) {
-        switch (to) {
-            case Squares.g1: this.movePiece(Squares.f1, Squares.h1); break;
-            case Squares.c1: this.movePiece(Squares.d1, Squares.a1); break;
-
-            case Squares.g8: this.movePiece(Squares.f8, Squares.h8); break;
-            case Squares.c8: this.movePiece(Squares.d8, Squares.a8); break;
-
+        switch (toSq) {
+            case 'g1': this.movePiece('f1', 'h1'); break;
+            case 'c1': this.movePiece('d1', 'a1'); break;
+            case 'g8': this.movePiece('f8', 'h8'); break;
+            case 'c8': this.movePiece('d8', 'a8'); break;
             default: break;
         }
-        CastleSound.play();
     }
-
-    if (!(move & EnPassantFlag) && !(move & CastleFlag) && !(move & CaptureFlag) && !(move & PromotionFlag)) {
-        if (gameBoard.side === Color.white) {
-            EnemyMoveSound.play();
-        }
-        else {
-            SelfMoveSound.play();
-        }
-    }
-
-    this.movePiece(to, from);
+    this.movePiece(toSq, fromSq);
+    playSound(move);
 
     if (move & CaptureFlag) {
-        CaptureSound.play();
-        this.addPiece(to, moveCapturePiece(move));
+        this.addPiece(toSq, moveCapturePiece(move));
     }
     if (move & PromotionFlag) {
-        PromoteSound.play();
-        this.removePiece(from);
-        this.addPiece(from, PieceColor[movePormotionPiece(move)] === Color.white ? Pieces.wp : Pieces.bp);
+        this.removePiece(fromSq);
+        let pawn = (PieceColor[movePromotionPiece(move)] == Color.white) ? Pieces.wp : Pieces.bp;
+        this.addPiece(fromSq, pawn);
     }
 
-    if (gameBoard.checkSq !== Squares.noSq) {
-        CheckSound.play();
-        squareElements[Sq120To64[gameBoard.checkSq]].classList.add('danger');
+    if (gameBoard.checkSq != Squares.noSq) {
+        addMarker(SquaresChar[gameBoard.checkSq], 'check');
     }
     else {
-        squareElements[Sq120To64[gameBoard.pieceList[Kings[gameBoard.side ^ 1]][0]]].classList.remove('danger');
+        document.querySelector('.check')?.remove();
     }
-
-    clearHighlight();
-    addHighlight(from);
-    addHighlight(to);
 
     nodeList[currMoveNode].classList.remove('selected');
     currMoveNode = prevMoveNode--;
     nodeList[currMoveNode]?.classList.add('selected');
-
     undoMoveHistory.push(move);
     if (currMoveNode % 2 != 0) --ply;
+
+    hashKey.textContent = gameBoard.positionKey.toString(16);
+}
+
+function moveForward() {
+    if (undoMoveHistory.length === 0) {
+        return;
+    }
+    prevMoveNode = currMoveNode++;
+    if (currMoveNode % 2 == 0) ++ply;
+
+    let move = undoMoveHistory.pop();
+    gui.doMove(move, { userMove: false });
+
+    nodeList[prevMoveNode]?.classList.remove('selected');
+    nodeList[currMoveNode]?.classList.add('selected');
 }
 
 
-gui.addPiece = function (sq, piece) {
-    const pieceName = SideChar[PieceColor[piece]] + PieceType[piece];
-    const pieceElement = document.createElement('div');
-    pieceElement.classList.add('piece', pieceName);
-    pieceElement.draggable = 'true';
 
-    pieceElement.addEventListener('dragstart', dragStart);
-    pieceElement.addEventListener('click', clickOnPiece);
+// =================================================================
+// ========================== Move record ==========================
+// =================================================================
 
-    squareElements[Sq120To64[sq]].appendChild(pieceElement);
+const records = document.querySelector('.movelist');
+let undoMoveHistory = [];
+let nodeList = [];
+let prevMoveNode = -1;
+let currMoveNode = -1;
+let ply = 0;
+let promotionMove = null;
+
+function addRecord(notation) {
+    const node = document.createElement('div');
+    const color = gameBoard.side === Color.white ? 'black' : 'white';
+    node.classList.add('node', color);
+    node.textContent = notation;
+
+    let temp = nodeList.length - currMoveNode - 1;
+    while (temp--) {
+        let node = nodeList.pop();
+        if (node.classList.contains('white')) {
+            node.parentElement.remove();
+        }
+        node.remove();
+    }
+
+    nodeList.push(node);
+    prevMoveNode = currMoveNode++;
+
+    nodeList[prevMoveNode]?.classList.remove('selected');
+    nodeList[currMoveNode].classList.add('selected');
+    if (currMoveNode % 2 === 0) {
+        const move = document.createElement('div');
+        const p = document.createElement('p');
+
+        p.classList.add('ply');
+        move.classList.add('move');
+
+        p.textContent = ++ply + '.';
+
+        move.append(p, node);
+        records.appendChild(move);
+    }
+    else {
+        records.lastChild.appendChild(node);
+    }
+    records.scrollTop = records.scrollHeight;
 }
 
-gui.removePiece = function (sq) {
-    squareElements[Sq120To64[sq]].querySelector('.piece')?.remove();
+
+function moveNotation(move, checkMate = false) {
+    let from = moveFrom(move);
+    let to = moveTo(move);
+    let piece = PieceType[gameBoard.pieces[to]].toUpperCase();
+    let capture = ((move & CaptureFlag) || (move & EnPassantFlag)) ? 'x' : '';
+    let check = (gameBoard.checkSq !== Squares.noSq) ? '+' : '';
+    if (checkMate) check = '#';
+    let notation;
+
+    if ((move & PromotionFlag) || piece === 'P') {
+        notation = capture + SquaresChar[to];
+        if (capture) {
+            notation = SquaresChar[from][0] + notation;
+        }
+        if (move & PromotionFlag) {
+            notation += '=' + piece;
+        }
+
+        return notation + check;
+    }
+    else {
+        if (move & CastleFlag) {
+            if (fileOf(to) === FileG) return 'o-o'
+            return 'o-o-o';
+        }
+        const disambiguation = getDisambiguation(from, to);
+        return piece + disambiguation + capture + SquaresChar[to] + check;
+    }
+    return moveStr(move);
+
+    function getDisambiguation(from, to) {
+        let piece = gameBoard.pieces[to];
+        const samePieceMove = [from];
+
+        if (PieceType[piece] === 'n' || PieceType[piece] === 'k') {
+            for (const direction of PieceDirections[piece]) {
+                let targetSq = to + direction;
+                if (gameBoard.pieces[targetSq] === piece) {
+                    samePieceMove.push(targetSq);
+                }
+            }
+        }
+        else {
+            for (const direction of PieceDirections[piece]) {
+                let targetSq = to + direction;
+                while (gameBoard.pieces[targetSq] !== Squares.noSq) {
+                    if (gameBoard.pieces[targetSq] !== Pieces.empty) {
+                        if (gameBoard.pieces[targetSq] === piece) {
+                            samePieceMove.push(targetSq);
+                        }
+                        break;
+                    }
+                    targetSq += direction;
+                }
+            }
+        }
+
+        //no other piece able to cause ambiguity
+        if (samePieceMove.length === 1) {
+            return '';
+        }
+
+        let sameRank = samePieceMove.filter(sq => rankOf(from) === rankOf(sq));
+        let sameFile = samePieceMove.filter(sq => fileOf(from) === fileOf(sq));
+
+        if (sameFile.length === 1) return SquaresChar[from][0];
+        if (sameRank.length === 1) return SquaresChar[from][1];
+        return SquaresChar[from];
+    }
 }
 
-gui.movePiece = function (from, to) {
-    let piece = squareElements[Sq120To64[from]].querySelector('.piece');
-    if (piece)
-        squareElements[Sq120To64[to]]?.appendChild(piece);
-}
-
-// =====================================================
-// ================= GAME TERMINATION ==================
-// =====================================================
-
+// =================================================================
+// ======================= Game Termination ========================
+// =================================================================
 const resultTitle = document.querySelector('.game-over .header .title');
 const resultSubTitle = document.querySelector('.game-over .header .subtitle');
 const [whitePlayer, blackPlayer] = document.querySelectorAll('.player');
-
 function isGameOver() {
     if (gameBoard.fiftyMove >= 100) {
         resultTitle.textContent = 'Draw';
@@ -476,16 +428,6 @@ function isGameOver() {
     }
 }
 
-function threeFoldRep() {
-    let repetition = 0;
-    for (const { positionKey } of gameBoard.history) {
-        if (gameBoard.positionKey === positionKey) {
-            repetition++;
-        }
-    }
-    return repetition;
-}
-
 function drawMaterial() {
 
     if (gameBoard.pieceCount[Pieces.wp] !== 0 || gameBoard.pieceCount[Pieces.bp] !== 0) return false;
@@ -500,92 +442,39 @@ function drawMaterial() {
     return true;
 }
 
-
-function newGame() {
-    if(gameBoard.checkSq != Squares.noSq){
-        squareElements[Sq120To64[gameBoard.checkSq]].classList.remove('danger');
+function threeFoldRep() {
+    let repetition = 0;
+    for (const { positionKey } of gameBoard.history) {
+        if (gameBoard.positionKey === positionKey) {
+            repetition++;
+        }
     }
-    resetGui();
-    //no need to parse fen it it's already at starting position
-    if (gameBoard.positionKey !== StartingHashKey) {
-        parseFen(StartingFen);
-        gui.renderPieces();
-        GameStartSound.play();
-    }
-    clearHighlight();
-    clearMarker();
-
-    promotionUl?.remove();
-}
-function resetGui() {
-    ply = 0;
-    prevMoveNode = -1;
-    currMoveNode = -1;
-    undoMoveHistory = [];
-    nodeList = [];
-    records.innerHTML = '';
+    return repetition;
 }
 
 
-const records = document.querySelector('.movelist');
-let nodeList = [];
-let undoMoveHistory = [];
-let prevMoveNode = -1;
-let currMoveNode = -1;
-let ply = 0;
 
-function addRecord(notation) {
-    const node = document.createElement('div');
-    const color = gameBoard.side === Color.white ? 'black' : 'white';
-    node.classList.add('node', color);
-    node.textContent = notation;
+// =================================================================
+// ====================== Auxillury functions ======================
+// =================================================================
 
-    nodeList.push(node);
-
-    prevMoveNode = currMoveNode++;
-
-    nodeList[prevMoveNode]?.classList.remove('selected');
-    nodeList[currMoveNode].classList.add('selected');
-    if (currMoveNode % 2 === 0) {
-        const move = document.createElement('div');
-        const p = document.createElement('p');
-
-        p.classList.add('ply');
-        move.classList.add('move');
-
-        p.textContent = ++ply + '.';
-
-        move.append(p, node);
-        records.appendChild(move);
-    }
-    else {
-        records.lastChild.appendChild(node);
-    }
+function playSound(move) {
+    if (gameBoard.checkSq != Squares.noSq) CheckSound.play();
+    else if (move & PromotionFlag) PromoteSound.play();
+    else if (move & CaptureFlag) CaptureSound.play();
+    else if (move & EnPassantFlag) CaptureSound.play();
+    else if (move & CastleFlag) CastleSound.play();
+    else if (gameBoard.side == Color.white) SelfMoveSound.play();
+    else EnemyMoveSound.play();
 }
+function parseMove(fromSq, toSq, movelist) {
+    fromSq = Squares[fromSq];
+    toSq = Squares[toSq];
 
-
-function moveForward() {
-    if (undoMoveHistory.length === 0) {
-        return;
-    }
-    prevMoveNode = currMoveNode++;
-    if (currMoveNode % 2 == 0) ++ply;
-
-    let move = undoMoveHistory.pop();
-    gui.doMove(move, { userMove: false });
-
-    nodeList[prevMoveNode]?.classList.remove('selected');
-    nodeList[currMoveNode]?.classList.add('selected');
-}
-
-function parseMove(from, to, movelist) {
-    if (!movelist) {
-        movelist = generateMoves();
-    }
 
     let found = null;
     for (const { move } of movelist) {
-        if (moveFrom(move) === from && moveTo(move) === to) {
+        if (moveFrom(move) === fromSq && moveTo(move) === toSq) {
             found = move;
             break;
         }
@@ -594,12 +483,6 @@ function parseMove(from, to, movelist) {
     if (found) {
         if (!doMove(found)) {
             IllegalSound.play();
-            if (gameBoard.checkSq !== Squares.noSq) {
-                squareElements[Sq120To64[gameBoard.checkSq]].classList.add('blink');
-                setTimeout(() => {
-                    squareElements[Sq120To64[gameBoard.checkSq]].classList.remove('blink');
-                }, 500);
-            }
             return null;
         }
         undoMove();
@@ -608,136 +491,60 @@ function parseMove(from, to, movelist) {
     return found;
 }
 
-function flipBoard() {
-    graphicalBoard.querySelectorAll('.num').forEach(e => e.remove());
-    graphicalBoard.querySelectorAll('.alpha').forEach(e => e.remove());
+function showHints(fromSq, movelist) {
+    fromSq = Squares[fromSq];
 
-    if (!graphicalBoard.classList.contains('flip')) {
-        for (let rank = Rank1; rank <= Rank8; ++rank) {
-            for (let file = FileA; file <= FileH; ++file) {
-                let sq = fileRank2Sq(file, rank);
-                if (file === FileH) {
-                    squareElements[Sq120To64[sq]].innerHTML += `<span class="num">${rank + 1}<span>`
-                }
-                if (rank === Rank8) {
-                    squareElements[Sq120To64[sq]].innerHTML += `<span class="alpha">${FileChar[file]}<span>`
-                }
-                squareElements[Sq120To64[sq]].style.gridRow = rank + 1;
-                squareElements[Sq120To64[sq]].style.gridColumn = 8 - file;
+    const hints = movelist.filter(({ move }) => {
+        //filtering move for piece on 'fromSq' 
+        if (moveFrom(move) == fromSq) {
+            //filtering legal move
+            if (doMove(move) == false) {
+                return false;
+            }
+            else {
+                undoMove();
+                return true;
             }
         }
-        graphicalBoard.classList.add('flip');
-    }
-    else {
-        for (let rank = Rank1; rank <= Rank8; ++rank) {
-            for (let file = FileA; file <= FileH; ++file) {
-                let sq = fileRank2Sq(file, rank);
-                if (file === FileA) {
-                    squareElements[Sq120To64[sq]].innerHTML += `<span class="num">${rank + 1}<span>`
-                }
-                if (rank === Rank1) {
-                    squareElements[Sq120To64[sq]].innerHTML += `<span class="alpha">${FileChar[file]}<span>`
-                }
-                squareElements[Sq120To64[sq]].style.gridRow = 8 - rank;
-                squareElements[Sq120To64[sq]].style.gridColumn = file + 1;
-            }
-        }
-        graphicalBoard.classList.remove('flip');
-    }
-    gui.addInteraction();
+    });
+    hints.forEach(({ move }) => {
+        let className = (move & CaptureFlag) ? 'capture-hint' : 'hint';
+        addMarker(SquaresChar[moveTo(move)], className);
+    });
 }
 
-function moveNotation(move, checkMate = false) {
-    let from = moveFrom(move);
-    let to = moveTo(move);
-    let piece = PieceType[gameBoard.pieces[to]].toUpperCase();
-    let capture = ((move & CaptureFlag) || (move & EnPassantFlag)) ? 'x' : '';
-    let check = (gameBoard.checkSq !== Squares.noSq) ? '+' : '';
-    if (checkMate) check = '#';
-    let notation;
-
-    if ((move & PromotionFlag) || piece === 'P') {
-        notation = capture + SquaresChar[to];
-        if (capture) {
-            notation = SquaresChar[from][0] + notation;
-        }
-        if (move & PromotionFlag) {
-            notation += '=' + piece;
-        }
-
-        return notation + check;
-    }
-    else {
-        if (move & CastleFlag) {
-            if (fileOf(to) === FileG) return 'o-o'
-            return 'o-o-o';
-        }
-        const disambiguation = getDisambiguation(from, to);
-        return piece + disambiguation + capture + SquaresChar[to] + check;
-    }
-    return moveStr(move);
-}
-function getDisambiguation(from, to) {
-    let piece = gameBoard.pieces[to];
-    const samePieceMove = [from];
-
-    if (PieceType[piece] === 'n' || PieceType[piece] === 'k') {
-        for (const direction of PieceDirections[piece]) {
-            let targetSq = to + direction;
-            if (gameBoard.pieces[targetSq] === piece) {
-                samePieceMove.push(targetSq);
-            }
-        }
-    }
-    else {
-        for (const direction of PieceDirections[piece]) {
-            let targetSq = to + direction;
-            while (gameBoard.pieces[targetSq] !== Squares.noSq) {
-                if (gameBoard.pieces[targetSq] !== Pieces.empty) {
-                    if (gameBoard.pieces[targetSq] === piece) {
-                        samePieceMove.push(targetSq);
-                    }
-                    break;
-                }
-                targetSq += direction;
-            }
-        }
-    }
-
-    //no other piece able to cause ambiguity
-    if (samePieceMove.length === 1) {
-        return '';
-    }
-
-    let sameRank = samePieceMove.filter(sq => rankOf(from) === rankOf(sq));
-    let sameFile = samePieceMove.filter(sq => fileOf(from) === fileOf(sq));
-
-    if (sameFile.length === 1) return SquaresChar[from][0];
-    if (sameRank.length === 1) return SquaresChar[from][1];
-    return SquaresChar[from];
+function removeHints() {
+    document.querySelectorAll('.hint').forEach(hint => hint.remove());
+    document.querySelectorAll('.capture-hint').forEach(hint => hint.remove());
 }
 
-let promotionUl;
-function choosePromotionPiece(move) {
-    let toSq = moveTo(move);
-    promotionUl = document.createElement('ul');
-    promotionUl.classList.add(gameBoard.side === Color.white ? 'white' : 'black');
+function getSquare(e) {
+    // dont use graphicalBoard.offset using it doesnt consider floting valute use this
+    let x = e.clientX - graphicalBoard.getBoundingClientRect().left;
+    let y = e.clientY - graphicalBoard.getBoundingClientRect().top;
 
-    let pieces = 'qrbn';
-    for (const piece of pieces) {
-        const pieceElement = document.createElement('li');
-        pieceElement.classList.add('piece', SideChar[gameBoard.side] + piece);
-        promotionUl.appendChild(pieceElement);
+    let squareSize = graphicalBoard.clientWidth / 8;
+    let file = Math.floor(x / squareSize);
+    let rank = 7 - Math.floor(y / squareSize);
+
+    if (graphicalBoard.classList.contains('flipped')) {
+        file = 7 - file;
+        rank = 7 - rank;
     }
-    squareElements[Sq120To64[toSq]].appendChild(promotionUl);
 
-    promotionUl.childNodes.forEach(piece => {
-        piece.addEventListener('click', () => {
-            let promoteTo = Pieces[piece.classList[1]];
-            move = updatePromotion(move, promoteTo);
-            promotionUl.remove();
-            gui.doMove(move);
-            promotionMove = null;
-        })
-    })
+    let square = fileRank2Sq(file, rank);
+    return SquaresChar[square];
 }
+
+
+function addMarker(square, className) {
+    if (document.querySelector(`#${square}.${className}`)) {
+        return;
+    }
+
+    const marker = document.createElement('div');
+    marker.classList.add(className);
+    marker.id = square;
+    graphicalBoard.appendChild(marker);
+}
+
