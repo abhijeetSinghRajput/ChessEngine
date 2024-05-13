@@ -181,7 +181,7 @@ body::-webkit-scrollbar {
 .backdrop {
     position: fixed;
     width: 100vw;
-    height: 100svh;
+    height: 100vh;
     background-color: hsla(0, 0%, 0%, 0.7);
     z-index: 100;
     visibility: hidden;
