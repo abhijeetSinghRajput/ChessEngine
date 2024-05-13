@@ -13,7 +13,7 @@ gui.renderPieces = function () {
             gui.addPiece(SquaresChar[sq], gameBoard.pieces[sq]);
         }
     }
-    if(gameBoard.checkSq != Squares.noSq){
+    if (gameBoard.checkSq != Squares.noSq) {
         addMarker(SquaresChar[gameBoard.checkSq], 'check');
     }
     hashKey.textContent = gameBoard.positionKey.toString(16);
@@ -31,16 +31,22 @@ gui.addBoardInteraction = function () {
     graphicalBoard.addEventListener('click', clickOnSquare);
 }
 
-function clickOnPiece(e){
+function clickOnPiece(e) {
     let piece = e.target;
-    if(fromSq && piece.classList[1][0] != SideChar[gameBoard.side]){
+    // second click is for move the piece
+    // in this case second click to also to select the piece.
+    if(guiPieces[fromSq]?.classList[1][0] == piece.classList[1][0]){
+        document.querySelector(`#${fromSq}.highlight`)?.remove();
+        removeHints();
+    }
+    if (fromSq && piece.classList[1][0] != SideChar[gameBoard.side]) {
         drop(e);
     }
-    else{
-        removeHints();
+    else {
         dragStart(e);
     }
 }
+
 function clickOnSquare(e) {
     if (!e.target.classList.contains('piece')) {
         drop(e);
@@ -98,10 +104,12 @@ function dragStart(e) {
     fromSq = getSquare(e);
     moveList = generateMoves();
     showHints(fromSq, moveList);
+    addMarker(fromSq, 'highlight');
 }
 
 
 function drop(e) {
+    document.querySelector(`#${fromSq}.highlight`)?.remove();
     removeHints();
     toSq = getSquare(e);
     const move = parseMove(fromSq, toSq, moveList);
@@ -133,6 +141,10 @@ gui.doMove = function (move, { userMove = true } = {}) {
     let fromSq = SquaresChar[moveFrom(move)];
     let toSq = SquaresChar[moveTo(move)];
 
+    removePrevHighlight();
+    addMarker(fromSq, 'highlight');
+    addMarker(toSq, 'highlight');
+
     if (move & EnPassantFlag) {
         if (gameBoard.side == Color.white) {
             this.removePiece(SquaresChar[Squares[toSq] - 10]);
@@ -158,10 +170,9 @@ gui.doMove = function (move, { userMove = true } = {}) {
         this.removePiece(fromSq);
         this.addPiece(fromSq, movePromotionPiece(move));
     }
+
     this.movePiece(fromSq, toSq);
     doMove(move);
-    playSound(move);
-
 
     if (gameBoard.checkSq != Squares.noSq) {
         addMarker(SquaresChar[gameBoard.checkSq], 'check');
@@ -174,10 +185,13 @@ gui.doMove = function (move, { userMove = true } = {}) {
         if (isGameOver()) {
             let checkMate;
             addRecord(moveNotation(move), checkMate);
+            playSound(move, true);
             return;
         }
         addRecord(moveNotation(move));
     }
+
+    playSound(move);
     hashKey.textContent = gameBoard.positionKey.toString(16);
 }
 
@@ -187,6 +201,14 @@ gui.undoMove = function () {
 
     let fromSq = SquaresChar[moveFrom(move)];
     let toSq = SquaresChar[moveTo(move)];
+
+    document.querySelector(`#${fromSq}.highlight`)?.remove();
+    document.querySelector(`#${toSq}.highlight`)?.remove();
+    let currMove = gameBoard.history[gameBoard.history.length - 1]?.move;
+    if(currMove){
+        addMarker(SquaresChar[moveFrom(currMove)], 'highlight');
+        addMarker(SquaresChar[moveTo(currMove)], 'highlight');
+    }
 
     if (move & EnPassantFlag) {
         if (gameBoard.side == Color.white) {
@@ -374,6 +396,7 @@ function moveNotation(move, checkMate = false) {
 // =================================================================
 // ======================= Game Termination ========================
 // =================================================================
+
 const resultTitle = document.querySelector('.game-over .header .title');
 const resultSubTitle = document.querySelector('.game-over .header .subtitle');
 const [whitePlayer, blackPlayer] = document.querySelectorAll('.player');
@@ -457,9 +480,18 @@ function threeFoldRep() {
 // =================================================================
 // ====================== Auxillury functions ======================
 // =================================================================
-
-function playSound(move) {
-    if (gameBoard.checkSq != Squares.noSq) CheckSound.play();
+function removePrevHighlight() {
+    const prevMove = gameBoard.history[gameBoard.history.length - 1]?.move;
+    if (prevMove) {
+        let fromSq = SquaresChar[moveFrom(prevMove)];
+        let toSq = SquaresChar[moveTo(prevMove)];
+        document.querySelector(`#${fromSq}.highlight`)?.remove();
+        document.querySelector(`#${toSq}.highlight`)?.remove();
+    }
+}
+function playSound(move, gameEnd = false) {
+    if (gameEnd) GameEndSound.play();
+    else if (gameBoard.checkSq != Squares.noSq) CheckSound.play();
     else if (move & PromotionFlag) PromoteSound.play();
     else if (move & CaptureFlag) CaptureSound.play();
     else if (move & EnPassantFlag) CaptureSound.play();
@@ -517,6 +549,7 @@ function removeHints() {
     document.querySelectorAll('.hint').forEach(hint => hint.remove());
     document.querySelectorAll('.capture-hint').forEach(hint => hint.remove());
 }
+
 
 function getSquare(e) {
     // dont use graphicalBoard.offset using it doesnt consider floting valute use this

@@ -23,7 +23,7 @@
     text-decoration: none;
 }
 
-body{
+body {
     width: 100vw;
     min-height: 100svh;
     background-color: var(--bg-dark);
@@ -31,28 +31,32 @@ body{
     justify-content: center;
     overflow-x: hidden;
 }
+body::-webkit-scrollbar{
+    display: none;
+}
 
 .container {
     padding: 30px 10px;
     display: grid;
     grid-template-columns: minmax(300px, 600px) 300px;
     grid-gap: 10px;
-    border: 1px solid white;
     max-height: 100svh;
 }
 
 #board {
-    aspect-ratio: 1; 
+    aspect-ratio: 1;
     background: url('../assets/board.png') no-repeat;
     background-size: contain;
     border-radius: 3px;
     overflow: hidden;
     position: relative;
     height: 0;
-    padding-bottom: calc(100% - 10px);;
+    padding-bottom: calc(100% - 10px);
+    ;
 }
+
 .flipped .promotion-window.black,
-.promotion-window{
+.promotion-window {
     background-color: white;
     position: absolute;
     width: 12.5%;
@@ -65,20 +69,24 @@ body{
     z-index: 10;
     display: none;
 }
+
 .flipped .promotion-window,
-.promotion-window.black{
+.promotion-window.black {
     top: auto;
     bottom: 0;
     flex-direction: column-reverse;
 }
-.promotion-window .piece{
+
+.promotion-window .piece {
     position: relative;
     width: 100%;
 }
-.promotion-window .piece:hover{
+
+.promotion-window .piece:hover {
     background-color: var(--highlight);
 }
-.piece{
+
+.piece {
     background-size: contain;
     background-repeat: no-repeat;
     width: 12.5%;
@@ -86,13 +94,14 @@ body{
     position: absolute;
     cursor: grab;
     transition: transform .3s ease;
+    z-index: 3;
 }
-.game-controller{
+
+.game-controller {
     background-color: #262522;
     display: flex;
     flex-direction: column;
     border-radius: 3px;
-    overflow: hidden;
 }
 
 .game-controller .header {
@@ -106,11 +115,7 @@ body{
     font-size: 13px;
 }
 
-.game-controller .movelist{
-    height: 100%;
-}
-
-.movelist {
+.game-controller .movelist {
     min-height: 140px;
     height: 100%;
     overflow-y: scroll;
@@ -161,7 +166,7 @@ body{
     color: white;
 }
 
-.controller{
+.controller {
     display: grid;
     grid-gap: 3px;
     grid-row-gap: 10px;
@@ -178,32 +183,27 @@ body{
         width: 28px;
     }
 
-    .game-controller {
-        flex-direction: column-reverse;
-        min-width: 100%;
-        height: auto;
+    #board {
+        justify-self: center;
     }
 
-    #board {
-        margin: 8px 4px;
+    
+
+    .container {
+        margin-top: 10vw;
+        grid-template-columns: minmax(200px, 400px);
+        grid-template-rows: auto 1fr;
+        padding: 30px 5px 0px;
     }
 
     .movelist {
-        overflow: hidden;
+        padding-top: 10px;
+        padding-bottom: 20px;
+        overflow-y: auto;
     }
-
-    .game-controller .controller {
-        padding: 16px 10px 20px;
+    .game-controller {
+        flex-direction: column-reverse;
     }
-
-    .container {
-        grid-template-columns: minmax(300px, 500px);
-        min-height: 100vh;
-        max-height: max-content;
-        padding: 0;
-        max-width: 100vw;
-    }
-
     .game-controller .controller .btn {
         font-size: 18px;
     }
@@ -213,8 +213,30 @@ body{
     }
 }
 
+@media screen and (max-width: 480px) {
+    .game-controller {
+        flex-direction: column;
+    }
+    .game-controller .controller {
+        position: fixed;
+        width: 100%;
+        left: 0;
+        bottom: 0;
+        padding: 16px 10px 20px;
+        z-index: 100;
+    }
+    .controller .btn i::before {
+        font-size: 30px;
+    }
+    .game-controller {
+        padding-bottom: 150px;
+    }
+    .game-controller .controller .btn {
+        height: 48px;
+    }
+}
 
 .backdrop,
-.game-over{
+.game-over {
     display: none;
 }
