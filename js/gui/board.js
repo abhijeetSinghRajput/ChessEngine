@@ -1,13 +1,15 @@
 const graphicalBoard = document.getElementById('board');
 const hashKey = document.querySelector('#hash-key');
 const gui = {};
-const guiPieces = {};
+let guiPieces = {};
 
 // =================================================================
 // ===================== Board Initializaation =====================
 // =================================================================
 
 gui.renderPieces = function () {
+    graphicalBoard.querySelectorAll('.piece').forEach(piece => piece.remove());
+
     for (const sq of Sq64To120) {
         if (gameBoard.pieces[sq] != Pieces.empty) {
             gui.addPiece(SquaresChar[sq], gameBoard.pieces[sq]);
@@ -35,7 +37,7 @@ function clickOnPiece(e) {
     let piece = e.target;
     // second click is for move the piece
     // in this case second click to also to select the piece.
-    if(guiPieces[fromSq]?.classList[1][0] == piece.classList[1][0]){
+    if (guiPieces[fromSq]?.classList[1][0] == piece.classList[1][0]) {
         document.querySelector(`#${fromSq}.highlight`)?.remove();
         removeHints();
     }
@@ -173,6 +175,7 @@ gui.doMove = function (move, { userMove = true } = {}) {
 
     this.movePiece(fromSq, toSq);
     doMove(move);
+    hashKey.textContent = gameBoard.positionKey.toString(16);
 
     if (gameBoard.checkSq != Squares.noSq) {
         addMarker(SquaresChar[gameBoard.checkSq], 'check');
@@ -181,18 +184,19 @@ gui.doMove = function (move, { userMove = true } = {}) {
         document.querySelector('.check')?.remove();
     }
 
-    if (userMove) {
-        if (isGameOver()) {
-            let checkMate;
-            addRecord(moveNotation(move), checkMate);
-            playSound(move, true);
-            return;
+    if (isGameOver()) {
+        if (userMove) {
+            gameOver.classList.add('active');
+            addRecord(moveNotation(move, gameBoard.checkSq != Squares.noSq));
         }
-        addRecord(moveNotation(move));
+        playSound(move, true);
+        return;
     }
 
+    if(userMove){
+        addRecord(moveNotation(move));
+    }
     playSound(move);
-    hashKey.textContent = gameBoard.positionKey.toString(16);
 }
 
 gui.undoMove = function () {
@@ -205,7 +209,7 @@ gui.undoMove = function () {
     document.querySelector(`#${fromSq}.highlight`)?.remove();
     document.querySelector(`#${toSq}.highlight`)?.remove();
     let currMove = gameBoard.history[gameBoard.history.length - 1]?.move;
-    if(currMove){
+    if (currMove) {
         addMarker(SquaresChar[moveFrom(currMove)], 'highlight');
         addMarker(SquaresChar[moveTo(currMove)], 'highlight');
     }
@@ -297,6 +301,7 @@ function addRecord(notation) {
         }
         node.remove();
     }
+    undoMoveHistory = [];
 
     nodeList.push(node);
     prevMoveNode = currMoveNode++;
@@ -400,6 +405,7 @@ function moveNotation(move, checkMate = false) {
 const resultTitle = document.querySelector('.game-over .header .title');
 const resultSubTitle = document.querySelector('.game-over .header .subtitle');
 const [whitePlayer, blackPlayer] = document.querySelectorAll('.player');
+
 function isGameOver() {
     if (gameBoard.fiftyMove >= 100) {
         resultTitle.textContent = 'Draw';
@@ -480,6 +486,25 @@ function threeFoldRep() {
 // =================================================================
 // ====================== Auxillury functions ======================
 // =================================================================
+function newGame() {
+    resetGui();
+    parseFen(StartingFen);
+    gui.renderPieces();
+    GameStartSound.play();
+}
+
+function resetGui() {
+    ply = 0;
+    prevMoveNode = -1;
+    currMoveNode = -1;
+    undoMoveHistory = [];
+    nodeList = [];
+    records.innerHTML = '';
+    guiPieces = {};
+    removeHints();
+    document.querySelectorAll('.highlight').forEach(e => e.remove());
+    document.querySelector('.check')?.remove();
+}
 function removePrevHighlight() {
     const prevMove = gameBoard.history[gameBoard.history.length - 1]?.move;
     if (prevMove) {

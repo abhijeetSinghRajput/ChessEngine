@@ -31,7 +31,8 @@ body {
     justify-content: center;
     overflow-x: hidden;
 }
-body::-webkit-scrollbar{
+
+body::-webkit-scrollbar {
     display: none;
 }
 
@@ -177,6 +178,182 @@ body::-webkit-scrollbar{
 }
 
 
+.backdrop {
+    position: fixed;
+    width: 100vw;
+    height: 100svh;
+    background-color: hsla(0, 0%, 0%, 0.7);
+    z-index: 100;
+    visibility: hidden;
+}
+
+.confirm-popover {
+    position: fixed;
+    z-index: 100;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 13px;
+    background-color: #21201d;
+    min-width: 350px;
+    padding: 30px 14px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.65);
+    visibility: hidden;
+    opacity: 0;
+}
+
+.backdrop.active .active {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+.confirm-popover .message {
+    font-size: 14px;
+    text-transform: capitalize;
+    color: #e2e2e2;
+    margin-bottom: 20px;
+}
+
+.confirm-popover .buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.confirm-popover .buttons .btn {
+    flex: 1;
+    height: 48px;
+}
+
+.profile-photo {
+    aspect-ratio: 1;
+    width: 80px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.profile-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.game-over {
+    position: fixed;
+    z-index: 100;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 13px;
+    background-color: #21201d;
+    min-width: 350px;
+    color: #e2e2e2;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.65);
+    overflow: hidden;
+    transition: all .4s 0s cubic-bezier(0.51, 0.01, 0.47, 1.3);
+    visibility: hidden;
+    opacity: 0;
+}
+
+.game-over .close {
+    position: absolute;
+    font-size: 24px;
+    padding: 2px;
+    top: 0;
+    right: 0;
+    aspect-ratio: 1;
+    cursor: pointer;
+    color: #989795;
+}
+
+.close:hover {
+    color: #fff;
+    background-color: #2a2926;
+}
+
+.game-over .header {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.game-over .header .title {
+    font-size: 32px;
+    font-weight: 800;
+}
+
+.game-over .header .subtitle {
+    color: #989795;
+}
+
+.game-over .players {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.players .name {
+    margin-top: 5px;
+    text-transform: capitalize;
+}
+
+.game-over .crowns {
+    margin: 16px 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.crown {
+    width: 50px;
+}
+
+.crown.dark {
+    filter: grayscale(1);
+}
+
+.game-over .buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 58px 45px;
+    grid-gap: 8px;
+    padding: 10px;
+}
+
+.game-over .buttons .btn {
+    height: 100%;
+}
+
+.game-over.active,
+.backdrop.active,
+.confirm-popover.active {
+    visibility: visible;
+}
+
+.game-over.active {
+    transition-delay: .7s;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @media screen and (max-width: 700px) {
     .icon {
@@ -187,7 +364,7 @@ body::-webkit-scrollbar{
         justify-self: center;
     }
 
-    
+
 
     .container {
         margin-top: 10vw;
@@ -201,9 +378,11 @@ body::-webkit-scrollbar{
         padding-bottom: 20px;
         overflow-y: auto;
     }
+
     .game-controller {
         flex-direction: column-reverse;
     }
+
     .game-controller .controller .btn {
         font-size: 18px;
     }
@@ -213,10 +392,43 @@ body::-webkit-scrollbar{
     }
 }
 
+
+
 @media screen and (max-width: 480px) {
+    .game-over {
+        width: 92vw;
+    }
+
+    .confirm-popover {
+        padding: 50px 20px;
+        width: 92vw;
+    }
+
+    .confirm-popover .message {
+        font-size: 16px;
+        margin-bottom: 30px;
+    }
+
+    .confirm-popover .buttons .btn {
+        height: 50px;
+    }
+
+    .game-over .profile-photo {
+        width: 100px;
+    }
+
+    .game-over .crown {
+        width: 60px;
+    }
+
     .game-controller {
         flex-direction: column;
     }
+
+    .game-over .buttons {
+        grid-template-rows: 64px 50px;
+    }
+
     .game-controller .controller {
         position: fixed;
         width: 100%;
@@ -225,18 +437,16 @@ body::-webkit-scrollbar{
         padding: 16px 10px 20px;
         z-index: 100;
     }
+
     .controller .btn i::before {
         font-size: 30px;
     }
+
     .game-controller {
         padding-bottom: 150px;
     }
+
     .game-controller .controller .btn {
         height: 48px;
     }
-}
-
-.backdrop,
-.game-over {
-    display: none;
 }
