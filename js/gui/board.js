@@ -8,7 +8,7 @@ let guiPieces = {};
 // =================================================================
 
 gui.renderPieces = function () {
-    graphicalBoard.querySelectorAll('.piece').forEach(piece => piece.remove());
+    document.querySelectorAll('.board>.piece').forEach(piece => piece.remove());
 
     for (const sq of Sq64To120) {
         if (gameBoard.pieces[sq] != Pieces.empty) {
@@ -95,12 +95,15 @@ const promotionWindow = document.querySelectorAll('.promotion-window');
 
 promotionWindow.forEach(promo => {
     promo.addEventListener('click', (e) => {
+        console.log("Click event on promo element");
         let piece = Pieces[e.target.classList[1]];
         promotionMove = updatePromotion(promotionMove, piece);
         promotionWindow[gameBoard.side].style.display = 'none';
         gui.doMove(promotionMove);
     })
 })
+
+
 
 function dragStart(e) {
     fromSq = getSquare(e);
@@ -120,6 +123,15 @@ function drop(e) {
         let file = fileOf(moveTo(move));
         promotionWindow[gameBoard.side].classList.add(`file-${FileChar[file]}`);
         promotionWindow[gameBoard.side].style.display = 'flex';
+        //remove the window if clicked outside
+        document.addEventListener('mousedown', outSideClick);
+
+        function outSideClick(e) {
+            if (!promotionWindow[gameBoard.side].contains(e.target)) {
+                promotionWindow[gameBoard.side].style.display = 'none';
+                document.removeEventListener('mousedown', outSideClick);
+            }
+        }
     }
     else {
         gui.doMove(move);
@@ -175,6 +187,10 @@ gui.doMove = function (move, { userMove = true } = {}) {
 
     this.movePiece(fromSq, toSq);
     doMove(move);
+    if (move & CaptureFlag || move & EnPassantFlag) {
+        gui.updateCapture(move);
+    }
+
     hashKey.textContent = gameBoard.positionKey.toString(16);
 
     if (gameBoard.checkSq != Squares.noSq) {
@@ -193,7 +209,7 @@ gui.doMove = function (move, { userMove = true } = {}) {
         return;
     }
 
-    if(userMove){
+    if (userMove) {
         addRecord(moveNotation(move));
     }
     playSound(move);
@@ -202,6 +218,9 @@ gui.doMove = function (move, { userMove = true } = {}) {
 gui.undoMove = function () {
     const move = undoMove();
     if (!move) return;
+    if (move & CaptureFlag || move & EnPassantFlag) {
+        gui.updateCapture(move);
+    }
 
     let fromSq = SquaresChar[moveFrom(move)];
     let toSq = SquaresChar[moveTo(move)];
@@ -606,3 +625,29 @@ function addMarker(square, className) {
     graphicalBoard.appendChild(marker);
 }
 
+const captures = document.querySelectorAll('.player .capture');
+gui.updateCapture = function (move) {
+    let piece = moveCapturePiece(move);
+    if (move & EnPassantFlag) {
+        piece = gameBoard.side == Color.white ? Pieces.wp : Pieces.bp;
+    }
+    let captureCount = 0;
+    //map capture piece index with, piece enum
+    let map = {
+        1: 0, 4: 1, 3: 2, 2: 3, 5: 4,
+        7: 5, 10: 6, 9: 7, 8: 8, 11: 9,
+    };
+    let pieceName = SideChar[PieceColor[piece]] + PieceType[piece];
+
+    //capturing promoted piece will not added to account
+    switch (PieceType[piece]) {
+        case 'p': captureCount = Math.max(0, 8 - gameBoard.pieceCount[piece]); break;
+        case 'r': captureCount = Math.max(0, 2 - gameBoard.pieceCount[piece]); break;
+        case 'n': captureCount = Math.max(0, 2 - gameBoard.pieceCount[piece]); break;
+        case 'b': captureCount = Math.max(0, 2 - gameBoard.pieceCount[piece]); break;
+        case 'q': captureCount = Math.max(0, 1 - gameBoard.pieceCount[piece]); break;
+        default: break;
+    }
+    //updating how many pieces has been captured.
+    captures[map[piece]].classList.replace(captures[map[piece]].classList[1], `${pieceName}-${captureCount}`);
+}

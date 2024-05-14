@@ -16,20 +16,66 @@
 
 <body>
     <div class="container">
-        <div id="board">
-            <!-- -------- promotion window -------- -->
-            <div class="promotion-window white">
-                <div class="piece wq"></div>
-                <div class="piece wr"></div>
-                <div class="piece wb"></div>
-                <div class="piece wn"></div>
+        <div class="board-layout">
+            <!-- ---------- WHITE PLAYER ---------- -->
+            <div class="player white">
+                <div class="left">
+                    <div class="profile-photo">
+                        <img src="./assets/avatar/acharya.png" alt="">
+                    </div>
+                </div>
+                <div class="right">
+                    <p class="name">acharya</p>
+
+                    <div class="captures">
+                        <div class="capture wp-0"></div>
+                        <div class="capture wb-0"></div>
+                        <div class="capture wn-0"></div>
+                        <div class="capture wr-0"></div>
+                        <div class="capture wq-0"></div>
+                        <div class="capture-score"></div>
+                    </div>
+                </div>
             </div>
-            <div class="promotion-window black">
-                <div class="piece bq"></div>
-                <div class="piece br"></div>
-                <div class="piece bb"></div>
-                <div class="piece bn"></div>
+
+            <!-- ---------- GAME BOARD ---------- -->
+            <div id="board">
+                <!-- -------- promotion window -------- -->
+                <div class="promotion-window white">
+                    <div class="piece wq"></div>
+                    <div class="piece wr"></div>
+                    <div class="piece wb"></div>
+                    <div class="piece wn"></div>
+                </div>
+                <div class="promotion-window black">
+                    <div class="piece bq"></div>
+                    <div class="piece br"></div>
+                    <div class="piece bb"></div>
+                    <div class="piece bn"></div>
+                </div>
             </div>
+
+            <!-- ---------- BLACK PLAYER ---------- -->
+            <div class="player black">
+                <div class="left">
+                    <div class="profile-photo">
+                        <img src="./assets/avatar/devki.png" alt="">
+                    </div>
+                </div>
+                <div class="right">
+                    <p class="name">devki</p>
+
+                    <div class="captures">
+                        <div class="capture bp-0"></div>
+                        <div class="capture bb-0"></div>
+                        <div class="capture bn-0"></div>
+                        <div class="capture br-0"></div>
+                        <div class="capture bq-0"></div>
+                        <div class="capture-score"></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- ---------- CONTROLLERS ---------- -->
@@ -58,6 +104,8 @@
 
         </div>
     </div>
+
+    <!-- ---------- END-GAME WINDOW ---------- -->
 
     <div class="game-over">
         <div class="close"><i class="uil uil-times"></i></div>
@@ -95,7 +143,7 @@
     </div>
 
     <div class="backdrop">
-        <!-- ---------- CONFIRM POPOVER ---------- -->
+        <!-- ---------- CONFIRM WINDOW ---------- -->
         <div class="confirm-popover">
             <div class="message">are you sure?</div>
             <div class="buttons">

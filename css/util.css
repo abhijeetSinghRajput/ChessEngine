@@ -81,6 +81,135 @@
 
 
 
+.capture.bp-1{
+    background-position: 0px -594px;
+    width: 14px;
+}
+.capture.bp-2{
+    background-position: 0px -569px;
+    width: 21px;
+}
+.capture.bp-3{
+    background-position: 0px -544px;
+    width: 28px;
+}
+.capture.bp-4{
+    background-position: 0px -519px;
+    width: 35px;
+}
+
+.capture.bp-5{
+    background-position: 0px -494px;
+    width: 42px;
+}
+.capture.bp-6{
+    background-position: 0px -469px;
+    width: 49px;
+}
+.capture.bp-7{
+    background-position: 0px -444px;
+    width: 56px;
+}
+.capture.bp-8{
+    background-position: 0px -419px;
+    width: 64px;
+}
+
+.capture.wp-1{
+    background-position: -359px -594px;
+    width: 14px;
+}
+.capture.wp-2{
+    background-position: -359px -569px;
+    width: 21px;
+}
+.capture.wp-3{
+    background-position: -359px -544px;
+    width: 28px;
+}
+.capture.wp-4{
+    background-position: -359px -519px;
+    width: 35px;
+}
+
+.capture.wp-5{
+    background-position: -359px -494px;
+    width: 42px;
+}
+.capture.wp-6{
+    background-position: -359px -469px;
+    width: 49px;
+}
+.capture.wp-7{
+    background-position: -359px -444px;
+    width: 56px;
+}
+.capture.wp-8{
+    background-position: -359px -419px;
+    width: 64px;
+}
+.capture.wb-1{
+    background-position: -427px -443px;
+    width: 15px;
+}
+.capture.wb-2{
+    background-position: -427px -418px;
+    width: 23px;
+}
+.capture.wn-1{
+    background-position: -455px -443px;
+    width: 15px;
+}
+.capture.wn-2 {
+    background-position: -455px -418px;
+    width: 22px;
+}
+.capture.wr-1{
+    background-position: -480px -443px;
+    width: 15px;
+}
+.capture.wr-2 {
+    background-position: -480px -418px;
+    width: 24px;
+}
+.capture.wq-1 {
+    background-position: -504px -418px;
+    width: 20px;
+}
+
+
+.capture.bb-1{
+    background-position: -67px -443px;
+    width: 16px;
+}
+.capture.bb-2{
+    background-position: -67px -418px;
+    width: 24px;
+}
+.capture.bn-1{
+    background-position: -95px -443px;
+    width: 16px;
+}
+.capture.bn-2 {
+    background-position: -95px -418px;
+    width: 23px;
+}
+.capture.br-1{
+    background-position: -120px -443px;
+    width: 16px;
+}
+.capture.br-2 {
+    background-position: -120px -418px;
+    width: 24px;
+}
+.capture.bq-1 {
+    background-position: -145px -418px;
+    width: 20px;
+}
+
+
+
+
 
 .piece.wp {
     background-image: url(../assets/pieces/wp.png);

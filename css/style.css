@@ -43,6 +43,48 @@ body::-webkit-scrollbar {
     grid-gap: 10px;
     max-height: 100svh;
 }
+.board-layout{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.board-layout .profile-photo{
+    width: 50px;
+    border-radius: 3px;
+}
+.board-layout .player{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 10px;
+    color: #e2e2e2;
+    text-transform: capitalize;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.player.white .profile-photo{
+    border: 5px solid white;
+}
+.player.black .profile-photo{
+    border: 5px solid black;
+}
+.board-layout .player .profile-photo{
+    border-width: 3px;
+}
+.captures{
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+.capture{
+    background-repeat: no-repeat;
+    height: 20px;
+    background-image: url('../assets/captured-pieces.png');
+    background-position: 0 0;
+}
+
 
 #board {
     aspect-ratio: 1;
@@ -53,7 +95,7 @@ body::-webkit-scrollbar {
     position: relative;
     height: 0;
     padding-bottom: calc(100% - 10px);
-    ;
+    align-self: center;
 }
 
 .flipped .promotion-window.black,
