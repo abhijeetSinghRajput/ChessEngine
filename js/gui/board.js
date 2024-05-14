@@ -8,7 +8,7 @@ let guiPieces = {};
 // =================================================================
 
 gui.renderPieces = function () {
-    document.querySelectorAll('.board>.piece').forEach(piece => piece.remove());
+    document.querySelectorAll('#board>.piece').forEach(piece => piece.remove());
 
     for (const sq of Sq64To120) {
         if (gameBoard.pieces[sq] != Pieces.empty) {
