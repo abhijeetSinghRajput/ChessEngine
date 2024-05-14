@@ -1,4 +1,4 @@
-let StartingFen = 'rnbqkbnr/ppPppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+let StartingFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 const StartingHashKey = 0x5300d2e1;
 
 const FileMask = new Array(8);
