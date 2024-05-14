@@ -11,12 +11,12 @@ document.addEventListener('mousedown', (e) => {
         gameOver.classList.remove('active');
     }
 });
-gameOver.querySelectorAll('.btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
+gameOver.querySelectorAll('.btn').forEach(btn => {
+    btn.addEventListener('click', () => {
         gameOver.classList.remove('active');
     })
 })
-closeResult.addEventListener('click', ()=>{
+closeResult.addEventListener('click', () => {
     gameOver.classList.remove('active');
 })
 
@@ -45,6 +45,15 @@ confirmBtn.addEventListener('click', () => {
     newGame();
 })
 
+const coordinates = document.querySelectorAll('.coordinates *');
 function flipBoard() {
-    graphicalBoard.classList.toggle('flipped');
+    boardLayout.classList.toggle('flipped');
+    flipCoordinates();
+}
+function flipCoordinates() {
+    let texts = boardLayout.classList.contains('flipped') ? '12345678hgfedcba':'87654321abcdefgh'
+    console.log(texts);
+    for(let i = 0; i<coordinates.length; i++) {
+        coordinates[i].textContent = texts[i];
+    }
 }

@@ -1,4 +1,6 @@
 const graphicalBoard = document.getElementById('board');
+const boardLayout = document.querySelector('.board-layout');
+
 const hashKey = document.querySelector('#hash-key');
 const gui = {};
 let guiPieces = {};
@@ -87,7 +89,7 @@ gui.movePiece = function (from, to) {
 
 
 // =================================================================
-// ============================ Events =============================
+// ======================== Event handlers =========================
 // =================================================================
 
 let fromSq, toSq, moveList;
@@ -423,7 +425,7 @@ function moveNotation(move, checkMate = false) {
 
 const resultTitle = document.querySelector('.game-over .header .title');
 const resultSubTitle = document.querySelector('.game-over .header .subtitle');
-const [whitePlayer, blackPlayer] = document.querySelectorAll('.player');
+const [whitePlayer, blackPlayer] = document.querySelectorAll('.game-over .player');
 
 function isGameOver() {
     if (gameBoard.fiftyMove >= 100) {
@@ -460,10 +462,12 @@ function isGameOver() {
     if (gameBoard.checkSq !== Squares.noSq) {
         if (gameBoard.side === Color.white) {
             resultTitle.textContent = 'Black Won';
+            whitePlayer.classList.remove('winner');
             blackPlayer.classList.add('winner');
         }
         else {
             resultTitle.textContent = 'White Won';
+            blackPlayer.classList.remove('winner');
             whitePlayer.classList.add('winner');
         }
         resultSubTitle.textContent = 'by checkmate'
@@ -604,7 +608,7 @@ function getSquare(e) {
     let file = Math.floor(x / squareSize);
     let rank = 7 - Math.floor(y / squareSize);
 
-    if (graphicalBoard.classList.contains('flipped')) {
+    if (boardLayout.classList.contains('flipped')) {
         file = 7 - file;
         rank = 7 - rank;
     }

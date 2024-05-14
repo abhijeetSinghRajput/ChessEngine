@@ -48,7 +48,9 @@ body::-webkit-scrollbar {
     flex-direction: column;
     gap: 10px;
 }
-
+.board-layout.flipped{
+    flex-direction: column-reverse;
+}
 .board-layout .profile-photo{
     width: 50px;
     border-radius: 3px;
@@ -96,6 +98,21 @@ body::-webkit-scrollbar {
     height: 0;
     padding-bottom: calc(100% - 10px);
     align-self: center;
+}
+.coordinates {
+    position: absolute;
+    left: 0;
+    top: 0;
+    user-select: none;
+}
+.coordinate-light {
+    fill: var(--sq-dark);
+}
+.coordinate-dark{
+    fill: var(--sq-light);
+}
+.coordinate-dark, .coordinate-light {
+    font-weight: 600;
 }
 
 .flipped .promotion-window.black,
@@ -274,7 +291,23 @@ body::-webkit-scrollbar {
     width: 80px;
     border-radius: 10px;
     overflow: hidden;
+    position: relative;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
 }
+.profile-photo .crown-alt{
+    display: none;
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    width: 30px;
+    background-color: #81b64c;
+    border: 7px solid #81b64c;
+    border-top-left-radius: 5px;
+}
+.winner .profile-photo .crown-alt{
+    display: block;
+}
+
 
 .profile-photo img {
     width: 100%;
@@ -336,6 +369,10 @@ body::-webkit-scrollbar {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
+}
+.game-over .winner .profile-photo{
+    border-color: #81b64c;
+    box-shadow: 0px 0px 16px 0px #aef46721;
 }
 
 .players .name {

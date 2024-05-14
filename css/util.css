@@ -18,7 +18,18 @@
     font-size: 22px;
     font-weight: 800;
 }
-
+.white.crown-alt{
+    aspect-ratio: 1;
+    width: 16px;
+    background: url('../assets/icons/white-crown-alt.png') no-repeat;
+    background-size: 100%;
+}
+.black.crown-alt{
+    aspect-ratio: 1;
+    width: 16px;
+    background: url('../assets/icons/black-crown-alt.png') no-repeat;
+    background-size: 100%;
+}
 .btn.primary {
     background-color: #81b64c;
     border-color: #45753c;
@@ -27,6 +38,7 @@
 
 .btn.primary:hover {
     filter: brightness(120%);
+    box-shadow: 0px 0px 16px 0px #aef46721;
 }
 
 .btn.bold {
@@ -37,7 +49,6 @@
     height: 60px;
     grid-column: 1/-1;
     text-shadow: 0 0.1rem 0 rgba(0, 0, 0, .4);
-    transition: box-shadow .2s ease-in-out;
     height: 48px;
 }
 
