@@ -18,7 +18,7 @@ gui.renderPieces = function () {
         }
     }
     if (gameBoard.checkSq != Squares.noSq) {
-        addMarker(SquaresChar[gameBoard.checkSq], 'check');
+        addMarker('check', SquaresChar[gameBoard.checkSq]);
     }
     hashKey.textContent = gameBoard.positionKey.toString(16);
     gui.addBoardInteraction();
@@ -35,27 +35,6 @@ gui.addBoardInteraction = function () {
     graphicalBoard.addEventListener('click', clickOnSquare);
 }
 
-function clickOnPiece(e) {
-    let piece = e.target;
-    // second click is for move the piece
-    // in this case second click to also to select the piece.
-    if (guiPieces[fromSq]?.classList[1][0] == piece.classList[1][0]) {
-        document.querySelector(`#${fromSq}.highlight`)?.remove();
-        removeHints();
-    }
-    if (fromSq && piece.classList[1][0] != SideChar[gameBoard.side]) {
-        drop(e);
-    }
-    else {
-        dragStart(e);
-    }
-}
-
-function clickOnSquare(e) {
-    if (!e.target.classList.contains('piece')) {
-        drop(e);
-    }
-}
 
 
 gui.addPiece = function (square, piece) {
@@ -92,12 +71,11 @@ gui.movePiece = function (from, to) {
 // ======================== Event handlers =========================
 // =================================================================
 
-let fromSq, toSq, moveList;
+let fromSq = toSq = null, moveList;
 const promotionWindow = document.querySelectorAll('.promotion-window');
 
 promotionWindow.forEach(promo => {
     promo.addEventListener('click', (e) => {
-        console.log("Click event on promo element");
         let piece = Pieces[e.target.classList[1]];
         promotionMove = updatePromotion(promotionMove, piece);
         promotionWindow[gameBoard.side].style.display = 'none';
@@ -105,19 +83,48 @@ promotionWindow.forEach(promo => {
     })
 })
 
+function clickOnPiece(e) {
+    let piece = e.target;
+    let pieceColor = piece.classList[1][0];
+    if (pieceColor == SideChar[gameBoard.side]) {
+        dragStart(e);
+    }
+    else {
+        drop(e);
+    }
+}
 
-
-function dragStart(e) {
-    fromSq = getSquare(e);
-    moveList = generateMoves();
-    showHints(fromSq, moveList);
-    addMarker(fromSq, 'highlight');
+function clickOnSquare(e) {
+    if (!e.target.classList.contains('piece')) {
+        drop(e);
+    }
 }
 
 
+function dragStart(e) {
+    removeMarker('hint', '*');
+    removeMarker('capture-hint', '*');
+    removeMarker('highlight', fromSq);
+    fromSq = getSquare(e);
+    moveList = generateMoves();
+    showHints(fromSq, moveList);
+    addMarker('highlight', fromSq);
+}
+
+document.addEventListener('mousedown', (e) => {
+    if (!graphicalBoard.contains(e.target)) {
+        removeMarker('hint', '*');
+        removeMarker('capture-hint', '*');
+        removeMarker('highlight', fromSq);
+        fromSq = null;
+    }
+})
+
 function drop(e) {
-    document.querySelector(`#${fromSq}.highlight`)?.remove();
-    removeHints();
+    removeMarker('hint', '*');
+    removeMarker('capture-hint', '*');
+    removeMarker('highlight', fromSq);
+
     toSq = getSquare(e);
     const move = parseMove(fromSq, toSq, moveList);
     if (move & PromotionFlag) {
@@ -138,6 +145,7 @@ function drop(e) {
     else {
         gui.doMove(move);
     }
+    fromSq = null;
 }
 
 function dragOver(e) {
@@ -151,15 +159,15 @@ function dragOver(e) {
 // =========================== Play Move ===========================
 // =================================================================
 
-gui.doMove = function (move, { userMove = true } = {}) {
+gui.doMove = function (move, { userMove = true, audio = true } = {}) {
     if (!move) return;
 
     let fromSq = SquaresChar[moveFrom(move)];
     let toSq = SquaresChar[moveTo(move)];
 
     removePrevHighlight();
-    addMarker(fromSq, 'highlight');
-    addMarker(toSq, 'highlight');
+    addMarker('highlight', fromSq);
+    addMarker('highlight', toSq);
 
     if (move & EnPassantFlag) {
         if (gameBoard.side == Color.white) {
@@ -189,14 +197,12 @@ gui.doMove = function (move, { userMove = true } = {}) {
 
     this.movePiece(fromSq, toSq);
     doMove(move);
-    if (move & CaptureFlag || move & EnPassantFlag) {
-        gui.updateCapture(move);
-    }
+    this.updateCapture(move);
 
     hashKey.textContent = gameBoard.positionKey.toString(16);
 
     if (gameBoard.checkSq != Squares.noSq) {
-        addMarker(SquaresChar[gameBoard.checkSq], 'check');
+        addMarker('check', SquaresChar[gameBoard.checkSq]);
     }
     else {
         document.querySelector('.check')?.remove();
@@ -207,32 +213,32 @@ gui.doMove = function (move, { userMove = true } = {}) {
             gameOver.classList.add('active');
             addRecord(moveNotation(move, gameBoard.checkSq != Squares.noSq));
         }
-        playSound(move, true);
+        if (audio) playSound(move, true);
         return;
     }
 
     if (userMove) {
         addRecord(moveNotation(move));
     }
-    playSound(move);
+    if (audio) playSound(move);
 }
 
-gui.undoMove = function () {
+gui.undoMove = function ({ audio = true } = {}) {
     const move = undoMove();
     if (!move) return;
-    if (move & CaptureFlag || move & EnPassantFlag) {
-        gui.updateCapture(move);
-    }
+    this.updateCapture(move, { reverse: true });
 
     let fromSq = SquaresChar[moveFrom(move)];
     let toSq = SquaresChar[moveTo(move)];
+    //remove from undo move
+    removeMarker('highlight', fromSq)
+    removeMarker('highlight', toSq)
 
-    document.querySelector(`#${fromSq}.highlight`)?.remove();
-    document.querySelector(`#${toSq}.highlight`)?.remove();
+    //add to last played move
     let currMove = gameBoard.history[gameBoard.history.length - 1]?.move;
     if (currMove) {
-        addMarker(SquaresChar[moveFrom(currMove)], 'highlight');
-        addMarker(SquaresChar[moveTo(currMove)], 'highlight');
+        addMarker('highlight', SquaresChar[moveFrom(currMove)]);
+        addMarker('highlight', SquaresChar[moveTo(currMove)]);
     }
 
     if (move & EnPassantFlag) {
@@ -253,7 +259,7 @@ gui.undoMove = function () {
         }
     }
     this.movePiece(toSq, fromSq);
-    playSound(move);
+    if (audio) playSound(move);
 
     if (move & CaptureFlag) {
         this.addPiece(toSq, moveCapturePiece(move));
@@ -265,10 +271,10 @@ gui.undoMove = function () {
     }
 
     if (gameBoard.checkSq != Squares.noSq) {
-        addMarker(SquaresChar[gameBoard.checkSq], 'check');
+        addMarker('check', SquaresChar[gameBoard.checkSq]);
     }
     else {
-        document.querySelector('.check')?.remove();
+        removeMarker('check', '*');
     }
 
     nodeList[currMoveNode].classList.remove('selected');
@@ -280,7 +286,7 @@ gui.undoMove = function () {
     hashKey.textContent = gameBoard.positionKey.toString(16);
 }
 
-function moveForward() {
+function moveForward({ audio = true } = {}) {
     if (undoMoveHistory.length === 0) {
         return;
     }
@@ -288,7 +294,7 @@ function moveForward() {
     if (currMoveNode % 2 == 0) ++ply;
 
     let move = undoMoveHistory.pop();
-    gui.doMove(move, { userMove: false });
+    gui.doMove(move, { userMove: false, audio });
 
     nodeList[prevMoveNode]?.classList.remove('selected');
     nodeList[currMoveNode]?.classList.add('selected');
@@ -326,6 +332,8 @@ function addRecord(notation) {
 
     nodeList.push(node);
     prevMoveNode = currMoveNode++;
+    node.id = currMoveNode;
+    node.addEventListener('click', clickOnNode);
 
     nodeList[prevMoveNode]?.classList.remove('selected');
     nodeList[currMoveNode].classList.add('selected');
@@ -337,7 +345,6 @@ function addRecord(notation) {
         move.classList.add('move');
 
         p.textContent = ++ply + '.';
-
         move.append(p, node);
         records.appendChild(move);
     }
@@ -347,6 +354,19 @@ function addRecord(notation) {
     records.scrollTop = records.scrollHeight;
 }
 
+function clickOnNode(e) {
+    let id = e.target.id;
+    if (id == currMoveNode) return;
+    PremoveSound.play();
+    while (currMoveNode != id) {
+        if (currMoveNode > id) {
+            gui.undoMove({ audio: false });
+        }
+        else {
+            moveForward({ audio: false });
+        }
+    }
+}
 
 function moveNotation(move, checkMate = false) {
     let from = moveFrom(move);
@@ -524,17 +544,15 @@ function resetGui() {
     nodeList = [];
     records.innerHTML = '';
     guiPieces = {};
-    removeHints();
-    document.querySelectorAll('.highlight').forEach(e => e.remove());
-    document.querySelector('.check')?.remove();
+    removeAllMarker();
 }
 function removePrevHighlight() {
     const prevMove = gameBoard.history[gameBoard.history.length - 1]?.move;
     if (prevMove) {
         let fromSq = SquaresChar[moveFrom(prevMove)];
         let toSq = SquaresChar[moveTo(prevMove)];
-        document.querySelector(`#${fromSq}.highlight`)?.remove();
-        document.querySelector(`#${toSq}.highlight`)?.remove();
+        removeMarker('highlight', fromSq);
+        removeMarker('highlight', toSq);
     }
 }
 function playSound(move, gameEnd = false) {
@@ -550,6 +568,9 @@ function playSound(move, gameEnd = false) {
 function parseMove(fromSq, toSq, movelist) {
     fromSq = Squares[fromSq];
     toSq = Squares[toSq];
+    if (!movelist) {
+        movelist = generateMoves();
+    }
 
 
     let found = null;
@@ -589,14 +610,11 @@ function showHints(fromSq, movelist) {
     });
     hints.forEach(({ move }) => {
         let className = (move & CaptureFlag) ? 'capture-hint' : 'hint';
-        addMarker(SquaresChar[moveTo(move)], className);
+        addMarker(className, SquaresChar[moveTo(move)]);
     });
 }
 
-function removeHints() {
-    document.querySelectorAll('.hint').forEach(hint => hint.remove());
-    document.querySelectorAll('.capture-hint').forEach(hint => hint.remove());
-}
+
 
 
 function getSquare(e) {
@@ -617,41 +635,105 @@ function getSquare(e) {
     return SquaresChar[square];
 }
 
+const markers = {
+    'highlight': {},
+    'hint': {},
+    'capture-hint': {},
+    'check': {},
+};
 
-function addMarker(square, className) {
-    if (document.querySelector(`#${square}.${className}`)) {
+function removeMarker(className, square) {
+    if (square == '*') {
+        for (const square in markers[className]) {
+            const marker = markers[className][square];
+            marker.remove();
+            delete markers[className][square];
+        }
         return;
     }
+    const marker = markers[className][square];
+    if (marker) {
+        marker.remove();
+        delete markers[className][square];
+    }
+}
+function removeAllMarker() {
+    removeMarker('hint', '*');
+    removeMarker('capture-hint', '*');
+    removeMarker('highlight', '*')
+    removeMarker('check', '*');
+}
+function addMarker(className, square) {
+    //check if marker already exist
+    if (markers[className][square]) return;
 
     const marker = document.createElement('div');
+    markers[className][square] = marker;
     marker.classList.add(className);
     marker.id = square;
     graphicalBoard.appendChild(marker);
 }
 
-const captures = document.querySelectorAll('.player .capture');
-gui.updateCapture = function (move) {
-    let piece = moveCapturePiece(move);
-    if (move & EnPassantFlag) {
-        piece = gameBoard.side == Color.white ? Pieces.wp : Pieces.bp;
+let captures = [
+    document.querySelectorAll('.player.white .capture'),
+    document.querySelectorAll('.player.black .capture'),
+]
+gui.updateCapture = function (move, { reverse = false } = {}) {
+    if (gameBoard.side == Color.white) {
+        if (gameBoard.pieceCount[Pieces.wr] > 2) return;
+        if (gameBoard.pieceCount[Pieces.wn] > 2) return;
+        if (gameBoard.pieceCount[Pieces.wb] > 2) return;
+        if (gameBoard.pieceCount[Pieces.wq] > 1) return;
+        if (gameBoard.pieceCount[Pieces.wp] > 8) return;
     }
-    let captureCount = 0;
-    //map capture piece index with, piece enum
-    let map = {
-        1: 0, 4: 1, 3: 2, 2: 3, 5: 4,
-        7: 5, 10: 6, 9: 7, 8: 8, 11: 9,
-    };
-    let pieceName = SideChar[PieceColor[piece]] + PieceType[piece];
+    else {
+        if (gameBoard.pieceCount[Pieces.br] > 2) return;
+        if (gameBoard.pieceCount[Pieces.bn] > 2) return;
+        if (gameBoard.pieceCount[Pieces.bb] > 2) return;
+        if (gameBoard.pieceCount[Pieces.bq] > 1) return;
+        if (gameBoard.pieceCount[Pieces.bp] > 8) return;
+    }
 
-    //capturing promoted piece will not added to account
-    switch (PieceType[piece]) {
-        case 'p': captureCount = Math.max(0, 8 - gameBoard.pieceCount[piece]); break;
-        case 'r': captureCount = Math.max(0, 2 - gameBoard.pieceCount[piece]); break;
-        case 'n': captureCount = Math.max(0, 2 - gameBoard.pieceCount[piece]); break;
-        case 'b': captureCount = Math.max(0, 2 - gameBoard.pieceCount[piece]); break;
-        case 'q': captureCount = Math.max(0, 1 - gameBoard.pieceCount[piece]); break;
-        default: break;
+    let attackerSide = (reverse) ? gameBoard.side : gameBoard.side ^ 1;
+    let capturePiece = moveCapturePiece(move);
+    if (move & EnPassantFlag) {
+        capturePiece = (gameBoard.side == Color.white) ? Pieces.wp : Pieces.bp;
     }
-    //updating how many pieces has been captured.
-    captures[map[piece]].classList.replace(captures[map[piece]].classList[1], `${pieceName}-${captureCount}`);
+    const map = {
+        p: 0,
+        b: 1,
+        n: 2,
+        q: 3,
+    };
+    //add capture
+    if (capturePiece) {
+        let pieceName = PieceName[capturePiece];//eg wp (white pawn)
+        let pieceIndex = map[pieceName[1]];//eg: map['p']
+
+        //eg:classList[1] = wp-0 
+        let captureCount = +captures[attackerSide][pieceIndex].classList[1][3];
+        let newCaptureCount = (reverse) ? captureCount - 1 : captureCount + 1;
+        captures[attackerSide][pieceIndex].classList.replace(
+            `${pieceName}-${captureCount}`,
+            `${pieceName}-${newCaptureCount}`
+        )
+    }
+
+    //remove capture from opponent.
+    if (move & PromotionFlag) {
+        let promotedPiece = movePromotionPiece(move);
+        let pieceName = PieceName[promotedPiece];
+        let pieceIndex = map[pieceName[1]];
+
+        //eg:classList[1] = wp-0 
+        let captureCount = +captures[attackerSide ^ 1][pieceIndex].classList[1][3];
+        if (captureCount == 0) return;
+
+        let newCaptureCount = (reverse) ? captureCount + 1 : captureCount - 1;
+        captures[attackerSide][pieceIndex].classList.replace(
+            `${pieceName}-${captureCount}`,
+            `${pieceName}-${newCaptureCount}`
+        )
+    }
 }
+

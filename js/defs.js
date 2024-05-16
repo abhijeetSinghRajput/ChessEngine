@@ -55,6 +55,7 @@ const Sq64To120 = new Array(64);
 
 const PieceChar = '.PRNBQKprnbqk';
 const PieceType = '.prnbqkprnbqk';
+const PieceName = ['.', 'wp', 'wr', 'wn', 'wb', 'wq', 'wk', 'bp', 'br', 'bn', 'bb', 'bq', 'bk']
 const PieceColor = [
     2,
     0, 0, 0, 0, 0, 0,
@@ -284,7 +285,7 @@ const CastleBit = { K: 8, Q: 4, k: 2, q: 1 };
 const CastlePermission = [
     15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
     15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-    15, 11, 15, 15, 15,  3, 15, 15,  7, 15,//white 1011 0011 0111
+    15, 11, 15, 15, 15, 3, 15, 15, 7, 15,//white 1011 0011 0111
     15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
     15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
     15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
@@ -328,3 +329,6 @@ function updatePromotion(move, piece) {
 }
 
 
+const MaxDepth = 64;
+const Infinite = 30000;
+const Mate = 29000;

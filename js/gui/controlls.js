@@ -52,7 +52,6 @@ function flipBoard() {
 }
 function flipCoordinates() {
     let texts = boardLayout.classList.contains('flipped') ? '12345678hgfedcba':'87654321abcdefgh'
-    console.log(texts);
     for(let i = 0; i<coordinates.length; i++) {
         coordinates[i].textContent = texts[i];
     }

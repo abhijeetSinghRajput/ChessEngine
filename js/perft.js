@@ -2,7 +2,6 @@ function perft(depth) {
     if (depth <= 0) {
         return 1;
     }
-
     let count = 0;
     for (const { move } of generateMoves()) {
         if (doMove(move) == false) {

@@ -37,25 +37,30 @@ body::-webkit-scrollbar {
 }
 
 .container {
-    padding: 30px 10px;
+    padding: 10px;
     display: grid;
     grid-template-columns: minmax(300px, 600px) 300px;
     grid-gap: 10px;
     max-height: 100svh;
 }
-.board-layout{
+
+.board-layout {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    height: max-content;
 }
-.board-layout.flipped{
+
+.board-layout.flipped {
     flex-direction: column-reverse;
 }
-.board-layout .profile-photo{
+
+.board-layout .profile-photo {
     width: 50px;
     border-radius: 3px;
 }
-.board-layout .player{
+
+.board-layout .player {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -66,25 +71,28 @@ body::-webkit-scrollbar {
     font-weight: 600;
 }
 
-.player.white .profile-photo{
+.player.white .profile-photo {
     border: 5px solid white;
 }
-.player.black .profile-photo{
+
+.player.black .profile-photo {
     border: 5px solid black;
 }
-.board-layout .player .profile-photo{
+
+.board-layout .player .profile-photo {
     border-width: 3px;
 }
-.captures{
+
+.captures {
     display: flex;
     align-items: center;
     gap: 2px;
 }
-.capture{
-    background-repeat: no-repeat;
+
+.capture {
+    background-position: center;
+    background-size: auto 100%;
     height: 20px;
-    background-image: url('../assets/captured-pieces.png');
-    background-position: 0 0;
 }
 
 
@@ -95,23 +103,26 @@ body::-webkit-scrollbar {
     border-radius: 3px;
     overflow: hidden;
     position: relative;
-    height: 0;
-    padding-bottom: calc(100% - 10px);
-    align-self: center;
 }
+
 .coordinates {
     position: absolute;
     left: 0;
     top: 0;
     user-select: none;
+    z-index: 3;
 }
+
 .coordinate-light {
     fill: var(--sq-dark);
 }
-.coordinate-dark{
+
+.coordinate-dark {
     fill: var(--sq-light);
 }
-.coordinate-dark, .coordinate-light {
+
+.coordinate-dark,
+.coordinate-light {
     font-weight: 600;
 }
 
@@ -195,8 +206,9 @@ body::-webkit-scrollbar {
 }
 
 .movelist .move {
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 10px 55px 55px;
+    grid-gap: 10px;
     font-size: 11px;
     padding: 2px 5px 2px 15px;
 }
@@ -209,11 +221,14 @@ body::-webkit-scrollbar {
 .move .node {
     margin-right: 16px;
     min-width: 40px;
+    width: max-content;
     color: #ffffffb8;
     font-weight: 700;
     padding: 4px;
     border-radius: 2px;
     border-bottom: 3px solid transparent;
+    user-select: none;
+    cursor: pointer;
 }
 
 .move:nth-child(odd) {
@@ -294,7 +309,8 @@ body::-webkit-scrollbar {
     position: relative;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
 }
-.profile-photo .crown-alt{
+
+.profile-photo .crown-alt {
     display: none;
     position: absolute;
     bottom: -5px;
@@ -304,7 +320,8 @@ body::-webkit-scrollbar {
     border: 7px solid #81b64c;
     border-top-left-radius: 5px;
 }
-.winner .profile-photo .crown-alt{
+
+.winner .profile-photo .crown-alt {
     display: block;
 }
 
@@ -370,7 +387,8 @@ body::-webkit-scrollbar {
     align-items: center;
     justify-content: space-evenly;
 }
-.game-over .winner .profile-photo{
+
+.game-over .winner .profile-photo {
     border-color: #81b64c;
     box-shadow: 0px 0px 16px 0px #aef46721;
 }
@@ -443,13 +461,15 @@ body::-webkit-scrollbar {
         justify-self: center;
     }
 
+    .board-layout .player {
+        padding: 0;
+    }
 
 
     .container {
-        margin-top: 10vw;
         grid-template-columns: minmax(200px, 400px);
         grid-template-rows: auto 1fr;
-        padding: 30px 5px 0px;
+        margin-bottom: 84px;
     }
 
     .movelist {
@@ -476,6 +496,10 @@ body::-webkit-scrollbar {
 @media screen and (max-width: 480px) {
     .game-over {
         width: 92vw;
+    }
+
+    .board-layout {
+        margin: 0 16px;
     }
 
     .confirm-popover {
@@ -522,7 +546,7 @@ body::-webkit-scrollbar {
     }
 
     .game-controller {
-        padding-bottom: 150px;
+        padding-bottom: 100px;
     }
 
     .game-controller .controller .btn {

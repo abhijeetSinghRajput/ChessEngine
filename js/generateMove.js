@@ -102,21 +102,21 @@ function generateMoves() {
     return moves;
 }
 
-function generateSlidingMoves() {
+function generateSlidingMoves({captureOnly = false} = {}) {
     for (const piece of SlidingPieces[gameBoard.side]) {
         for (const sq of gameBoard.pieceList[piece]) {
             for (const direction of PieceDirections[piece]) {
                 let targetSq = sq + direction;
 
                 while (gameBoard.pieces[targetSq] != Squares.offBoard) {
-                    if (gameBoard.pieces[targetSq] == Pieces.empty) {
-                        addQuiteMove(buildMove(sq, targetSq, 0, 0, 0));
-                    }
-                    else {
-                        if (PieceColor[gameBoard.pieces[targetSq]] !== gameBoard.side) {
-                            addQuiteMove(buildMove(sq, targetSq, gameBoard.pieces[targetSq], 0, 0));
+                    if(gameBoard.pieces[targetSq] != Pieces.empty){
+                        if(PieceColor[gameBoard.pieces[targetSq]] != gameBoard.side){
+                            addCaptureMove(buildMove(sq, targetSq, gameBoard.pieces[targetSq], 0, 0));
                         }
                         break;
+                    }
+                    else if(!captureOnly){
+                        addQuiteMove(buildMove(sq, targetSq, 0, 0, 0));
                     }
                     targetSq += direction;
                 }
@@ -126,7 +126,7 @@ function generateSlidingMoves() {
     }
 }
 
-function generateNonSlidingMoves() {
+function generateNonSlidingMoves({captureOnly = false} = {}) {
     for (const piece of NonSlidingPieces[gameBoard.side]) {
         for (const sq of gameBoard.pieceList[piece]) {
             for (const direction of PieceDirections[piece]) {
@@ -136,14 +136,69 @@ function generateNonSlidingMoves() {
                     continue;
                 }
                 if (gameBoard.pieces[targetSq] == Pieces.empty) {
-                    addQuiteMove(buildMove(sq, targetSq, 0, 0, 0));
+                    if(!captureOnly){
+                        addQuiteMove(buildMove(sq, targetSq, 0, 0, 0));
+                    }
                 }
                 else if (PieceColor[gameBoard.pieces[targetSq]] != gameBoard.side) {
-                    addQuiteMove(buildMove(sq, targetSq, gameBoard.pieces[targetSq], 0, 0));
+                    addCaptureMove(buildMove(sq, targetSq, gameBoard.pieces[targetSq], 0, 0));
                 }
             }
         }
     }
+}
+
+
+function generateCaptureMoves() {
+    moves = [];
+
+    if (gameBoard.side == Color.white) {
+        for (const sq of gameBoard.pieceList[Pieces.wp]) {
+
+            //add capture move
+            if (sq + 9 != Squares.offBoard && PieceColor[gameBoard.pieces[sq + 9]] == Color.black) {
+                addWhiteCaptureMove(sq, sq + 9, gameBoard.pieces[sq + 9]);
+            }
+            if (sq + 11 != Squares.offBoard && PieceColor[gameBoard.pieces[sq + 11]] == Color.black) {
+                addWhiteCaptureMove(sq, sq + 11, gameBoard.pieces[sq + 11]);
+            }
+
+            //add enpassant move
+            if (sq + 9 == gameBoard.enPassantSq) {
+                addEnPassantMove(buildMove(sq, sq + 9, 0, 0, EnPassantFlag));
+            }
+            if (sq + 11 == gameBoard.enPassantSq) {
+                addEnPassantMove(buildMove(sq, sq + 11, 0, 0, EnPassantFlag));
+            }
+
+        }
+
+    }
+    else {
+        for (const sq of gameBoard.pieceList[Pieces.bp]) {
+            
+            //add capture move
+            if (sq - 9 != Squares.offBoard && PieceColor[gameBoard.pieces[sq - 9]] == Color.white) {
+                addBlackCaptureMove(sq, sq - 9, gameBoard.pieces[sq - 9]);
+            }
+            if (sq - 11 != Squares.offBoard && PieceColor[gameBoard.pieces[sq - 11]] == Color.white) {
+                addBlackCaptureMove(sq, sq - 11, gameBoard.pieces[sq - 11]);
+            }
+
+            //add enpassant move
+            if (sq - 9 == gameBoard.enPassantSq) {
+                addEnPassantMove(buildMove(sq, sq - 9, 0, 0, EnPassantFlag));
+            }
+            if (sq - 11 == gameBoard.enPassantSq) {
+                addEnPassantMove(buildMove(sq, sq - 11, 0, 0, EnPassantFlag));
+            }
+        }
+    }
+
+    generateSlidingMoves({captureOnly : true});
+    generateNonSlidingMoves({captureOnly : true});
+    
+    return moves;
 }
 
 //seperate functions for adding different move, because score will vary further
