@@ -239,6 +239,7 @@ body::-webkit-scrollbar {
 
 .movelist .move {
     display: grid;
+    align-items: center;
     grid-template-columns: 10px 55px 55px;
     grid-gap: 10px;
     font-size: 11px;
@@ -251,7 +252,6 @@ body::-webkit-scrollbar {
 }
 
 .move .node {
-    margin-right: 16px;
     min-width: 40px;
     width: max-content;
     color: #ffffffb8;
@@ -502,6 +502,7 @@ textarea::-webkit-scrollbar {
 
 .close {
     position: absolute;
+    z-index: 10;
     font-size: 24px;
     padding: 2px;
     top: 0;
@@ -610,7 +611,8 @@ textarea::-webkit-scrollbar {
     border: none;
     border-bottom: 1px solid #ffffff4d;
 }
-.upload .btn{
+
+.upload .btn {
     border-radius: 0;
     height: 48px;
     display: flex;
@@ -619,7 +621,8 @@ textarea::-webkit-scrollbar {
     border: none;
     gap: 5px;
 }
-.upload .btn .icon{
+
+.upload .btn .icon {
     width: 20px;
 }
 
@@ -639,10 +642,12 @@ textarea::-webkit-scrollbar {
     .icon {
         width: 28px;
     }
-    .close{
+
+    .close {
         width: 50px;
         font-size: 32px;
     }
+
     #board {
         justify-self: center;
     }
@@ -742,5 +747,10 @@ textarea::-webkit-scrollbar {
 
     .game-controller .controller .btn {
         height: 48px;
+    }
+
+    .movelist .move {
+        font-size: 14px;
+        grid-template-columns: 10px 80px 55px;
     }
 }

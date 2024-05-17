@@ -60,14 +60,14 @@ cancelBtn.addEventListener('click', () => {
 
 confirmBtn.addEventListener('click', () => {
     removeBackdrop();
-    if(uploadPgnInput.value){
+    if (uploadPgnInput.value) {
         try {
             parsePGN(uploadPgnInput.value);
         } catch (error) {
             alert(error);
         }
     }
-    else{
+    else {
         newGame();
     }
 })
@@ -123,8 +123,8 @@ function flipBoard() {
     flipCoordinates();
 }
 function flipCoordinates() {
-    let texts = boardLayout.classList.contains('flipped') ? '12345678hgfedcba':'87654321abcdefgh'
-    for(let i = 0; i<coordinates.length; i++) {
+    let texts = boardLayout.classList.contains('flipped') ? '12345678hgfedcba' : '87654321abcdefgh'
+    for (let i = 0; i < coordinates.length; i++) {
         coordinates[i].textContent = texts[i];
     }
 }
@@ -135,18 +135,21 @@ const uploadPgnBtn = document.getElementById('upload-pgn-btn');
 const uploadPgnInput = document.getElementById('upload-pgn-input');
 const fileInput = document.getElementById('file-input');
 
-uploadPgnBtn.addEventListener('click', ()=>{
+uploadPgnBtn.addEventListener('click', () => {
     fileInput.click();
 })
 
-fileInput.addEventListener('change', (e)=>{
+uploadPgnInput.addEventListener('input', (e) => {
+    confirmBtn.textContent = (uploadPgnInput.value)? 'load game' : 'new game';
+});
+
+fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
-    if(file){
+    if (file) {
         const reader = new FileReader();
-        reader.addEventListener('load', (e)=>{
+        reader.addEventListener('load', (e) => {
             const pgn = e.target.result;
             uploadPgnInput.value = pgn;
-            confirmBtn.textContent = 'load game'
         })
         reader.readAsText(file);
     }

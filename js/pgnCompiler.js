@@ -11,7 +11,7 @@
 function parsePGN(pgn) {
     let result = [];
     const moves = extractMoves(pgn);
-
+    newGame();
     for (const move of moves) {
         const match = isValidPgnMove(move);
         if (!match) {
@@ -151,7 +151,7 @@ function getPGN() {
             case 'Black Won': pgn += '0-1'; break;
         }
     }
-    else {
+    else if(pgn) {
         pgn += '*';
     }
     return pgn;
