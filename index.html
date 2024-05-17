@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- cdn to take snap of html element -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
 
@@ -31,6 +35,7 @@
                         <div class="capture wp-0"></div>
                         <div class="capture wb-0"></div>
                         <div class="capture wn-0"></div>
+                        <div class="capture wr-0"></div>
                         <div class="capture wq-0"></div>
                         <div class="capture-score"></div>
                     </div>
@@ -91,6 +96,7 @@
                         <div class="capture bp-0"></div>
                         <div class="capture bb-0"></div>
                         <div class="capture bn-0"></div>
+                        <div class="capture br-0"></div>
                         <div class="capture bq-0"></div>
                         <div class="capture-score"></div>
                     </div>
@@ -107,6 +113,13 @@
                     <span>hash key : </span>
                     <span id="hash-key">5300d2e1</span>
                 </div>
+
+                <div class="icons">
+                    <div class="icon download" onclick="showDownloadWindow()"><img src="./assets/icons/download.png"
+                            alt=""></div>
+                    <div class="icon share" onclick="showDownloadWindow()"><img src="./assets/icons/share.png" alt="">
+                    </div>
+                </div>
             </div>
 
             <div class="movelist"></div>
@@ -121,7 +134,7 @@
                 <div title="Move Forward" class="btn secondary move-forward" onclick="moveForward()"><i
                         class="uil uil-angle-right-b"></i>
                 </div>
-                <div title="New Game" class="btn secondary new-game" onclick="showConfirmWindow('Start a new game?')"><i
+                <div title="New Game" class="btn secondary new-game" onclick="showConfirmWindow()"><i
                         class="uil uil-plus"></i></div>
             </div>
 
@@ -168,9 +181,47 @@
     </div>
 
     <div class="backdrop">
+        <!-- ---------- DOWNLOAD WINDOW ---------- -->
+        <div class="download-window">
+            <div class="close" onclick="removeBackdrop()"><i class="uil uil-times"></i></div>
+            <div class="header">
+                <div class="option">
+                    <div class="option-pgn">PGN</div>
+                    <div class="option-image">Image</div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="fen">
+                    <p>FEN</p>
+                    <input type="text" readonly
+                        value="rnb1k1nr/pppp1p1p/6p1/2b1p3/5PPq/8/PPPPPN1P/RNBQKB1R w KQkq - 4 5">
+                </div>
+                <div class="pgn">
+                    <p>PGN</p>
+                    <textarea id="pgn" readonly>1. d4 e5 2. d5 e4 3. Nf3 exf3 4. exf3 c5 5. dxc6 </textarea>
+                </div>
+                <div class="btn primary download">
+                    <div class="icon">
+                        <img src="./assets/icons/download.png" alt="">
+                    </div>
+                    Download
+                </div>
+            </div>
+        </div>
+
         <!-- ---------- CONFIRM WINDOW ---------- -->
-        <div class="confirm-popover">
-            <div class="message">are you sure?</div>
+        <div class="confirm-popover active">
+            <div class="close" onclick="removeBackdrop()"><i class="uil uil-times"></i></div>
+            <div class="message">add new game</div>
+            <!-- upload -->
+            <div class="upload">
+                <textarea id="upload-pgn-input" placeholder="Paste one or upload PGN file here."></textarea>
+                <input type="file" id="file-input" accept=".pgn" style="display: none;">
+                <div class="btn secondary" id="upload-pgn-btn">
+                    <div class="icon"><img src="./assets/icons/upload.png" alt=""></div>
+                    upload
+                </div>
+            </div>
             <div class="buttons">
                 <div class="btn secondary" id="cancel">Cancel</div>
                 <div class="btn primary" id="confirm">Yes</div>
@@ -192,6 +243,7 @@
 
 <script src="./js/gui/board.js"></script>
 <script src="./js/gui/controlls.js"></script>
+<script src="./js/pgnCompiler.js"></script>
 
 <script src="./js/main.js"></script>
 

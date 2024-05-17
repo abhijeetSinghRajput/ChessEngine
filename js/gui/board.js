@@ -390,8 +390,8 @@ function moveNotation(move, checkMate = false) {
     }
     else {
         if (move & CastleFlag) {
-            if (fileOf(to) === FileG) return 'o-o'
-            return 'o-o-o';
+            if (fileOf(to) === FileG) return 'O-O'
+            return 'O-O-O';
         }
         const disambiguation = getDisambiguation(from, to);
         return piece + disambiguation + capture + SquaresChar[to] + check;
@@ -545,6 +545,12 @@ function resetGui() {
     records.innerHTML = '';
     guiPieces = {};
     removeAllMarker();
+    const allCaptures = [...captures[0], ...captures[1]];
+    for (const capture of allCaptures) {
+        let currentClass = capture.classList[1]; 
+        let newClass = currentClass.replace(/\d+$/, '0'); 
+        capture.classList.replace(currentClass, newClass);
+    }
 }
 function removePrevHighlight() {
     const prevMove = gameBoard.history[gameBoard.history.length - 1]?.move;
@@ -703,7 +709,8 @@ gui.updateCapture = function (move, { reverse = false } = {}) {
         p: 0,
         b: 1,
         n: 2,
-        q: 3,
+        r: 3,
+        q: 4,
     };
     //add capture
     if (capturePiece) {
