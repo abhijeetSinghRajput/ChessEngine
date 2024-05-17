@@ -29,6 +29,7 @@ closeResult.addEventListener('click', () => {
 
 function showConfirmWindow() {
     uploadPgnInput.value = '';
+    confirmBtn.textContent = 'new game';
     backdrop.classList.add('active');
     confirmWindow.classList.add('active');
     downloadWindow.classList.remove('active');
@@ -145,6 +146,7 @@ fileInput.addEventListener('change', (e)=>{
         reader.addEventListener('load', (e)=>{
             const pgn = e.target.result;
             uploadPgnInput.value = pgn;
+            confirmBtn.textContent = 'load game'
         })
         reader.readAsText(file);
     }

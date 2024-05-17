@@ -2,9 +2,10 @@
 // Example usage
 // let pgn = [
 //     '1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7 11. Nbd2 Bb7 12. Bc2 Re8 13. Nf1 Bf8 14. Ng3 g6 15. Bg5 h6 16. Bd2 Bg7 17. Qc1 Kh7 18. Nh2 c5 19. d5 c4 20. Ng4 Nxg4 21. hxg4 Nc5 22. f3 a5 23. Kf2 b4 24. Rh1 Qb6 25. Be3 Qc7 26. Bxh6 Bxh6 27. Qxh6+ Kg8 28. Qh8#',
-// ]
+//     '1. b3 d5 2. Nf3 Nf6 3. Bb2 Bf5 4. Nh4 Bd7 5. e3 c5 6. c4 e6 7. Be2 Be7 8. O-O O-O 9. Nf3 Nc6 10. d4 cxd4 11. exd4 Rc8 12. Nbd2 dxc4 13. bxc4 Re8 14. Nb3 Bf8 15. Qd2 Ne7 16. Ne5 g6 17. Bf3 b6 18. Rfe1 Bg7 19. Rad1 b5 20. Nxd7 Nxd7 21. cxb5 Nb6 22. Na5 Nc4 23. Nxc4 Rxc4 24. Qd3 Rc8 25. a4 Qa5 26. Qb3 Red8 27. g3 Nd5 28. Rc1 Nb6 29. d5 Bxb2 30. Qxb2 exd5 31. Qf6 Qxa4 32. Rc7 Rf8 33. Rxc8 Rxc8 34. Re7 Rf8 35. h4 h5 36. Kg2 Qc2 37. g4 hxg4 38. Bxg4 d4 39. Be6 Qe4+ 40. Kg3 Qxe6 41. Rxe6 fxe6 42. Qxg6+ Kh8 43. Qh6+ Kg8 44. Qxe6+ Kg7 45. Qe5+ Rf6 46. Qxd4 Kf7 47. h5 Nc8 48. Kg4 Ne7 49. f4 Rb6 50. Qc4+ Kg7 51. Qc5 Ng8 52. Kg5 Nh6 53. Qe5+ Kf8 54. Qh8+ Ng8 55. h6 Rxh6 56. Qxh6+ Nxh6 57. Kxh6 Ke7 58. Kg7 Ke6 59. Kg6 1-0',
+// ];
 // setTimeout(() => {
-//     const result = parsePGN(pgn[0]);
+//     const result = parsePGN(pgn[1]);
 // }, 200);
 
 function parsePGN(pgn) {
@@ -97,7 +98,7 @@ function nonSlideFromSq({ piece, toSq, fromFile, fromRank }) {
         let targetSq = toSq + direction;
         if (gameBoard.pieces[targetSq] == piece) {
             if (fromFile === '' && fromRank === '') return SquaresChar[targetSq];
-            if (fileOf(targetSq) == fromFile || rankOf(targetSq) == fromRank) {
+            if (fileOf(targetSq) === fromFile || rankOf(targetSq) === fromRank) {
                 return SquaresChar[targetSq];
             }
         }
@@ -109,14 +110,14 @@ function slideFromSq({ piece, toSq, fromFile, fromRank }) {
     if (fromFile !== '') fromFile = fromFile.charCodeAt(0) - 'a'.charCodeAt(0);
     if (fromRank !== '') fromRank -= 1;
 
-
     for (const direction of PieceDirections[piece]) {
         let targetSq = toSq + direction;
         while (gameBoard.pieces[targetSq] != Squares.offBoard) {
             if (gameBoard.pieces[targetSq] != Pieces.empty) {
                 if (gameBoard.pieces[targetSq] == piece) {
+
                     if (fromFile === '' && fromRank === '') return SquaresChar[targetSq];
-                    if (fileOf(targetSq) == fromFile || rankOf(targetSq) == fromRank) {
+                    if (fileOf(targetSq) === fromFile || rankOf(targetSq) === fromRank) {
                         return SquaresChar[targetSq];
                     }
                 }
@@ -140,37 +141,55 @@ function getPGN() {
             pgn += ++ply + '. ';
         }
         pgn += node.textContent;
-        if (index != nodeList.length - 1) {
-            pgn += ' ';
-        }
+        pgn += ' ';
     })
+    if (isGameOver()) {
+        let result = resultTitle.textContent;
+        switch (result) {
+            case 'Draw': pgn += '1/2-1/2'; break;
+            case 'White Won': pgn += '1-0'; break;
+            case 'Black Won': pgn += '0-1'; break;
+        }
+    }
+    else {
+        pgn += '*';
+    }
     return pgn;
 }
 
 function extractMoves(pgn) {
     const lines = pgn.split('\n');
-    // Flag to indicate when the moves section starts
     let movesStart = false;
     let moves = [];
 
     for (let line of lines) {
         // If we encounter a line without square brackets, it indicates the start of moves
-        if (!line.startsWith('[') && line.trim() !== '') {
+        if (!movesStart && !line.startsWith('[') && line.trim() !== '') {
             movesStart = true;
         }
+
         // If movesStart is true, we process the line for moves
         if (movesStart) {
-            const parts = line.trim().split(/\s+/);
+            // Remove comments and metadata enclosed in {}
+            line = line.replace(/\{[^}]*\}/g, '').trim();
+            const parts = line.split(/\s+/);
             for (let part of parts) {
                 // Remove move numbers and results
                 if (!part.match(/^\d+\.$|1-0|0-1|1\/2-1\/2|\*/)) {
                     moves.push(part);
                 }
             }
+
+            // Break the loop when we reach the result of the first game
+            if (line.includes('1-0') || line.includes('0-1') || line.includes('1/2-1/2') || line.includes('*')) {
+                break;
+            }
         }
     }
 
     return moves;
 }
+
+
 
 
