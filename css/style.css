@@ -750,7 +750,7 @@ textarea::-webkit-scrollbar {
     }
 
     .movelist .move {
-        font-size: 14px;
+        font-size: 12px;
         grid-template-columns: 10px 80px 55px;
     }
 }
