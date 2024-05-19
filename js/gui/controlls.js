@@ -157,11 +157,12 @@ uploadPgnBtn.addEventListener('click', () => {
     fileInput.click();
 })
 
-uploadPgnInput.addEventListener('input', (e) => {
-    confirmBtn.textContent = (uploadPgnInput.value) ? 'load game' : 'new game';
-});
+uploadPgnInput.addEventListener('input', updateConfirmButton);
 
-fileInput.addEventListener('change', updateConfirmButton);
+fileInput.addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    readPgnFile(file);
+});
 
 function readPgnFile(file) {
     if (!file) return;
