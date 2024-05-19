@@ -61,11 +61,11 @@ cancelBtn.addEventListener('click', () => {
 confirmBtn.addEventListener('click', () => {
     removeBackdrop();
     if (uploadPgnInput.value) {
-        try {
-            parsePGN(uploadPgnInput.value);
-        } catch (error) {
-            alert(error);
-        }
+        parsePGN(uploadPgnInput.value);
+        // try {
+        // } catch (error) {
+        //     alert(error);
+        // }
     }
     else {
         newGame();
@@ -133,6 +133,24 @@ function flipCoordinates() {
 
 const uploadPgnBtn = document.getElementById('upload-pgn-btn');
 const uploadPgnInput = document.getElementById('upload-pgn-input');
+const uploadPgnContainer = document.querySelector('.upload');
+
+
+uploadPgnContainer.addEventListener('dragover', (e) => {
+    uploadPgnContainer.classList.add('file-hover');
+    e.preventDefault();
+});
+
+uploadPgnContainer.addEventListener('dragleave', () => {
+    uploadPgnContainer.classList.remove('file-hover');
+});
+uploadPgnContainer.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadPgnContainer.classList.remove('file-hover');
+    const file = e.dataTransfer.files[0];
+    readPgnFile(file);
+});
+
 const fileInput = document.getElementById('file-input');
 
 uploadPgnBtn.addEventListener('click', () => {
@@ -140,17 +158,22 @@ uploadPgnBtn.addEventListener('click', () => {
 })
 
 uploadPgnInput.addEventListener('input', (e) => {
-    confirmBtn.textContent = (uploadPgnInput.value)? 'load game' : 'new game';
+    confirmBtn.textContent = (uploadPgnInput.value) ? 'load game' : 'new game';
 });
 
-fileInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.addEventListener('load', (e) => {
-            const pgn = e.target.result;
-            uploadPgnInput.value = pgn;
-        })
-        reader.readAsText(file);
-    }
-})
+fileInput.addEventListener('change', updateConfirmButton);
+
+function readPgnFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.addEventListener('load', (e) => {
+        const pgn = e.target.result;
+        uploadPgnInput.value = pgn;
+        updateConfirmButton();
+    })
+    reader.readAsText(file);
+}
+
+function updateConfirmButton() {
+    confirmBtn.textContent = (uploadPgnInput.value) ? 'load game' : 'new game';
+}

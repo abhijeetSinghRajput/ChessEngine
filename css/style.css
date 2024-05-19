@@ -596,7 +596,14 @@ textarea::-webkit-scrollbar {
     overflow: hidden;
     border-radius: 5px;
     margin-bottom: 20px;
+    border: 2px dashed transparent;
+    transition: .2s;
 }
+.upload.file-hover{
+    border: 2px dashed #ffffffA1;
+}
+
+
 
 .upload textarea {
     color: #ffffffA1;
@@ -611,6 +618,7 @@ textarea::-webkit-scrollbar {
     border: none;
     border-bottom: 1px solid #ffffff4d;
 }
+
 
 .upload .btn {
     border-radius: 0;

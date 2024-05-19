@@ -98,24 +98,24 @@ function generateMoves() {
 
     generateSlidingMoves();
     generateNonSlidingMoves();
-    
+
     return moves;
 }
 
-function generateSlidingMoves({captureOnly = false} = {}) {
+function generateSlidingMoves({ captureOnly = false } = {}) {
     for (const piece of SlidingPieces[gameBoard.side]) {
         for (const sq of gameBoard.pieceList[piece]) {
             for (const direction of PieceDirections[piece]) {
                 let targetSq = sq + direction;
 
                 while (gameBoard.pieces[targetSq] != Squares.offBoard) {
-                    if(gameBoard.pieces[targetSq] != Pieces.empty){
-                        if(PieceColor[gameBoard.pieces[targetSq]] != gameBoard.side){
+                    if (gameBoard.pieces[targetSq] != Pieces.empty) {
+                        if (PieceColor[gameBoard.pieces[targetSq]] != gameBoard.side) {
                             addCaptureMove(buildMove(sq, targetSq, gameBoard.pieces[targetSq], 0, 0));
                         }
                         break;
                     }
-                    else if(!captureOnly){
+                    else if (!captureOnly) {
                         addQuiteMove(buildMove(sq, targetSq, 0, 0, 0));
                     }
                     targetSq += direction;
@@ -126,7 +126,7 @@ function generateSlidingMoves({captureOnly = false} = {}) {
     }
 }
 
-function generateNonSlidingMoves({captureOnly = false} = {}) {
+function generateNonSlidingMoves({ captureOnly = false } = {}) {
     for (const piece of NonSlidingPieces[gameBoard.side]) {
         for (const sq of gameBoard.pieceList[piece]) {
             for (const direction of PieceDirections[piece]) {
@@ -136,7 +136,7 @@ function generateNonSlidingMoves({captureOnly = false} = {}) {
                     continue;
                 }
                 if (gameBoard.pieces[targetSq] == Pieces.empty) {
-                    if(!captureOnly){
+                    if (!captureOnly) {
                         addQuiteMove(buildMove(sq, targetSq, 0, 0, 0));
                     }
                 }
@@ -176,7 +176,7 @@ function generateCaptureMoves() {
     }
     else {
         for (const sq of gameBoard.pieceList[Pieces.bp]) {
-            
+
             //add capture move
             if (sq - 9 != Squares.offBoard && PieceColor[gameBoard.pieces[sq - 9]] == Color.white) {
                 addBlackCaptureMove(sq, sq - 9, gameBoard.pieces[sq - 9]);
@@ -195,23 +195,57 @@ function generateCaptureMoves() {
         }
     }
 
-    generateSlidingMoves({captureOnly : true});
-    generateNonSlidingMoves({captureOnly : true});
-    
+    generateSlidingMoves({ captureOnly: true });
+    generateNonSlidingMoves({ captureOnly: true });
+
     return moves;
 }
 
-//seperate functions for adding different move, because score will vary further
+//MvvLva = [victim][attacker]
+let MvvLva = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 105, 102, 104, 103, 101, 100, 105, 102, 104, 103, 101, 100],
+    [0, 405, 402, 404, 403, 401, 400, 405, 402, 404, 403, 401, 400],
+    [0, 205, 202, 204, 203, 201, 200, 205, 202, 204, 203, 201, 200],
+    [0, 305, 302, 304, 303, 301, 300, 305, 302, 304, 303, 301, 300],
+    [0, 505, 502, 504, 503, 501, 500, 505, 502, 504, 503, 501, 500],
+    [0, 605, 602, 604, 603, 601, 600, 605, 602, 604, 603, 601, 600],
+    [0, 105, 102, 104, 103, 101, 100, 105, 102, 104, 103, 101, 100],
+    [0, 405, 402, 404, 403, 401, 400, 405, 402, 404, 403, 401, 400],
+    [0, 205, 202, 204, 203, 201, 200, 205, 202, 204, 203, 201, 200],
+    [0, 305, 302, 304, 303, 301, 300, 305, 302, 304, 303, 301, 300],
+    [0, 505, 502, 504, 503, 501, 500, 505, 502, 504, 503, 501, 500],
+    [0, 605, 602, 604, 603, 601, 600, 605, 602, 604, 603, 601, 600],
+];
+
+
 function addCaptureMove(move) {
-    let score = 0;
+    let victim = moveCapturePiece(move);
+    let attacker = gameBoard.pieces[moveFrom(move)];
+    let score = MvvLva[victim][attacker] + 1000000;
     moves.push({ score, move });
 }
+
 function addQuiteMove(move) {
     let score = 0;
+    if (searchController.killers[searchController.ply][0]) {
+        score = 900000;
+    }
+    else if (searchController.killers[searchController.ply][1]) {
+        score = 800000;
+    }
+    else {
+        let piece = gameBoard.pieces[moveFrom(move)];
+        let toSq = moveTo(move);
+        score = searchController.history[piece][toSq];
+    }
+
     moves.push({ score, move });
 }
+
 function addEnPassantMove(move) {
-    let score = 0;
+    //MvvLva[Pieces.wp][Pieces.bp] == MvvLva[Pieces.bp][Pieces.wp]
+    let score = MvvLva[Pieces.wp][Pieces.bp] + 1000000;
     moves.push({ score, move });
 }
 
@@ -224,7 +258,7 @@ function addWhitePawnQuietMove(from, to) {
         addQuiteMove(buildMove(from, to, 0, Pieces.wb, 0));
         addQuiteMove(buildMove(from, to, 0, Pieces.wn, 0));
     }
-    else{
+    else {
         addQuiteMove(buildMove(from, to, 0, 0, 0));
     }
 }
@@ -236,7 +270,7 @@ function addBlackPawnQuietMove(from, to) {
         addQuiteMove(buildMove(from, to, 0, Pieces.bb, 0));
         addQuiteMove(buildMove(from, to, 0, Pieces.bn, 0));
     }
-    else{
+    else {
         addQuiteMove(buildMove(from, to, 0, 0, 0));
     }
 }
@@ -251,7 +285,7 @@ function addWhiteCaptureMove(from, to, capture) {
         addCaptureMove(buildMove(from, to, capture, Pieces.wb, 0));
         addCaptureMove(buildMove(from, to, capture, Pieces.wn, 0));
     }
-    else{
+    else {
         addCaptureMove(buildMove(from, to, capture, 0, 0));
     }
 }
@@ -263,7 +297,7 @@ function addBlackCaptureMove(from, to, capture) {
         addCaptureMove(buildMove(from, to, capture, Pieces.bb, 0));
         addCaptureMove(buildMove(from, to, capture, Pieces.bn, 0));
     }
-    else{
+    else {
         addCaptureMove(buildMove(from, to, capture, 0, 0));
     }
 }

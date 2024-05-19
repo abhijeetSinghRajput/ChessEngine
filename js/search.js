@@ -9,161 +9,232 @@ searchController.start;
 searchController.stop;
 searchController.best;
 searchController.thinking;
+searchController.ply;
+searchController.killers = new Array(MaxDepth); //killer[ply][0/1];
+searchController.history = new Array(13); //
+
+
+searchController.clear = function() {
+	for(let i = 0; i<this.killers.length; ++i){
+		this.killers[i] = new Array(2).fill(null);
+	}
+	
+	for(let i = 0; i<this.history.length; ++i){
+		this.history[i] = new Array(120).fill(0);
+	}
+	
+	this.ply = 0;
+	this.nodes = 0;
+	this.fh = 0;
+	this.fhf = 0;
+	this.start = Date.now();
+	this.stop = false;
+}
+searchController.clear();
+
 
 function searchPosition() {
-    let bestMove = null;
-    let bestScore = -Infinite;
+	
+	let bestMove = null;
+	let bestScore = -Infinite;
+	searchController.clear();
+	PvTable.clear();
+	
+	let line;
+	searchController.depth = 5;
 
-    for (let depth = 1; depth <= searchController.depth; ++depth) {
-        let score = alphaBeta(-Infinite, Infinit, depth);
-        if (searchController.stop) break;
+	for (let depth = 1; depth <= searchController.depth; ++depth) {
+		bestScore = alphaBeta(-Infinite, Infinite, depth);
 
-        bestScore = score;
-        bestMove = PVTable.getMove();
+		if (searchController.stop) break;
 
-    }
+		bestMove = PvTable.getMove();
+		line = 'D:' + depth + ' Best:' + moveStr(bestMove) + ' Score:' + bestScore +
+			' nodes:' + searchController.nodes;
 
-    searchController.best = bestMove;
-    searchController.thinking = false;
+		line += ' ' + PvTable.getBestMoveTillDepth(depth).join(' ');
+		if(depth!=1) {
+			line += (" Ordering:" + ((searchController.fhf/searchController.fh)*100).toFixed(2) + "%");
+		}
+		console.log(line);
+
+	}
+
+
+	searchController.best = bestMove;
+	searchController.thinking = false;
 }
+
+
+
+
+
 
 function alphaBeta(alpha, beta, depth) {
-    searchController.nodes++;
-    if (depth <= 0) {
-        return quiescence();
-    }
+	if (depth <= 0) {
+		return quiescence(alpha, beta);
+	}
 
-    if(isReperation() || gameBoard.fifyMove >= 100) {
-        return 0;
-    }
-    if (nodes % 2048 == 0) checkTimeUp();
+	if ((searchController.nodes % 2048) == 0) {
+		checkTimeUp();
+	}
 
-    if (gameBoard.history.length >= MaxDepth) {
-        return evalPosition();
-    }
-    if(gameBoard.checkSq != Squares.noSq){
-        ++depth;
-    }
+	searchController.nodes++;
 
-    let score = -Infinite;
-    let legalMove = 0;
-    let prevAlpha = alpha;
-    let bestMove = null;
-    const moveList = generateMoves();
-    //priorities the move
-    const pvMove = PVTable.getMove();
-    if(pvMove){
-        for(const moveObj of moveList){
-            if(moveObj.move == pvMove){
-                moveObj.score = 2000000;
-                break;
-            }
-        }
-    }
-    moveList.sort((a, b) => b.score - a.score);
-    for (const {move} of moveList) {
-        if (doMove(move) == false) {
-            continue;
-        }
-        legalMove++;
-        score = -alphaBeta(beta, alpha, depth - 1);
+	if ((isRepetition() || gameBoard.fiftyMove >= 100) && searchController.ply != 0) {
+		return 0;
+	}
 
-        undoMove();
-        if (searchController.stop) return 0;
+	if (searchController.ply >= MaxDepth) {
+		return evalPosition();
+	}
 
-        if (score > alpha) {
-            if (score >= beta) {
-                if (legalMove == 1) {
-                    searchController.fhf++;
-                }
-                else {
-                    searchController.fh++;
-                }
-                //update killer move ...
-                return beta;
-            }
-            alpha = score;
-            bestMove = move;
-            //update history table ...
-        }
-    }
+	if (gameBoard.checkSq != Squares.noSq) {
+		++depth;
+	}
 
-    if(!legalMove){
-        //checkmate
-        if(gameBoard.checkSq != Squares.noSq){
-            return -Mate + gameBoard.history.length;
-        }
-        //stalemate
-        else{
-            return 0;
-        }
-    }
-    if (alpha != prevAlpha) {
-        PVTable.addMove(move);
-    }
-    return alpha;
+	let score = -Infinite;
+
+	const moves = generateMoves();
+	let legalMove = 0;
+	const prevAlpha = alpha;
+	let bestMove = null;
+
+	//prioties the moves having high score
+	moves.sort((a, b) => (b.score - a.score));
+
+	for (const { move } of moves) {
+
+		if (!doMove(move)) continue;
+		legalMove++;
+		searchController.ply++;
+		score = -alphaBeta(-beta, -alpha, depth - 1);
+
+		undoMove();
+		searchController.ply--;
+
+		if (searchController.stop) return 0;
+
+		if (score > alpha) {
+			if (score >= beta) {
+				if (legalMove == 1) {
+					searchController.fhf++;
+				}
+				searchController.fh++;
+				//non capturing move prunning the brach
+				if(!(move & CaptureFlag)){
+					searchController.killers[searchController.ply][1] = searchController.killers[searchController.ply][0];
+					searchController.killers[searchController.ply][0] = move;
+				}
+
+				return beta;
+			}
+
+			//non capturing move improving the alpha
+			if(!(move & CaptureFlag)){
+				let piece = gameBoard.pieces[moveFrom(move)];
+				let toSq = moveTo(move);
+				searchController.history[piece][toSq]  += depth * depth;
+			}
+
+			alpha = score;
+			bestMove = move;
+		}
+	}
+
+	if (legalMove == 0) {
+		if (gameBoard.checkSq != Squares.noSq) {
+			return -Mate + searchController.ply;
+		} else {
+			return 0;
+		}
+	}
+
+	if (alpha != prevAlpha) {
+		PvTable.addMove(bestMove);
+	}
+
+	return alpha;
 }
 
-function quiescence(alpha, beta){
-    if(searchController.nodes % 2048 == 0) checkTimeUp();
-    searchController.nodes++;
 
-    if(isReperation() || gameBoard.fifyMove >= 100) return 0;
-    if(gameBoard.history.length >= MaxDepth) return evalPosition();
+function quiescence(alpha, beta) {
 
-    var score = evalPosition();
-    if(score >= beta) return beta;
-    if(score > alpha) return score;
+	if ((searchController.nodes % 2048) == 0) {
+		checkTimeUp();
+	}
 
-    let bestMove = null;
-    let prevAlpha = alpha;
-    let legalMove = 0;
+	searchController.nodes++;
 
-    const captureMoves = generateCaptureMoves();
-    captureMoves.sort((a, b) => b.score - a.score);
+	if ((isRepetition() || gameBoard.fiftyMove >= 100) && searchController.ply != 0) {
+		return 0;
+	}
 
-    for(const {move} of captureMoves){
-        if(doMove(move) == false){
-            continue;
-        }
-        legalMove++;
-        score = -quiescence(-beta, -alpha);
+	if (searchController.ply >= MaxDepth) {
+		return evalPosition();
+	}
 
-        undoMove();
-        if(searchController.stop) return 0;
+	let score = evalPosition();
 
-        if(score > alpha){
-            if(score >= beta){
-                if(legalMove == 1){
-                    searchController.fhf++;
-                }
-                searchController.fh++;
-                return beta;
-            }
-            alpha = score;
-            bestMove = move;
-        }
-    }
+	if (score >= beta) return beta;
+	if (score > alpha) alpha = score;
 
-    if(alpha != prevAlpha){
-        PVTable.addMove(bestMove);
-    }
 
-    return alpha;
+	let legalMove = 0;
+	let prevAlpha = alpha;
+	let bestMove = null;
+	let moves = generateCaptureMoves();
+
+	//prioties the move having high score
+	moves.sort((a, b) => (b.score - a.score));
+
+	for (const { move } of moves) {
+		if (!doMove(move)) continue;
+		legalMove++;
+		searchController.ply++;
+
+		score = -quiescence(-beta, -alpha);
+
+		undoMove();
+		searchController.ply--;
+
+		if (searchController.stop) return 0;
+
+		if (score > alpha) {
+			if (score >= beta) {
+				if (legalMove == 1) {
+					searchController.fhf++;
+				}
+				searchController.fh++;
+				return beta;
+			}
+			alpha = score;
+			bestMove = move;
+		}
+	}
+
+	if (alpha != prevAlpha) {
+		PvTable.addMove(bestMove);
+	}
+
+	return alpha;
+
 }
 
 function checkTimeUp() {
-    if ((Date.now() - searchController.start) >= searchController.time) {
-        searchController.stop = true;
-    }
+	if ((Date.now() - searchController.start) > searchController.time) {
+		searchController.stop = true;
+	}
 }
 
-function isReperation() {
-    //max iteration 64, because max depth is 64
-    for (const { positionKey } of gameBoard.history) {
-        if (gameBoard.positionKey === positionKey) {
-            return true;
-        }
-    }
-    return false;
+function isRepetition() {
+	let hisPly = gameBoard.history.length;
+	for(let i = hisPly - gameBoard.fiftyMove; i < hisPly - 1; ++i) {
+		if(gameBoard.positionKey == gameBoard.history[i].positionKey) {
+			return true;
+		}
+	}
+
+	return false;
 }
+

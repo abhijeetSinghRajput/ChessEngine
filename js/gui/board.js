@@ -400,7 +400,9 @@ function moveNotation(move, checkMate = false) {
 
     function getDisambiguation(from, to) {
         let piece = gameBoard.pieces[to];
-        const samePieceMove = [from];
+        const samePieceMove = [];
+        //since the move has been performed. so take back the piece
+        movePiece(to, from);
 
         if (PieceType[piece] === 'n' || PieceType[piece] === 'k') {
             for (const direction of PieceDirections[piece]) {
@@ -424,6 +426,9 @@ function moveNotation(move, checkMate = false) {
                 }
             }
         }
+
+        // move the piece to actual position
+        movePiece(from, to);
 
         //no other piece able to cause ambiguity
         if (samePieceMove.length === 1) {
