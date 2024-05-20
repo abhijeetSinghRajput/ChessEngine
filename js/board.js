@@ -138,7 +138,6 @@ function parseFen(fen) {
 
     //assign a unique key for each different position
     gameBoard.positionKey = generatePositionKey();
-    initPawnMask();//get bitboard for pawn
 }
 
 
@@ -178,6 +177,7 @@ function updateMaterial() {
             gameBoard.material[PieceColor[piece]] += PieceValue[piece];
         }
     }
+    PawnBitBoard.init();
 }
 
 function printBoard() {
@@ -299,18 +299,4 @@ function isUnderAttack(sq, attakingSide) {
     }
 
     return false;
-}
-
-function initPawnMask() {
-    for (let sq of gameBoard.pieceList[Pieces.wp]) {
-        sq = Sq120To64[sq];
-        PawnBitBoard[Color.white] |= (1n << BigInt(sq));
-    }
-
-    for (let sq of gameBoard.pieceList[Pieces.bp]) {
-        sq = Sq120To64[sq];
-        PawnBitBoard[Color.black] |= (1n << BigInt(sq));
-    }
-
-    PawnBitBoard[Color.both] = PawnBitBoard[Color.white] | PawnBitBoard[Color.black];
 }

@@ -1,4 +1,4 @@
-var PawnTable = [
+const PawnTable = [
     0, 0, 0, 0, 0, 0, 0, 0,
     10, 10, 0, -10, -10, 0, 10, 10,
     5, 0, 0, 5, 5, 0, 0, 5,
@@ -10,7 +10,7 @@ var PawnTable = [
 ];
 
 
-var KnightTable = [
+const KnightTable = [
     0, -10, 0, 0, 0, 0, -10, 0,
     0, 0, 0, 5, 5, 0, 0, 0,
     0, 0, 10, 10, 10, 10, 0, 0,
@@ -21,7 +21,7 @@ var KnightTable = [
     0, 0, 0, 0, 0, 0, 0, 0
 ];
 
-var BishopTable = [
+const BishopTable = [
     0, 0, -10, 0, 0, -10, 0, 0,
     0, 0, 0, 10, 10, 0, 0, 0,
     0, 0, 10, 15, 15, 10, 0, 0,
@@ -32,7 +32,7 @@ var BishopTable = [
     0, 0, 0, 0, 0, 0, 0, 0
 ];
 
-var RookTable = [
+const RookTable = [
     0, 0, 5, 10, 10, 5, 0, 0,
     0, 0, 5, 10, 10, 5, 0, 0,
     0, 0, 5, 10, 10, 5, 0, 0,
@@ -43,7 +43,10 @@ var RookTable = [
     0, 0, 5, 10, 10, 5, 0, 0
 ];
 
-var BishopPair = 40;
+const BishopPair = 40;
+const PawnIsolated = -10;
+const PawnPassed = [0, 5, 10, 20, 35, 60, 100, 200];
+const EndGame_Material = (1 * PieceValue[Pieces.wr]) + (2 * PieceValue[Pieces.wn]) + (2 * PieceValue[Pieces.wp]) + (PieceValue[Pieces.wk]);
 
 
 function evalPosition() {
@@ -52,9 +55,24 @@ function evalPosition() {
     //pawn
     for (const sq of gameBoard.pieceList[Pieces.wp]) {
         score += PawnTable[Sq120To64[sq]];
+
+        if ((IsolatedBitMask[Sq120To64[sq]] & PawnBitBoard[Color.white]) == 0) {
+            score += PawnIsolated;
+        }
+
+        if ((PassedPawnBitMask[Color.white][Sq120To64[sq]] & PawnBitBoard[Color.black]) == 0) {
+            score += PawnPassed[rankOf(sq)];
+        }
     }
     for (const sq of gameBoard.pieceList[Pieces.bp]) {
         score -= PawnTable[Mirror64[Sq120To64[sq]]];
+        if ((IsolatedBitMask[Sq120To64[sq]] & PawnBitBoard[Color.black]) == 0) {
+            score -= PawnIsolated;
+        }
+
+        if ((PassedPawnBitMask[Color.black][Sq120To64[sq]] & PawnBitBoard[Color.white]) == 0) {
+            score -= PawnPassed[7 - rankOf(sq)];
+        }
     }
 
     //knight

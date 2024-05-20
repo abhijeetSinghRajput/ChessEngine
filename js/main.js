@@ -5,10 +5,9 @@
     // StartingFen = '2k1r2r/Bpq3pp/3b4/3Bp3/8/7b/PPP1QP2/R3R1K1 w - -';
 
     //fen for testing move ordering
-    // StartingFen = 'rnb1k2r/pp2qppp/3p1n2/2pp2B1/1bP5/2N1P3/PP2NPP/R2QKB1R w KQkq'
+    // StartingFen = 'rnb1k2r/pp2qppp/3p1n2/2pp2B1/1bp5/2N1P3/PP2NPPP/R2QKB1R w KQkq -';
     // StartingFen = '2rr3k/pp3pp1/1nnqbN1p/3pN3/2pP4/2P3Q1/PPB4P/R4RK1 w - -';
-    // StartingFen = '1br3k1/p4p2/2p1r3/3p1b2/3Bn1p1/1P2P1Pq/P3Q1BP/2R1NRK1 b - -';
-
+    // StartingFen = 'r1bq2rk/pp3pbp/2p1p1pQ/7P/3P4/2PB1N2/PP3PPR/2KR4 w - -';
     parseFen(StartingFen);
     gui.renderPieces();
 
@@ -23,13 +22,70 @@
 })();
 
 function init() {
-    initSquareSwitch();
-    initBitLines();
-    initPassedPawnMask();
-    initIsolatedMask();
+    init_SquareSwitch();
+    init_FileBitMask();
+    init_RankBitMask();
+    init_PassedPawnBitMask();
+    init_IsolatedBitMask();
 }
 
-function initSquareSwitch() {
+function init_FileBitMask() {
+    for (let file = FileA; file <= FileH; ++file) {
+        for(let rank = Rank1; rank <= Rank8; ++rank) {
+            FileBitMask[file] |= (1n << BigInt(file)) << BigInt(8 * rank);
+        }
+    }
+}
+
+function init_RankBitMask(){
+    for(let rank = Rank1; rank <= Rank8; ++rank){
+        RankBitMask[rank] |= 255n << BigInt(rank * 8);
+    }
+}
+
+function init_IsolatedBitMask(){
+    for(let sq = 0; sq < 64; sq++){
+        let file = fileOf(Sq64To120[sq]);
+        if(file > FileA){
+            IsolatedBitMask[sq] |= FileBitMask[file - 1];
+        }
+        if(file < FileH){
+            IsolatedBitMask[sq] |= FileBitMask[file + 1];
+        }
+    }
+}
+
+function init_PassedPawnBitMask() {
+    for (let i = 0; i < 2; ++i) {
+        PassedPawnBitMask[i] = new Array(64).fill(0n);
+
+        for (let sq = 0; sq < 64; sq++) {
+            let file = fileOf(Sq64To120[sq]);
+            let rank = rankOf(Sq64To120[sq]);
+
+            PassedPawnBitMask[i][sq] |= FileBitMask[file];
+            if (file > FileA) {
+                PassedPawnBitMask[i][sq] |= FileBitMask[file - 1];
+            }
+            if (file < FileH) {
+                PassedPawnBitMask[i][sq] |= FileBitMask[file + 1];
+            }
+
+            if(i == Color.white){
+                while (rank >= Rank1) {
+                    PassedPawnBitMask[i][sq] &= ~RankBitMask[rank--];
+                }
+            }
+            else{
+                while (rank <= Rank8) {
+                    PassedPawnBitMask[i][sq] &= ~RankBitMask[rank++];
+                }
+            }
+        }
+    }
+}
+
+function init_SquareSwitch() {
     for (let rank = Rank1; rank <= Rank8; ++rank) {
         for (let file = FileA; file <= FileH; ++file) {
             let sq120 = fileRank2Sq(file, rank);
@@ -39,61 +95,6 @@ function initSquareSwitch() {
         }
     }
 }
-
-function initBitLines() {
-    for (let file = FileA; file <= FileH; ++file) {
-        let num = 0n;
-        for (let i = 0; i < 8; ++i) {
-            num |= 1n << (BigInt(file) + BigInt(i * 8));
-        }
-        FileMask[file] = num;
-    }
-
-    let num = 255n;
-    for (let rank = Rank1; rank <= Rank8; ++rank) {
-        RankMask[rank] = (num << BigInt(rank * 8));
-    }
-}
-
-function initIsolatedMask(){
-    for(const sq of Sq64To120){
-        let currFile = fileOf(sq);
-        let leftFileMask = FileMask[currFile - 1];
-        let rightFileMask = FileMask[currFile + 1];
-        let mask = 0n;
-        if(leftFileMask) mask |= leftFileMask;
-        if(rightFileMask) mask |= rightFileMask;
-        IsolatedMask[sq] = mask;
-    }
-};
-
-function initPassedPawnMask() {
-    PassedPawnMask[Color.white] = new Array(120);
-    PassedPawnMask[Color.black] = new Array(120);
-
-    for (const sq of Sq64To120) {
-        let currFile = fileOf(sq);
-        let currFileMask = FileMask[currFile];
-        let leftFileMask = FileMask[currFile - 1];
-        let rightFileMask = FileMask[currFile + 1];
-
-        if (leftFileMask) currFileMask |= leftFileMask;
-        if (rightFileMask) currFileMask |= rightFileMask;
-
-        let whitePassedMask = currFileMask;
-        for (let rank = rankOf(sq); rank >= Rank1; --rank) {
-            whitePassedMask &= (~RankMask[rank]);
-        }
-
-        let blackPassedMask = currFileMask;
-        for (let rank = rankOf(sq); rank <= Rank8; ++rank) {
-            blackPassedMask &= (~RankMask[rank]);
-        }
-
-        PassedPawnMask[Color.white][sq] = whitePassedMask;
-        PassedPawnMask[Color.black][sq] = blackPassedMask;
-    }
-};
 
 
 function printArr(arr, rows, cols) {

@@ -722,7 +722,9 @@ textarea::-webkit-scrollbar {
     .game-over {
         width: 92vw;
     }
-
+    #upload-fen-input {
+        padding: 8px;
+    }
     .board-layout {
         margin: 0 16px;
     }

@@ -63,15 +63,6 @@ function moveDetail(move) {
 
 function movePiece(from, to) {
     let piece = gameBoard.pieces[from];
-    
-    if(piece == Pieces.wp){
-        PawnBitBoard[Color.white] &= ~(1n << BigInt(Sq120To64[from]));
-        PawnBitBoard[Color.white] |= (1n << BigInt(Sq120To64[to]));
-    }
-    else if(piece == Pieces.bp){
-        PawnBitBoard[Color.black] &= ~(1n << BigInt(Sq120To64[from]));
-        PawnBitBoard[Color.black] |= (1n << BigInt(Sq120To64[to]));
-    }
 
     hashPiece(from, piece);
     gameBoard.pieces[from] = Pieces.empty;
@@ -96,13 +87,6 @@ function addPiece(sq, piece) {
     gameBoard.material[PieceColor[piece]] += PieceValue[piece];
     gameBoard.pieceList[piece].push(sq);
     gameBoard.pieceCount[piece]++;
-
-    if(piece == Pieces.wp){
-        PawnBitBoard[Color.white] |= (1n << BigInt(Sq120To64[sq]));
-    }
-    else if(piece == Pieces.bp){
-        PawnBitBoard[Color.black] |= (1n << BigInt(Sq120To64[sq]));
-    }
 }
 
 function removePiece(sq) {
@@ -120,13 +104,6 @@ function removePiece(sq) {
         }
     }
     gameBoard.pieceCount[piece]--;
-
-    if(piece == Pieces.wp){
-        PawnBitBoard[Color.white] &= ~(1n << BigInt(Sq120To64[sq]));
-    }
-    else if(piece == Pieces.bp){
-        PawnBitBoard[Color.black] &= ~(1n << BigInt(Sq120To64[sq]));
-    }
 }
 
 
