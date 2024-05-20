@@ -316,7 +316,7 @@ body::-webkit-scrollbar {
 .download-window textarea {
     color: #ffffffA1;
     background-color: #3c3a38;
-    border: 1px solid #ffffff4d;
+    border: 1px solid #777574;
     outline: none;
     padding: 4px 8px;
     font-size: 14px;
@@ -603,7 +603,17 @@ textarea::-webkit-scrollbar {
     border: 2px dashed #ffffffA1;
 }
 
-
+#upload-fen-input{
+    color: #ffffffA1;
+    background-color: #3c3a38;
+    border: none;
+    outline: none;
+    padding: 4px 8px;
+    font-size: 14px;
+    border-radius: 2px;
+    margin-bottom: 6px;
+    width: 100%;
+}
 
 .upload textarea {
     color: #ffffffA1;
@@ -616,7 +626,14 @@ textarea::-webkit-scrollbar {
     resize: none;
     max-height: 300px;
     border: none;
-    border-bottom: 1px solid #ffffff4d;
+    border-bottom: 1px solid #777574;
+}
+#upload-bar{
+    width: 0%;
+    height: 3px;
+    margin-top: -3px;
+    background-color: #777574;
+    transition: width .3s;
 }
 
 

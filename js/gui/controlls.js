@@ -13,6 +13,12 @@ const closeResult = gameOver.querySelector('.close');
 const pgnOutput = downloadWindow.querySelector('.pgn textarea');
 const fenOutput = downloadWindow.querySelector('.fen input');
 
+const uploadPgnBtn = document.getElementById('upload-pgn-btn');
+const uploadPgnInput = document.getElementById('upload-pgn-input');
+const uploadPgnContainer = document.querySelector('.upload');
+const uploadFenInput = document.getElementById('upload-fen-input');
+const uploadProgressBar = document.getElementById('upload-bar');
+
 document.addEventListener('mousedown', (e) => {
     if (!gameOver.contains(e.target)) {
         gameOver.classList.remove('active');
@@ -33,6 +39,7 @@ function showConfirmWindow() {
     backdrop.classList.add('active');
     confirmWindow.classList.add('active');
     downloadWindow.classList.remove('active');
+    uploadProgressBar.style.width = `0%`;
 }
 
 function showDownloadWindow() {
@@ -59,17 +66,17 @@ cancelBtn.addEventListener('click', () => {
 })
 
 confirmBtn.addEventListener('click', () => {
-    removeBackdrop();
     if (uploadPgnInput.value) {
-        parsePGN(uploadPgnInput.value);
-        // try {
-        // } catch (error) {
-        //     alert(error);
-        // }
+        try {
+            parsePGN(uploadPgnInput.value);
+        } catch (error) {
+            alert(error);
+        }
     }
     else {
-        newGame();
+        newGame(uploadFenInput.value);
     }
+    removeBackdrop();
 })
 
 downloadOptions.forEach(option => {
@@ -131,9 +138,6 @@ function flipCoordinates() {
 
 
 
-const uploadPgnBtn = document.getElementById('upload-pgn-btn');
-const uploadPgnInput = document.getElementById('upload-pgn-input');
-const uploadPgnContainer = document.querySelector('.upload');
 
 
 uploadPgnContainer.addEventListener('dragover', (e) => {
@@ -148,6 +152,7 @@ uploadPgnContainer.addEventListener('drop', (e) => {
     e.preventDefault();
     uploadPgnContainer.classList.remove('file-hover');
     const file = e.dataTransfer.files[0];
+    resetProgressWidth();
     readPgnFile(file);
 });
 
@@ -157,24 +162,59 @@ uploadPgnBtn.addEventListener('click', () => {
     fileInput.click();
 })
 
-uploadPgnInput.addEventListener('input', updateConfirmButton);
+uploadPgnInput.addEventListener('input', () => {
+    uploadFenInput.value = '';
+    confirmBtn.textContent = (uploadPgnInput.value) ? 'load game' : 'new game';
+});
+uploadFenInput.addEventListener('input', () => {
+    uploadPgnInput.value = '';
+    confirmBtn.textContent = (uploadFenInput.value) ? 'load game' : 'new game';
+});
 
-fileInput.addEventListener('change', (e)=>{
+fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
+    resetProgressWidth();
     readPgnFile(file);
 });
 
 function readPgnFile(file) {
     if (!file) return;
+
+    confirmBtn.disabled = true;
+
+    if (!file.name.endsWith('.pgn')) {
+        alert('Please upload a valid PGN file.');
+        return;
+    }
+
     const reader = new FileReader();
     reader.addEventListener('load', (e) => {
         const pgn = e.target.result;
         uploadPgnInput.value = pgn;
-        updateConfirmButton();
-    })
+        uploadFenInput.value = '';
+
+        confirmBtn.textContent = (uploadPgnInput.value) ? 'load game' : 'new game';
+        confirmBtn.disabled = false;
+    });
+
+    reader.addEventListener('progress', (e) => {
+        if (e.lengthComputable) {
+            const progress = (e.loaded / e.total) * 100;
+            uploadProgressBar.style.width = `${progress}%`;
+        }
+    });
+
+    reader.addEventListener('error', (e) => {
+        console.error('File reading error:', e.target.error);
+        alert(e.target.error);
+    });
+
     reader.readAsText(file);
 }
 
-function updateConfirmButton() {
-    confirmBtn.textContent = (uploadPgnInput.value) ? 'load game' : 'new game';
+function resetProgressWidth(){
+    uploadProgressBar.style.transition = 'none';
+    uploadProgressBar.style.width = 0;
+    void uploadProgressBar.offsetWidth;
+    uploadProgressBar.style.transition = 'width .3s';
 }

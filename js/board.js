@@ -38,7 +38,58 @@ function resetBoard() {
     gameBoard.history = [];
 }
 
+function isValidFen(fen) {
+    const [position, side, castling, enPassant] = fen.split(' ');
+
+    const rows = position.split('/');
+    if (rows.length !== 8) {
+        throw new Error('FEN string should contain exactly 8 rows separated by slashes.');
+    }
+
+    const validPosition = rows.every(row => {
+        let count = 0;
+        for (let char of row) {
+            if (char >= '1' && char <= '8') {
+                count += parseInt(char);
+            } else if ('pnbrqkPNBRQK'.includes(char)) {
+                count++;
+            } else {
+                throw new Error(`Invalid character "${char}" found in FEN position.`);
+            }
+        }
+        return count === 8;
+    });
+
+    if (!validPosition) {
+        throw new Error('Each row in FEN position must sum to exactly 8 squares.');
+    }
+
+    if (!['w', 'b'].includes(side)) {
+        throw new Error('Side to move must be either "w" (white) or "b" (black).');
+    }
+
+    // Validate castling availability
+    if (!/^(-|[KQkq]{1,4})$/.test(castling)) {
+        throw new Error('Castling availability must be "-" or a combination of "K", "Q", "k", and "q".');
+    }
+
+    // Validate en passant target square
+    if (!/^(-|[a-h][36])$/.test(enPassant)) {
+        throw new Error('En passant target square must be "-" or a valid square (e.g., "e3", "d6").');
+    }
+
+    return true;
+}
+
 function parseFen(fen) {
+    try {
+        isValidFen(fen)
+    }
+    catch (error) {
+        console.error(error);
+        alert(error.message);
+        return;
+    }
     resetBoard();
 
     const [position, side, castlePermission, enPassantSq] = fen.split(' ');
@@ -198,11 +249,14 @@ function getFen() {
     }
 
     if (gameBoard.enPassantSq !== Squares.noSq) {
-        fen += ' ' + SquaresChar[gameBoard.enPassantSq];
+        fen += ' ' + SquaresChar[gameBoard.enPassantSq] + ' ';
     }
     else {
         fen += ' - '
     }
+    fen += gameBoard.fiftyMove + ' ';
+    //ply that visible on gui
+    fen += ply ? ply : 1;
     return fen;
 }
 
@@ -247,13 +301,13 @@ function isUnderAttack(sq, attakingSide) {
     return false;
 }
 
-function initPawnMask(){
-    for(let sq of gameBoard.pieceList[Pieces.wp]){
+function initPawnMask() {
+    for (let sq of gameBoard.pieceList[Pieces.wp]) {
         sq = Sq120To64[sq];
         PawnBitBoard[Color.white] |= (1n << BigInt(sq));
     }
 
-    for(let sq of gameBoard.pieceList[Pieces.bp]){
+    for (let sq of gameBoard.pieceList[Pieces.bp]) {
         sq = Sq120To64[sq];
         PawnBitBoard[Color.black] |= (1n << BigInt(sq));
     }

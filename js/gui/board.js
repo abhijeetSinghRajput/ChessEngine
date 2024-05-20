@@ -534,9 +534,19 @@ function threeFoldRep() {
 // =================================================================
 // ====================== Auxillury functions ======================
 // =================================================================
-function newGame() {
+function newGame(fen) {
+    if(!fen){
+        if(gameBoard.positionKey === 0x5300d2e1) return;
+        fen = StartingFen;
+    }
+
+    try{
+        parseFen(fen);
+    }catch(error){
+        alert(error);
+    }
+    
     resetGui();
-    parseFen(StartingFen);
     gui.renderPieces();
     GameStartSound.play();
 }
@@ -552,8 +562,8 @@ function resetGui() {
     removeAllMarker();
     const allCaptures = [...captures[0], ...captures[1]];
     for (const capture of allCaptures) {
-        let currentClass = capture.classList[1]; 
-        let newClass = currentClass.replace(/\d+$/, '0'); 
+        let currentClass = capture.classList[1];
+        let newClass = currentClass.replace(/\d+$/, '0');
         capture.classList.replace(currentClass, newClass);
     }
 }

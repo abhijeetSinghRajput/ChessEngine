@@ -1,15 +1,16 @@
 (function main() {
     init();
-    // StartingFen = 'r3k2r/pPppqpb11/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ';
+    //fen for perft test
+    // StartingFen = 'r3k2r/pPppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ';
     // StartingFen = '2k1r2r/Bpq3pp/3b4/3Bp3/8/7b/PPP1QP2/R3R1K1 w - -';
 
+    //fen for testing move ordering
     // StartingFen = 'rnb1k2r/pp2qppp/3p1n2/2pp2B1/1bP5/2N1P3/PP2NPP/R2QKB1R w KQkq'
     // StartingFen = '2rr3k/pp3pp1/1nnqbN1p/3pN3/2pP4/2P3Q1/PPB4P/R4RK1 w - -';
-    StartingFen = '1br3k1/p4p2/2p1r3/3p1b2/3Bn1p1/1P2P1Pq/P3Q1BP/2R1NRK1 b - -';
+    // StartingFen = '1br3k1/p4p2/2p1r3/3p1b2/3Bn1p1/1P2P1Pq/P3Q1BP/2R1NRK1 b - -';
+
     parseFen(StartingFen);
     gui.renderPieces();
-    // printBoard();
-    // console.log(evalPosition());
 
     // perftTest(4)
     // for (let depth = 1; depth <= 5; depth++) {
