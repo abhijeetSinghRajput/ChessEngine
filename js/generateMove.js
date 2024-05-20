@@ -228,10 +228,10 @@ function addCaptureMove(move) {
 
 function addQuiteMove(move) {
     let score = 0;
-    if (searchController.killers[searchController.ply][0]) {
+    if (searchController.killers[searchController.ply][0] == move) {
         score = 900000;
     }
-    else if (searchController.killers[searchController.ply][1]) {
+    else if (searchController.killers[searchController.ply][1] == move) {
         score = 800000;
     }
     else {
