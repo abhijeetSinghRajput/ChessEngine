@@ -47,15 +47,19 @@ searchController.clear = function () {
 searchController.clear();
 
 
-function searchPosition() {
+function searchPosition(thinkingTime = 2) {
 	let bestMove = null;
 	let bestScore = -Infinite;
+	let depth = 1;
 	searchController.clear();
 	PvTable.clear();
 
 	if(getMoveFromBook()) return;
+	searchController.depth = MaxDepth;
+	searchController.start = Date.now();
+	searchController.time = thinkingTime * 1000;
 
-	for (let depth = 1; depth <= searchController.depth; ++depth) {
+	for (depth = 1; depth <= searchController.depth; ++depth) {
 		bestScore = alphaBeta(-Infinite, Infinite, depth);
 
 		if (searchController.stop) break;
@@ -68,10 +72,9 @@ function searchPosition() {
 		if (depth != 1) {
 			line += (" Ordering:" + ((searchController.fhf / searchController.fh) * 100).toFixed(2) + "%");
 		}
-		console.log(line);
+		// console.log(line);
 
 	}
-
 
 	searchController.best = bestMove;
 	searchController.thinking = false;

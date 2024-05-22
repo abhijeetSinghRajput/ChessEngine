@@ -159,9 +159,8 @@ function dragOver(e) {
 // =========================== Play Move ===========================
 // =================================================================
 
-gui.doMove = function (move, { userMove = true, audio = true } = {}) {
+gui.doMove = function (move, { userMove = true, audio = true , engine = false} = {}) {
     if (!move) return;
-
     let fromSq = SquaresChar[moveFrom(move)];
     let toSq = SquaresChar[moveTo(move)];
 
@@ -209,7 +208,7 @@ gui.doMove = function (move, { userMove = true, audio = true } = {}) {
     }
 
     if (isGameOver()) {
-        if (userMove) {
+        if (userMove || engine) {
             gameOver.classList.add('active');
             addRecord(moveNotation(move, gameBoard.checkSq != Squares.noSq));
         }
@@ -217,10 +216,22 @@ gui.doMove = function (move, { userMove = true, audio = true } = {}) {
         return;
     }
 
+    if (audio) playSound(move);
+    
     if (userMove) {
         addRecord(moveNotation(move));
+        setTimeout(()=>{
+            searchPosition();
+            gui.doMove(searchController.best, {
+                userMove: false,
+                engine: true,
+            });
+        }, 200);
     }
-    if (audio) playSound(move);
+    if(engine){
+        addRecord(moveNotation(move));
+    }
+
 }
 
 gui.undoMove = function ({ audio = true } = {}) {
