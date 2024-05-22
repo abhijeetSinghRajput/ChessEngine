@@ -1,5 +1,24 @@
-const searchController = {};
+let book;
+fetch('../book.json')
+.then(response => response.json())
+.then(data => book = data)
+.catch(err => console.log(err));
 
+function getMoveFromBook(){
+	const positionKey = gameBoard.positionKey.toString(16);
+	// no move present for current position
+	if(!book[positionKey]) return false;
+	
+	// pick a random move from movelist
+	const moves = Object.keys(book[positionKey]);
+	const move = moves[Math.floor(Math.random() * moves.length)];
+
+	searchController.best = move;
+	searchController.thinking = false;
+	return true;
+}
+
+const searchController = {};
 searchController.nodes;
 searchController.fh;
 searchController.fhf;
@@ -29,14 +48,12 @@ searchController.clear();
 
 
 function searchPosition() {
-
 	let bestMove = null;
 	let bestScore = -Infinite;
 	searchController.clear();
 	PvTable.clear();
 
-	let line;
-	searchController.depth = 6;
+	if(getMoveFromBook()) return;
 
 	for (let depth = 1; depth <= searchController.depth; ++depth) {
 		bestScore = alphaBeta(-Infinite, Infinite, depth);
