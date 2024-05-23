@@ -267,3 +267,53 @@ function undoMove() {
 
     return move;
 }
+
+
+// NULL MOVE
+function doNullMove() {
+    if(gameBoard.checkSq != Squares.noSq) return;
+
+    gameBoard.history.push({
+        fiftyMove: gameBoard.fiftyMove,
+        positionKey: gameBoard.positionKey,
+        enPassantSq: gameBoard.enPassantSq,
+        castlePermission: gameBoard.castlePermission,
+        checkSq: gameBoard.checkSq,
+        move: null,
+    });
+
+    gameBoard.enPassantSq = Squares.noSq;
+
+    gameBoard.side ^= 1;
+    hashSide();
+}
+
+function undoNullMove(){
+    if (gameBoard.history.length === 0) {
+        return null;
+    }
+
+    const {
+        fiftyMove,
+        enPassantSq,
+        castlePermission,
+        checkSq,
+    } = gameBoard.history.pop();
+
+    if(gameBoard.enPassantSq != Squares.noSq) {
+        hashEnPassant();
+    }
+
+    gameBoard.castlePermission = castlePermission;
+    gameBoard.fiftyMove = fiftyMove;
+    gameBoard.enPassantSq = enPassantSq;
+    gameBoard.checkSq = checkSq;
+
+    if(gameBoard.enPassantSq != Squares.noSq) {
+        hashEnPassant();
+    }
+    gameBoard.side ^= 1;
+    hashSide();
+
+    return null;
+}

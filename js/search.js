@@ -1,14 +1,14 @@
 let book;
 fetch('../book.json')
-.then(response => response.json())
-.then(data => book = data)
-.catch(err => console.log(err));
+	.then(response => response.json())
+	.then(data => book = data)
+	.catch(err => console.log(err));
 
-function getMoveFromBook(){
+function getMoveFromBook() {
 	const positionKey = gameBoard.positionKey.toString(16);
 	// no move present for current position
-	if(!book[positionKey]) return false;
-	
+	if (!book[positionKey]) return false;
+
 	// pick a random move from movelist
 	const moves = Object.keys(book[positionKey]);
 	const move = moves[Math.floor(Math.random() * moves.length)];
@@ -47,14 +47,14 @@ searchController.clear = function () {
 searchController.clear();
 
 
-function searchPosition(thinkingTime = 2) {
+function searchPosition(thinkingTime = 3) {
 	let bestMove = null;
 	let bestScore = -Infinite;
 	let depth = 1;
 	searchController.clear();
 	PvTable.clear();
 
-	if(getMoveFromBook()) return;
+	if (getMoveFromBook()) return;
 	searchController.depth = MaxDepth;
 	searchController.start = Date.now();
 	searchController.time = thinkingTime * 1000;
@@ -72,7 +72,7 @@ function searchPosition(thinkingTime = 2) {
 		if (depth != 1) {
 			line += (" Ordering:" + ((searchController.fhf / searchController.fh) * 100).toFixed(2) + "%");
 		}
-		// console.log(line);
+		console.log(line);
 
 	}
 
@@ -85,7 +85,7 @@ function searchPosition(thinkingTime = 2) {
 
 let logs = 0;
 
-function alphaBeta(alpha, beta, depth) {
+function alphaBeta(alpha, beta, depth, { doNull = true } = {}) {
 	if (depth <= 0) {
 		return quiescence(alpha, beta);
 	}
@@ -104,11 +104,23 @@ function alphaBeta(alpha, beta, depth) {
 		return evalPosition();
 	}
 
-	if (gameBoard.checkSq != Squares.noSq) {
+	let inCheck = gameBoard.checkSq != Squares.noSq;
+	if (inCheck) {
 		++depth;
 	}
 
 	let score = -Infinite;
+
+	//NULL Move Pruning
+	if (doNull && !inCheck && searchController.ply && depth >= 4) {
+		doNullMove();
+		score = -alphaBeta(-beta, -beta + 1, depth - 4, { doNull: false });
+		undoNullMove();
+		if (searchController.stop) return 0;
+		if (score >= beta) {
+			return beta;
+		}
+	}
 
 	const moves = generateMoves();
 	let legalMove = 0;
@@ -127,7 +139,7 @@ function alphaBeta(alpha, beta, depth) {
 
 	for (let i = 0; i < moves.length; ++i) {
 		swapWithBest(i, moves);
-		if(logs++ < 200){
+		if (logs++ < 200) {
 		}
 		const move = moves[i].move;
 
@@ -140,7 +152,7 @@ function alphaBeta(alpha, beta, depth) {
 		searchController.ply--;
 
 		if (searchController.stop) return 0;
-		
+
 		if (score > alpha) {
 			if (score >= beta) {
 				if (legalMove === 1) searchController.fhf++;
@@ -163,7 +175,7 @@ function alphaBeta(alpha, beta, depth) {
 	}
 
 	if (legalMove == 0) {
-		if (gameBoard.checkSq != Squares.noSq) {
+		if (inCheck) {
 			return -Mate + searchController.ply;
 		} else {
 			return 0;
