@@ -8,7 +8,6 @@ let guiPieces = {};
 // =================================================================
 // ===================== Board Initializaation =====================
 // =================================================================
-
 gui.renderPieces = function () {
     document.querySelectorAll('#board>.piece').forEach(piece => piece.remove());
 
@@ -130,7 +129,11 @@ function drop(e) {
     if (move & PromotionFlag) {
         promotionMove = move;
         let file = fileOf(moveTo(move));
-        promotionWindow[gameBoard.side].classList.add(`file-${FileChar[file]}`);
+
+        const classList = promotionWindow[gameBoard.side].classList;
+        classList.remove(classList[2]);
+        classList.add(`file-${FileChar[file]}`);
+
         promotionWindow[gameBoard.side].style.display = 'flex';
         //remove the window if clicked outside
         document.addEventListener('mousedown', outSideClick);
@@ -158,8 +161,24 @@ function dragOver(e) {
 // =================================================================
 // =========================== Play Move ===========================
 // =================================================================
+const searchToggle = document.querySelector('.toggle-btn');
+let search = true;
+searchToggle.addEventListener('click', () => {
+    searchToggle.classList.toggle('active');
+    search = searchToggle.classList.contains('active');
+    
+    if (search && gameBoard.side == Color.black) {
+        setTimeout(() => {
+            searchPosition();
+            gui.doMove(searchController.best, {
+                userMove: false,
+                engine: true,
+            });
+        }, 200);
+    }
+})
 
-gui.doMove = function (move, { userMove = true, audio = true , engine = false} = {}) {
+gui.doMove = function (move, { userMove = true, audio = true, engine = false } = {}) {
     if (!move) return;
     let fromSq = SquaresChar[moveFrom(move)];
     let toSq = SquaresChar[moveTo(move)];
@@ -217,18 +236,22 @@ gui.doMove = function (move, { userMove = true, audio = true , engine = false} =
     }
 
     if (audio) playSound(move);
-    
+
     if (userMove) {
         addRecord(moveNotation(move));
-        setTimeout(()=>{
-            searchPosition();
-            gui.doMove(searchController.best, {
-                userMove: false,
-                engine: true,
-            });
-        }, 200);
+
+        if (search) {
+            setTimeout(() => {
+                searchPosition();
+                gui.doMove(searchController.best, {
+                    userMove: false,
+                    engine: true,
+                });
+            }, 200);
+        }
     }
-    if(engine){
+
+    if (engine) {
         addRecord(moveNotation(move));
     }
 
@@ -546,17 +569,15 @@ function threeFoldRep() {
 // ====================== Auxillury functions ======================
 // =================================================================
 function newGame(fen) {
-    if(!fen){
-        if(gameBoard.positionKey === 0x5300d2e1) return;
-        fen = StartingFen;
-    }
+    if (!fen) fen = StartingFen;
 
-    try{
+    try {
         parseFen(fen);
-    }catch(error){
+    } catch (error) {
+        console.error(error);
         alert(error);
     }
-    
+
     resetGui();
     gui.renderPieces();
     GameStartSound.play();
@@ -769,4 +790,6 @@ gui.updateCapture = function (move, { reverse = false } = {}) {
         )
     }
 }
+
+
 

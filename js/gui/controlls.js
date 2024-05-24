@@ -70,6 +70,7 @@ confirmBtn.addEventListener('click', () => {
         try {
             parsePGN(uploadPgnInput.value);
         } catch (error) {
+            console.error(error);
             alert(error);
         }
     }

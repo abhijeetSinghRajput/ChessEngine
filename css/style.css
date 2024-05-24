@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 :root {
     --bg-dark: #302e2b;
     --clr-dark: #262522;
@@ -28,7 +29,7 @@
 *,
 *::before,
 *::after {
-    font-family: sans-serif;
+    font-family: "Montserrat", sans-serif;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -82,6 +83,10 @@ body::-webkit-scrollbar {
     text-transform: capitalize;
     font-size: 13px;
     font-weight: 600;
+}
+
+.board-layout .player .toggle-btn {
+    margin-left: auto;
 }
 
 .player.white .profile-photo {
@@ -599,11 +604,12 @@ textarea::-webkit-scrollbar {
     border: 2px dashed transparent;
     transition: .2s;
 }
-.upload.file-hover{
+
+.upload.file-hover {
     border: 2px dashed #ffffffA1;
 }
 
-#upload-fen-input{
+#upload-fen-input {
     color: #ffffffA1;
     background-color: #3c3a38;
     border: none;
@@ -628,7 +634,8 @@ textarea::-webkit-scrollbar {
     border: none;
     border-bottom: 1px solid #777574;
 }
-#upload-bar{
+
+#upload-bar {
     width: 0%;
     height: 3px;
     margin-top: -3px;
@@ -652,6 +659,9 @@ textarea::-webkit-scrollbar {
 }
 
 
+.line::-webkit-scrollbar{
+    display: none;
+}
 
 
 
@@ -718,13 +728,20 @@ textarea::-webkit-scrollbar {
 
 @media screen and (max-width: 480px) {
 
+    .toggle-btn {
+        width: 38px;
+        height: 19px;
+    }
+
     .download-window,
     .game-over {
         width: 92vw;
     }
+
     #upload-fen-input {
         padding: 8px;
     }
+
     .board-layout {
         margin: 0 16px;
     }

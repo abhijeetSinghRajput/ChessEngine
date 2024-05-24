@@ -15,6 +15,40 @@
     user-select: none;
 }
 
+.toggle-btn {
+    background-color: #75757566;
+    color: #ffffffb8;
+    border: 1px solid #ffffff33;
+    width: 30px;
+    height: 16px;
+    border-radius: 50px;
+    position: relative;
+    cursor: pointer;
+    transition: all .3s ease; /* Unified transition */
+}
+
+.toggle-btn::before {
+    content: '';
+    position: absolute;
+    background-color: #e8e7e6;
+    border: 1px solid #dad7d5;
+    border-radius: 50%;
+    height: 120%;
+    aspect-ratio: 1;
+    top: 50%;
+    transform: translateY(-50%);
+    left: -1px;
+    transition: all .3s ease;
+}
+
+.toggle-btn.active {
+    background-color: #5d9948; 
+}
+
+.toggle-btn.active::before {
+    left: 100%;
+    transform: translate(-90%, -50%);
+}
 
 .btn i::before {
     font-size: 22px;

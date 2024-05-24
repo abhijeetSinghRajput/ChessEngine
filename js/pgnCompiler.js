@@ -9,6 +9,10 @@
 // }, 200);
 
 function parsePGN(pgn) {
+    if (search) {
+        search = false;
+        searchToggle.classList.remove('active');
+    }
     let result = [];
     const moves = extractMoves(pgn);
     newGame();
@@ -27,15 +31,42 @@ function parsePGN(pgn) {
         else if (piece == 'P') {
             fromSq = getPawnFromSq(match);
         }
-        else if (piece == 'K' || piece == 'N') {
-            fromSq = nonSlideFromSq(match);
-        }
         else {
-            fromSq = slideFromSq(match);
+            piece = Pieces[SideChar[gameBoard.side] + piece.toLowerCase()];
+            toSq = Squares[toSq];
+            if (fromFile !== '') fromFile = fromFile.charCodeAt(0) - 'a'.charCodeAt(0);
+            if (fromRank !== '') fromRank -= 1;
+
+            let moves = generateMoves().filter(({ move }) => {
+                return (
+                    gameBoard.pieces[moveFrom(move)] == piece &&
+                    moveTo(move) == toSq
+                )
+            });
+
+            //filtering illegal move
+            moves = moves.filter(({ move }) => {
+                if (!doMove(move)) return false;
+                undoMove();
+                return true;
+            })
+            if (moves.length == 1) {
+                gui.doMove(moves[0].move, { audio: false });
+            }
+            else {
+                moves = moves.filter(({ move }) => {
+                    return fileOf(moveFrom(move)) === fromFile || rankOf(moveFrom(move)) === fromRank
+                })
+                if (moves.length !== 1) {
+                    throw new Error(`${move} is a Illigal move`);
+                }
+                gui.doMove(moves[0].move, { audio: false });
+            }
+            continue;
         }
 
         const parsedMove = parseMove(fromSq, toSq);
-        if (!parseMove) {
+        if (!parsedMove) {
             throw new Error(`${move} is a Illigal move`);
         }
         // console.log(fromSq, toSq, parsedMove);
@@ -88,45 +119,7 @@ function getPawnFromSq({ fromFile, toSq, capture }) {
     }
 }
 
-function nonSlideFromSq({ piece, toSq, fromFile, fromRank }) {
-    toSq = Squares[toSq];
-    piece = Pieces[SideChar[gameBoard.side] + piece.toLowerCase()];
-    if (fromFile !== '') fromFile = fromFile.charCodeAt(0) - 'a'.charCodeAt(0);
-    if (fromRank !== '') fromRank -= 1;
 
-    for (const direction of PieceDirections[piece]) {
-        let targetSq = toSq + direction;
-        if (gameBoard.pieces[targetSq] == piece) {
-            if (fromFile === '' && fromRank === '') return SquaresChar[targetSq];
-            if (fileOf(targetSq) === fromFile || rankOf(targetSq) === fromRank) {
-                return SquaresChar[targetSq];
-            }
-        }
-    }
-}
-function slideFromSq({ piece, toSq, fromFile, fromRank }) {
-    toSq = Squares[toSq];
-    piece = Pieces[SideChar[gameBoard.side] + piece.toLowerCase()];
-    if (fromFile !== '') fromFile = fromFile.charCodeAt(0) - 'a'.charCodeAt(0);
-    if (fromRank !== '') fromRank -= 1;
-
-    for (const direction of PieceDirections[piece]) {
-        let targetSq = toSq + direction;
-        while (gameBoard.pieces[targetSq] != Squares.offBoard) {
-            if (gameBoard.pieces[targetSq] != Pieces.empty) {
-                if (gameBoard.pieces[targetSq] == piece) {
-
-                    if (fromFile === '' && fromRank === '') return SquaresChar[targetSq];
-                    if (fileOf(targetSq) === fromFile || rankOf(targetSq) === fromRank) {
-                        return SquaresChar[targetSq];
-                    }
-                }
-                break;
-            }
-            targetSq += direction;
-        }
-    }
-}
 
 
 
@@ -151,7 +144,7 @@ function getPGN() {
             case 'Black Won': pgn += '0-1'; break;
         }
     }
-    else if(pgn) {
+    else if (pgn) {
         pgn += '*';
     }
     return pgn;

@@ -46,7 +46,7 @@ searchController.clear = function () {
 
 searchController.clear();
 
-
+const depthSearched = document.querySelector('.board-layout .player .name sup');
 function searchPosition(thinkingTime = 3) {
 	let bestMove = null;
 	let bestScore = -Infinite;
@@ -65,21 +65,20 @@ function searchPosition(thinkingTime = 3) {
 		if (searchController.stop) break;
 
 		bestMove = PvTable.getMove();
-		line = 'D:' + depth + ' Best:' + moveStr(bestMove) + ' Score:' + bestScore +
-			' nodes:' + searchController.nodes;
+		// line = 'D:' + depth + ' Best:' + moveStr(bestMove) + ' Score:' + bestScore +
+		// 	' nodes:' + searchController.nodes;
 
-		line += ' ' + PvTable.getBestMoveTillDepth(depth).join(' ');
-		if (depth != 1) {
-			line += (" Ordering:" + ((searchController.fhf / searchController.fh) * 100).toFixed(2) + "%");
-		}
-		console.log(line);
-
+		// line += ' ' + PvTable.getBestMoveTillDepth(depth).join(' ');
+		// if (depth != 1) {
+		// 	line += (" Ordering:" + ((searchController.fhf / searchController.fh) * 100).toFixed(2) + "%");
+		// }
+		// console.log(line);
 	}
 
 	searchController.best = bestMove;
 	searchController.thinking = false;
+	depthSearched.textContent = depth;
 }
-
 
 
 
