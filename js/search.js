@@ -46,7 +46,6 @@ searchController.clear = function () {
 
 searchController.clear();
 
-const depthSearched = document.querySelector('.board-layout .player .name sup');
 function searchPosition(thinkingTime = 3) {
 	let bestMove = null;
 	let bestScore = -Infinite;
@@ -77,7 +76,7 @@ function searchPosition(thinkingTime = 3) {
 
 	searchController.best = bestMove;
 	searchController.thinking = false;
-	depthSearched.textContent = depth;
+	searchDepth[gameBoard.side].textContent = depth;
 }
 
 

@@ -9,9 +9,8 @@
 // }, 200);
 
 function parsePGN(pgn) {
-    if (search) {
-        searchToggle.click();
-    }
+    engine.stop();
+    
     let result = [];
     const moves = extractMoves(pgn);
     newGame();

@@ -161,24 +161,74 @@ function dragOver(e) {
 // =================================================================
 // =========================== Play Move ===========================
 // =================================================================
-const searchToggle = document.querySelector('.toggle-btn');
-let search = true;
-searchToggle.addEventListener('click', () => {
-    searchToggle.classList.toggle('active');
-    search = searchToggle.classList.contains('active');
-    
-    if (search && gameBoard.side == Color.black) {
-        setTimeout(() => {
-            searchPosition();
-            gui.doMove(searchController.best, {
-                userMove: false,
-                engine: true,
-            });
-        }, 200);
-    }
-})
 
-gui.doMove = function (move, { userMove = true, audio = true, engine = false } = {}) {
+const engine = {
+
+    //(-1 none) (0 white) (1 black) (2 both)
+    side: Color.both,
+    isRunning: false,
+
+    updateSide: function () {
+        let blackActive = blackBotToggle.classList.contains('active');
+        let whiteActive = whiteBotToggle.classList.contains('active');
+        
+        if (blackActive && whiteActive) {
+            this.isRunning = true;
+            this.side = Color.both;
+        }
+        else if (!blackActive && !whiteActive) {
+            this.isRunning = false;
+            this.side = -1;
+        }
+        else if (whiteActive) {
+            this.isRunning = true;
+            this.side = Color.white;
+        }
+        else {
+            this.isRunning = true;
+            this.side = Color.black;
+        }
+    },
+    stop() {
+        searchDepth[0].textContent = '';
+        searchDepth[0].textContent = '';
+
+        this.isRunning = false;
+        this.side = -1;
+        blackBotToggle.classList.remove('active');
+        whiteBotToggle.classList.remove('active');
+    },
+    play: function () {
+        if (!this.isRunning) return;
+
+        if (this.side == Color.both || this.side == gameBoard.side) {
+            //wait 200 ms to DOM content load
+            setTimeout(() => {
+                searchPosition();
+                gui.doMove(searchController.best, {
+                    userMove: false,
+                    engineMove: true,
+                })
+            }, 200);
+        }
+    }
+}
+const whiteBotToggle = document.getElementById('whiteBot')
+const blackBotToggle = document.getElementById('blackBot')
+const searchDepth = [
+    document.querySelector('.player.white sup#searchDepth'),
+    document.querySelector('.player.black sup#searchDepth')
+];
+
+for (const botToggle of [whiteBotToggle, blackBotToggle]) {
+    botToggle.addEventListener('click', () => {
+        botToggle.classList.toggle('active');
+        engine.updateSide();
+        engine.play();
+    })
+}
+
+gui.doMove = function (move, { userMove = true, engineMove = false, audio = true } = {}) {
     if (!move) return;
     let fromSq = SquaresChar[moveFrom(move)];
     let toSq = SquaresChar[moveTo(move)];
@@ -227,7 +277,7 @@ gui.doMove = function (move, { userMove = true, audio = true, engine = false } =
     }
 
     if (isGameOver()) {
-        if (userMove || engine) {
+        if (userMove || engineMove) {
             gameOver.classList.add('active');
             addRecord(moveNotation(move, gameBoard.checkSq != Squares.noSq));
         }
@@ -237,24 +287,10 @@ gui.doMove = function (move, { userMove = true, audio = true, engine = false } =
 
     if (audio) playSound(move);
 
-    if (userMove) {
+    if (userMove || engineMove) {
         addRecord(moveNotation(move));
-
-        if (search) {
-            setTimeout(() => {
-                searchPosition();
-                gui.doMove(searchController.best, {
-                    userMove: false,
-                    engine: true,
-                });
-            }, 200);
-        }
+        engine.play();
     }
-
-    if (engine) {
-        addRecord(moveNotation(move));
-    }
-
 }
 
 gui.undoMove = function ({ audio = true } = {}) {
@@ -470,7 +506,7 @@ function moveNotation(move, checkMate = false) {
         }
 
         movePiece(to, from);
-        samePieceMove = samePieceMove.filter((sq)=>{
+        samePieceMove = samePieceMove.filter((sq) => {
             //move the piece to 'to' and check is it ligal
             movePiece(sq, to);
             let king = gameBoard.pieceList[Kings[gameBoard.side ^ 1]][0];
@@ -484,7 +520,7 @@ function moveNotation(move, checkMate = false) {
         if (samePieceMove.length === 1) {
             return '';
         }
-        
+
         let sameRank = samePieceMove.filter(sq => rankOf(from) === rankOf(sq));
         let sameFile = samePieceMove.filter(sq => fileOf(from) === fileOf(sq));
 
@@ -607,7 +643,9 @@ function resetGui() {
     nodeList = [];
     records.innerHTML = '';
     guiPieces = {};
-	depthSearched.textContent = '';
+
+    engine.stop();
+
     removeAllMarker();
     const allCaptures = [...captures[0], ...captures[1]];
     for (const capture of allCaptures) {
