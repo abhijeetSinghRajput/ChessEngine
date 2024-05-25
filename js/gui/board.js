@@ -434,7 +434,7 @@ function moveNotation(move, checkMate = false) {
 
     function getDisambiguation(from, to) {
         let piece = gameBoard.pieces[to];
-        const samePieceMove = [];
+        let samePieceMove = [];
         //since the move has been performed. so take back the piece
         movePiece(to, from);
 
@@ -469,6 +469,22 @@ function moveNotation(move, checkMate = false) {
             return '';
         }
 
+        movePiece(to, from);
+        samePieceMove = samePieceMove.filter((sq)=>{
+            //move the piece to 'to' and check is it ligal
+            movePiece(sq, to);
+            let king = gameBoard.pieceList[Kings[gameBoard.side ^ 1]][0];
+            let legal = !isUnderAttack(king, gameBoard.side);
+            //move the piece back
+            movePiece(to, sq);
+            return legal;
+        })
+        movePiece(from, to);
+
+        if (samePieceMove.length === 1) {
+            return '';
+        }
+        
         let sameRank = samePieceMove.filter(sq => rankOf(from) === rankOf(sq));
         let sameFile = samePieceMove.filter(sq => fileOf(from) === fileOf(sq));
 
@@ -591,6 +607,7 @@ function resetGui() {
     nodeList = [];
     records.innerHTML = '';
     guiPieces = {};
+	depthSearched.textContent = '';
     removeAllMarker();
     const allCaptures = [...captures[0], ...captures[1]];
     for (const capture of allCaptures) {

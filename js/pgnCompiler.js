@@ -10,8 +10,7 @@
 
 function parsePGN(pgn) {
     if (search) {
-        search = false;
-        searchToggle.classList.remove('active');
+        searchToggle.click();
     }
     let result = [];
     const moves = extractMoves(pgn);
