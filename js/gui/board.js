@@ -191,7 +191,7 @@ const engine = {
     },
     stop() {
         searchDepth[0].textContent = '';
-        searchDepth[0].textContent = '';
+        searchDepth[1].textContent = '';
 
         this.isRunning = false;
         this.side = -1;
