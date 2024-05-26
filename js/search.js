@@ -46,7 +46,7 @@ searchController.clear = function () {
 
 searchController.clear();
 
-function searchPosition(thinkingTime = 3) {
+function searchPosition(thinkingTime = 2) {
 	let bestMove = null;
 	let bestScore = -Infinite;
 	let depth = 1;

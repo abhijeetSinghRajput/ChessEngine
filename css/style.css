@@ -29,7 +29,8 @@
 *,
 *::before,
 *::after {
-    font-family: "Montserrat", sans-serif;
+    /* font-family: "Montserrat", sans-serif; */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -77,16 +78,17 @@ body::-webkit-scrollbar {
 .board-layout .player {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
     padding: 0 10px;
     color: #e2e2e2;
     text-transform: capitalize;
     font-size: 13px;
     font-weight: 600;
 }
-
-.board-layout .player .toggle-btn {
-    margin-left: auto;
+.board-layout .player .user{
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .player.white .profile-photo {
@@ -100,6 +102,11 @@ body::-webkit-scrollbar {
 .board-layout .player .profile-photo {
     border-width: 3px;
 }
+.board-layout .player .control{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
 .captures {
     display: flex;
@@ -111,6 +118,71 @@ body::-webkit-scrollbar {
     background-position: center;
     background-size: auto 100%;
     height: 20px;
+}
+
+.drop-menu{
+    position: relative;
+    min-width: 60px;
+    height: max-content;
+    color: #e2e2e2;
+    z-index: 100;
+}
+.drop-menu .selection{
+    cursor: pointer;
+    background-color: #3c3a38;
+    border: 1px solid #ffffff1a;
+    padding: 4px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 3px;
+    overflow: hidden;
+}
+.selection:hover,
+.drop-menu.active .selection{
+    border-color: #ffffff4d;
+}
+.selection i{
+    font-size: 22px;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.drop-menu.active .options{
+    display: block;
+}
+.drop-menu .options{
+    display: none;
+    width: 100%;
+    position: absolute;
+    background-color: #262421;
+    border-radius: 3px;
+    overflow: hidden;
+    padding: 8px 0;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+.options .option{
+    cursor: pointer;
+    padding: 4px 8px;
+}
+.options .option.select,
+.options .option:hover{
+    background-color: #211f1d;
+}
+
+.player.black .drop-menu .options,
+.flipped .player.white .drop-menu .options{
+    top: calc(100% + 8px);
+    bottom: auto;
+}
+.flipped .player.black .drop-menu .options,
+.player.white .drop-menu .options{
+    bottom: calc(100% + 8px);
+    top: auto;
 }
 
 
@@ -723,6 +795,8 @@ textarea::-webkit-scrollbar {
         font-size: clamp(7px, 3vmin, 11px);
     }
 }
+
+
 
 
 

@@ -167,11 +167,12 @@ const engine = {
     //(-1 none) (0 white) (1 black) (2 both)
     side: Color.both,
     isRunning: false,
+    searchTime: [2, 2],
 
     updateSide: function () {
         let blackActive = blackBotToggle.classList.contains('active');
         let whiteActive = whiteBotToggle.classList.contains('active');
-        
+
         if (blackActive && whiteActive) {
             this.isRunning = true;
             this.side = Color.both;
@@ -204,7 +205,7 @@ const engine = {
         if (this.side == Color.both || this.side == gameBoard.side) {
             //wait 200 ms to DOM content load
             setTimeout(() => {
-                searchPosition();
+                searchPosition(this.searchTime[gameBoard.side]);
                 gui.doMove(searchController.best, {
                     userMove: false,
                     engineMove: true,

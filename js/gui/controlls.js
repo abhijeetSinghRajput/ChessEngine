@@ -213,9 +213,55 @@ function readPgnFile(file) {
     reader.readAsText(file);
 }
 
-function resetProgressWidth(){
+function resetProgressWidth() {
     uploadProgressBar.style.transition = 'none';
     uploadProgressBar.style.width = 0;
     void uploadProgressBar.offsetWidth;
     uploadProgressBar.style.transition = 'width .3s';
 }
+
+// ======================================================
+// ========== drop down search time controller ==========
+// ======================================================
+const selections = document.querySelectorAll('.selection');
+const options = document.querySelectorAll('.drop-menu .options');
+
+function removeSelectFrom(option) {
+    [...option.children].forEach(child => {
+        child.classList.remove('select');
+    });
+}
+
+options.forEach(option => {
+    [...option.children].forEach(child => {
+        child.addEventListener('click', () => {
+            removeSelectFrom(option);
+            child.classList.add('select');
+            if (option.id == 'white') {
+                selections[1].textContent = child.textContent + 's';
+                engine.searchTime[Color.white] = +child.textContent;
+            }
+            else {
+                selections[0].textContent = child.textContent + 's';
+                engine.searchTime[Color.black] = +child.textContent;
+            }
+        })
+    })
+})
+selections.forEach(selection => {
+    selection.addEventListener('click', () => {
+        removeDropDown();
+        selection.parentElement.classList.add('active');
+    })
+})
+
+function removeDropDown() {
+    selections.forEach(selection => {
+        selection.parentElement.classList.remove('active');
+    })
+}
+document.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('selection')) {
+        removeDropDown();
+    }
+})
