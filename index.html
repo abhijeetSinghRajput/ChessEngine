@@ -9,6 +9,10 @@
         integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    <!-- confetti animation lottie -->
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+
+
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
 
     <link rel="shortcut icon" href="./assets/icons/favIcon.png" type="image/x-icon">
@@ -160,6 +164,8 @@
                     <span id="hash-key">5300d2e1</span>
                 </div>
 
+                <p id="mateIn" style="display: none;">mate in <span>5</span> moves</p>
+
                 <div class="icons">
                     <div class="icon download" onclick="showDownloadWindow()"><img src="./assets/icons/download.png"
                             alt=""></div>
@@ -199,6 +205,9 @@
     <!-- ---------- END-GAME WINDOW ---------- -->
 
     <div class="game-over">
+        <dotlottie-player src="https://lottie.host/04c8f302-d1f3-40ef-b838-32097c555bce/VJmLvTkY5h.json" class="win-animation">
+        </dotlottie-player>
+
         <div class="close"><i class="uil uil-times"></i></div>
         <div class="header">
             <div class="title">

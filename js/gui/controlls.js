@@ -18,6 +18,7 @@ const uploadPgnInput = document.getElementById('upload-pgn-input');
 const uploadPgnContainer = document.querySelector('.upload');
 const uploadFenInput = document.getElementById('upload-fen-input');
 const uploadProgressBar = document.getElementById('upload-bar');
+const winAnimation = document.querySelector('dotlottie-player.win-animation');
 
 document.addEventListener('mousedown', (e) => {
     if (!gameOver.contains(e.target)) {

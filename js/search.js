@@ -13,12 +13,13 @@ function getMoveFromBook() {
 	const moves = Object.keys(book[positionKey]);
 	const move = moves[Math.floor(Math.random() * moves.length)];
 
-	searchController.best = move;
+	searchController.bestMove = move | FromBookFlag;
 	searchController.thinking = false;
 	return true;
 }
 
 const searchController = {};
+searchController.depthReached;
 searchController.nodes;
 searchController.fh;
 searchController.fhf;
@@ -26,7 +27,8 @@ searchController.depth;
 searchController.time;
 searchController.start;
 searchController.stop;
-searchController.best;
+searchController.bestMove;
+searchController.bestScore;
 searchController.thinking;
 searchController.ply;
 searchController.killers = new Array(MaxDepth); //killer[ply][0/1];
@@ -37,6 +39,7 @@ searchController.clear = function () {
 	this.killers = Array.from({ length: MaxDepth }, () => [null, null]);
 	this.history = Array.from({ length: 13 }, () => Array(120).fill(0));
 	this.ply = 0;
+	this.depthReached = 0;
 	this.nodes = 0;
 	this.fh = 0;
 	this.fhf = 0;
@@ -62,25 +65,29 @@ function searchPosition(thinkingTime = 2) {
 
 	for (depth = 1; depth <= searchController.depth; ++depth) {
 		bestScore = alphaBeta(-Infinite, Infinite, depth);
-		
+
 		if (searchController.stop) break;
-		
+
 		bestMove = PvTable.getMove();
-		
+
 		if (depth != 1) {
 			ordering = ((searchController.fhf / searchController.fh) * 100).toFixed(2);
 		}
+
 		self.postMessage({
 			command: 'searching',
 			depth,
 			pvLine: PvTable.getLine(depth),
 			bestMove,
-			bestScore, 
+			bestScore,
 			nodes: searchController.nodes,
 			ordering,
 		})
+		searchController.bestMove = bestMove;
+		searchController.bestScore = bestScore;
+		searchController.depthReached = depth;
 	}
-	searchController.best = bestMove;
+
 	searchController.thinking = false;
 }
 

@@ -16,7 +16,12 @@ self.onmessage = function(e){
     const {command, searchTime, board} = e.data;
     gameBoard = board;
     if(command == 'search'){
-        searchPosition(searchTime);
-        self.postMessage({bestMove: searchController.best});
+        let depth = searchPosition(searchTime);
+        self.postMessage({
+            command: 'searchFinished',
+            bestMove: searchController.bestMove,
+            bestScore: searchController.bestScore,
+            depth : searchController.depthReached,
+        })
     }
 }

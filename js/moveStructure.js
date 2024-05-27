@@ -6,24 +6,14 @@
 // 0000 0100 0000 0000 0000 0000 0000   0x40000       enpassant
 // 0000 1000 0000 0000 0000 0000 0000   0x80000       castle
 // 0001 0000 0000 0000 0000 0000 0000   0x1000000     pawnstart
-
-
-//space complexity:- 
-//  8byte for each 7 properties 56 bytes
-//  24bytes for objected itself
-//  80bytes total
-
-// our program gonna exceed 119 million moves in just by reaching to the depth of 6
-// 80 bytes x 119,000,000 = 9.52 GB
-
-// we can redure the sapce complexity by encoding these information binary representation of a single number;
-// 1 bytes x 119,000,000 = 113.48 MB
+// 0010 0000 0000 0000 0000 0000 0000   0x2000000     from Book
 
 
 //flags 🚩
 const EnPassantFlag = 0x400000;
 const CastleFlag = 0x800000;
 const PawnStartFlag = 0x1000000;
+const FromBookFlag = 0x2000000;
 
 const CaptureFlag = 0x3c000;
 const PromotionFlag = 0x3c0000;

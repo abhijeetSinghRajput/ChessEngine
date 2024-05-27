@@ -38,6 +38,11 @@
     text-decoration: none;
 }
 
+.win-animation{
+    position: absolute;
+    z-index: -1;
+}
+
 body {
     width: 100vw;
     min-height: 100svh;
@@ -152,26 +157,29 @@ body::-webkit-scrollbar {
 }
 
 .drop-menu.active .options{
-    display: block;
+    display: flex;
 }
 .drop-menu .options{
-    display: none;
-    width: 100%;
+    width: 100px;
+    right: 0;
     position: absolute;
-    background-color: #262421;
+    background-color: #21201d;
     border-radius: 3px;
     overflow: hidden;
     padding: 8px 0;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    display: none;
 }
 
 .options .option{
     cursor: pointer;
-    padding: 4px 8px;
+    padding: 8px 8px;
 }
 .options .option.select,
 .options .option:hover{
-    background-color: #211f1d;
+    background-color: #0e1514;
 }
 
 .player.black .drop-menu .options,
@@ -182,6 +190,7 @@ body::-webkit-scrollbar {
 .flipped .player.black .drop-menu .options,
 .player.white .drop-menu .options{
     bottom: calc(100% + 8px);
+    flex-direction: column-reverse;
     top: auto;
 }
 
@@ -297,10 +306,10 @@ body::-webkit-scrollbar {
     font-weight: 600;
     font-size: 12px;
     white-space: nowrap;
-    padding: 4px 8px;
 }
 .lines .line{
-    line-height: 20px;
+    margin: 0 8px;
+    line-height: 25px;
     overflow-x: scroll;
 }
 .line::-webkit-scrollbar{
@@ -757,7 +766,7 @@ textarea::-webkit-scrollbar {
 
 
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 900px) {
     .icon {
         width: 28px;
     }
@@ -777,7 +786,7 @@ textarea::-webkit-scrollbar {
 
 
     .container {
-        grid-template-columns: minmax(200px, 400px);
+        grid-template-columns: minmax(200px, 600px);
         grid-template-rows: auto 1fr;
         margin-top: 10px;
         margin-bottom: 84px;

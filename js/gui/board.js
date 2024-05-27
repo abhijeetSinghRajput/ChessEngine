@@ -163,6 +163,8 @@ function dragOver(e) {
 // =================================================================
 const worker = new Worker('js/searchWorker.js');
 const lines = document.querySelectorAll('.line');
+const mateIn = document.querySelector('#mateIn span');
+
 function updateLine(line) {
     lines[0].textContent = lines[1].textContent;
     lines[1].textContent = lines[2].textContent;
@@ -173,20 +175,39 @@ worker.onmessage = function (e) {
     const { bestMove, command, depth, pvLine, bestScore, nodes, ordering } = e.data;
     if (command == 'searching') {
         searchDepth[gameBoard.side].textContent = depth;
-        let line = `${depth} ordering: ${ordering}% ${pvLine} score: ${bestScore} nodes: ${nodes}`
+        let line = `${depth} ordering: ${ordering}% nodes: ${nodes}  score: ${bestScore}`
         updateLine(line);
     }
     //search finished
     else {
-        gui.doMove(bestMove, {
-            userMove: false,
-            engineMove: true,
-        });
+        if (Math.abs(bestScore) > Mate - MaxDepth) {
+            mateIn.textContent = Mate - Math.abs(bestScore);
+            mateIn.parentElement.style.display = 'block';
+        }
+        else {
+            mateIn.parentElement.style.display = 'none';
+        }
+
+        if (bestMove & FromBookFlag) {
+            setTimeout(() => {
+                gui.doMove(bestMove, {
+                    userMove: false,
+                    engineMove: true,
+                });
+            }, 200);
+        }
+        else {
+            gui.doMove(bestMove, {
+                userMove: false,
+                engineMove: true,
+            });
+        }
     }
 }
 worker.onerror = function (e) {
     console.error('worker error:', e.message);
 }
+
 const engine = {
 
     //(-1 none) (0 white) (1 black) (2 both)
@@ -244,6 +265,7 @@ const engine = {
         }
     }
 }
+
 const whiteBotToggle = document.getElementById('whiteBot')
 const blackBotToggle = document.getElementById('blackBot')
 const searchDepth = [
@@ -606,11 +628,13 @@ function isGameOver() {
             resultTitle.textContent = 'Black Won';
             whitePlayer.classList.remove('winner');
             blackPlayer.classList.add('winner');
+            playWinAnimation();
         }
         else {
             resultTitle.textContent = 'White Won';
             blackPlayer.classList.remove('winner');
             whitePlayer.classList.add('winner');
+            playWinAnimation();
         }
         resultSubTitle.textContent = 'by checkmate'
         return true;
@@ -620,6 +644,12 @@ function isGameOver() {
         resultSubTitle.textContent = 'by Stalemate'
         return true;
     }
+}
+function playWinAnimation() {
+    setTimeout(() => {
+        winAnimation.seek(0);
+        winAnimation.play();
+    }, 1000);
 }
 
 function drawMaterial() {
@@ -668,6 +698,8 @@ function newGame(fen) {
 
 function resetGui() {
     lines.forEach(line => line.textContent = '');
+    mateIn.parentElement.style.display = 'none';
+
     ply = 0;
     prevMoveNode = -1;
     currMoveNode = -1;
