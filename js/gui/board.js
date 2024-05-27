@@ -647,9 +647,13 @@ function isGameOver() {
 }
 function playWinAnimation() {
     setTimeout(() => {
+        winAnimation.style.display = 'block';
         winAnimation.seek(0);
         winAnimation.play();
     }, 1000);
+    setTimeout(()=>{
+        winAnimation.style.display = 'none';
+    }, 3000);
 }
 
 function drawMaterial() {

@@ -41,6 +41,7 @@
 .win-animation{
     position: absolute;
     z-index: -1;
+    display: none;
 }
 
 body {
@@ -58,8 +59,8 @@ body::-webkit-scrollbar {
 
 .container {
     display: grid;
-    grid-template-columns: minmax(300px, 600px) 300px;
-    grid-gap: 10px;
+    grid-template-columns: minmax(300px, 600px) 400px;
+    grid-gap: 20px;
     max-height: 100svh;
     position: relative;
 }
@@ -116,7 +117,7 @@ body::-webkit-scrollbar {
 .captures {
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
 }
 
 .capture {
@@ -271,7 +272,8 @@ body::-webkit-scrollbar {
     background-color: #262522;
     display: flex;
     flex-direction: column;
-    border-radius: 3px;
+    border-radius: 5px;
+    overflow: hidden;
     height: 100svh;
 }
 
@@ -301,11 +303,13 @@ body::-webkit-scrollbar {
 }
 
 .lines{
-    background-color: #0e1514;
+    background-color: #1b1917;
     color: #e2e2e2;
+    color: #81b64c;
     font-weight: 600;
     font-size: 12px;
     white-space: nowrap;
+    margin-bottom: 5px;
 }
 .lines .line{
     margin: 0 8px;
@@ -804,10 +808,15 @@ textarea::-webkit-scrollbar {
     }
 
     .game-controller {
-        flex-direction: column-reverse;
-        height: auto;
+        min-height: 500px;
+        max-height: 81svh;
+        display: grid;
+        grid-template-rows: repeat(4, max-content);
     }
-
+    .game-controller .controller{
+        grid-row: 1/2;
+        border-bottom: 1px solid #2a2926;
+    }
     .game-controller .controller .btn {
         font-size: 18px;
     }
@@ -822,7 +831,6 @@ textarea::-webkit-scrollbar {
 
 
 @media screen and (max-width: 480px) {
-
     .toggle-btn {
         width: 40px;
         height: 20px;
