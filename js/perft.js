@@ -33,9 +33,6 @@ function perftTest(depth) {
     console.log('Total Node Seared', totalNodeSeared);
 }
 
-function moveStr(move) {
-    return SquaresChar[moveFrom(move)] + SquaresChar[moveTo(move)];
-}
 
 
 

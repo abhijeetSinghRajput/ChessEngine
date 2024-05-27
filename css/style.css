@@ -291,6 +291,22 @@ body::-webkit-scrollbar {
     filter: brightness(200%);
 }
 
+.lines{
+    background-color: #0e1514;
+    color: #e2e2e2;
+    font-weight: 600;
+    font-size: 12px;
+    white-space: nowrap;
+    padding: 4px 8px;
+}
+.lines .line{
+    line-height: 20px;
+    overflow-x: scroll;
+}
+.line::-webkit-scrollbar{
+    display: none;
+}
+
 .game-controller .movelist {
     min-height: 150px;
     height: 100%;
@@ -730,10 +746,6 @@ textarea::-webkit-scrollbar {
     width: 20px;
 }
 
-
-.line::-webkit-scrollbar{
-    display: none;
-}
 
 
 

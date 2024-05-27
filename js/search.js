@@ -50,6 +50,8 @@ function searchPosition(thinkingTime = 2) {
 	let bestMove = null;
 	let bestScore = -Infinite;
 	let depth = 1;
+	let ordering = 0;
+
 	searchController.clear();
 	PvTable.clear();
 
@@ -60,23 +62,26 @@ function searchPosition(thinkingTime = 2) {
 
 	for (depth = 1; depth <= searchController.depth; ++depth) {
 		bestScore = alphaBeta(-Infinite, Infinite, depth);
-
+		
 		if (searchController.stop) break;
-
+		
 		bestMove = PvTable.getMove();
-		// line = 'D:' + depth + ' Best:' + moveStr(bestMove) + ' Score:' + bestScore +
-		// 	' nodes:' + searchController.nodes;
-
-		// line += ' ' + PvTable.getBestMoveTillDepth(depth).join(' ');
-		// if (depth != 1) {
-		// 	line += (" Ordering:" + ((searchController.fhf / searchController.fh) * 100).toFixed(2) + "%");
-		// }
-		// console.log(line);
+		
+		if (depth != 1) {
+			ordering = ((searchController.fhf / searchController.fh) * 100).toFixed(2);
+		}
+		self.postMessage({
+			command: 'searching',
+			depth,
+			pvLine: PvTable.getLine(depth),
+			bestMove,
+			bestScore, 
+			nodes: searchController.nodes,
+			ordering,
+		})
 	}
-
 	searchController.best = bestMove;
 	searchController.thinking = false;
-	searchDepth[gameBoard.side].textContent = depth;
 }
 
 

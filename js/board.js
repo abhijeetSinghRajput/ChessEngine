@@ -1,4 +1,4 @@
-const gameBoard = {};
+let gameBoard = {};
 
 gameBoard.pieces = new Array(120);
 gameBoard.side = Color.white;

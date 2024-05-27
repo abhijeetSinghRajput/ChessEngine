@@ -14,7 +14,7 @@ PvTable.clear = function () {
 PvTable.length = function () {
     return Object.keys(this.entries).length;
 }
-PvTable.getBestMoveTillDepth = function (depth) {
+PvTable.getLine = function (depth) {
     let move = this.getMove();
     let movelist = [];
     let count = 0;
@@ -31,7 +31,7 @@ PvTable.getBestMoveTillDepth = function (depth) {
         move = this.getMove();
     }
     while (count--) undoMove();
-    return movelist.map(move => moveStr(move));
+    return movelist.map(move => moveStr(move)).join(' ');
 }
 
 function isMoveExists(arg) {

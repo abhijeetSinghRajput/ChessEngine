@@ -161,7 +161,32 @@ function dragOver(e) {
 // =================================================================
 // =========================== Play Move ===========================
 // =================================================================
+const worker = new Worker('js/searchWorker.js');
+const lines = document.querySelectorAll('.line');
+function updateLine(line) {
+    lines[0].textContent = lines[1].textContent;
+    lines[1].textContent = lines[2].textContent;
+    lines[2].textContent = line;
+}
 
+worker.onmessage = function (e) {
+    const { bestMove, command, depth, pvLine, bestScore, nodes, ordering } = e.data;
+    if (command == 'searching') {
+        searchDepth[gameBoard.side].textContent = depth;
+        let line = `${depth} ordering: ${ordering}% ${pvLine} score: ${bestScore} nodes: ${nodes}`
+        updateLine(line);
+    }
+    //search finished
+    else {
+        gui.doMove(bestMove, {
+            userMove: false,
+            engineMove: true,
+        });
+    }
+}
+worker.onerror = function (e) {
+    console.error('worker error:', e.message);
+}
 const engine = {
 
     //(-1 none) (0 white) (1 black) (2 both)
@@ -203,14 +228,19 @@ const engine = {
         if (!this.isRunning) return;
 
         if (this.side == Color.both || this.side == gameBoard.side) {
+            worker.postMessage({
+                command: 'search',
+                searchTime: this.searchTime[gameBoard.side],
+                board: gameBoard,
+            });
             //wait 200 ms to DOM content load
-            setTimeout(() => {
-                searchPosition(this.searchTime[gameBoard.side]);
-                gui.doMove(searchController.best, {
-                    userMove: false,
-                    engineMove: true,
-                })
-            }, 200);
+            // setTimeout(() => {
+            //     searchPosition(this.searchTime[gameBoard.side]);
+            //     gui.doMove(searchController.best, {
+            //         userMove: false,
+            //         engineMove: true,
+            //     })
+            // }, 200);
         }
     }
 }
@@ -637,6 +667,7 @@ function newGame(fen) {
 }
 
 function resetGui() {
+    lines.forEach(line => line.textContent = '');
     ply = 0;
     prevMoveNode = -1;
     currMoveNode = -1;

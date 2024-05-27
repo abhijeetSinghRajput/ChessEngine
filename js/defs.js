@@ -331,7 +331,9 @@ function updatePromotion(move, piece) {
     move &= (~(0xf << 18));//clear the promoted piece
     return move | (piece << 18);
 }
-
+function moveStr(move) {
+    return SquaresChar[moveFrom(move)] + SquaresChar[moveTo(move)];
+}
 
 const MaxDepth = 64;
 const Infinite = 30000;
