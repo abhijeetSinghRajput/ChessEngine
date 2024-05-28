@@ -175,11 +175,12 @@ worker.onmessage = function (e) {
     const { bestMove, command, depth, pvLine, bestScore, nodes, ordering } = e.data;
     if (command == 'searching') {
         searchDepth[gameBoard.side].textContent = depth;
-        let line = `${depth} ordering: ${ordering}% nodes: ${nodes}  score: ${bestScore}`
+        let line = `${depth} ordering: ${ordering}% nodes: ${nodes}  score: ${bestScore} ${pvLine}`
         updateLine(line);
     }
     //search finished
     else {
+        engine.thinking = false;
         if (Math.abs(bestScore) > Mate - MaxDepth) {
             mateIn.textContent = Mate - Math.abs(bestScore);
             mateIn.parentElement.style.display = 'block';
@@ -188,19 +189,24 @@ worker.onmessage = function (e) {
             mateIn.parentElement.style.display = 'none';
         }
 
-        if (bestMove & FromBookFlag) {
-            setTimeout(() => {
+        try {
+            if (bestMove & FromBookFlag) {
+                setTimeout(() => {
+                    gui.doMove(bestMove, {
+                        userMove: false,
+                        engineMove: true,
+                    });
+                }, 200);
+            }
+            else {
                 gui.doMove(bestMove, {
                     userMove: false,
                     engineMove: true,
                 });
-            }, 200);
-        }
-        else {
-            gui.doMove(bestMove, {
-                userMove: false,
-                engineMove: true,
-            });
+            }
+        } catch (e) {
+            moveDetail(bestMove);
+            console.log(e.message);
         }
     }
 }
@@ -214,6 +220,7 @@ const engine = {
     side: Color.both,
     isRunning: false,
     searchTime: [2, 2],
+    thinking: false,
 
     updateSide: function () {
         let blackActive = blackBotToggle.classList.contains('active');
@@ -249,6 +256,8 @@ const engine = {
         if (!this.isRunning) return;
 
         if (this.side == Color.both || this.side == gameBoard.side) {
+            if(isGameOver()) return;
+            this.thinking = true;
             worker.postMessage({
                 command: 'search',
                 searchTime: this.searchTime[gameBoard.side],
@@ -283,6 +292,10 @@ for (const botToggle of [whiteBotToggle, blackBotToggle]) {
 
 gui.doMove = function (move, { userMove = true, engineMove = false, audio = true } = {}) {
     if (!move) return;
+    if (engine.thinking) {
+        alert('can you please wait. engine is thinking now');
+        return;
+    }
     let fromSq = SquaresChar[moveFrom(move)];
     let toSq = SquaresChar[moveTo(move)];
 
@@ -347,6 +360,10 @@ gui.doMove = function (move, { userMove = true, engineMove = false, audio = true
 }
 
 gui.undoMove = function ({ audio = true } = {}) {
+    if (engine.thinking) {
+        alert('can you please wait. engine is thinking now');
+        return;
+    }
     const move = undoMove();
     if (!move) return;
     this.updateCapture(move, { reverse: true });
@@ -651,7 +668,7 @@ function playWinAnimation() {
         winAnimation.seek(0);
         winAnimation.play();
     }, 1000);
-    setTimeout(()=>{
+    setTimeout(() => {
         winAnimation.style.display = 'none';
     }, 3000);
 }
