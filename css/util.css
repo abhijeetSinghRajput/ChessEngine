@@ -134,154 +134,154 @@
 
 
 .capture.bp-1 {
-    width: 16px;
+    aspect-ratio: .8/1;
     background-image: url('../assets/capture piece/capture-bp-1.png');
 }
 
 .capture.bp-2 {
     background-image: url('../assets/capture piece/capture-bp-2.png');
-    width: 25px;
+    aspect-ratio: 1.3/1;
 }
 
 .capture.bp-3 {
     background-image: url('../assets/capture piece/capture-bp-3.png');
-    width: 34px;
+    aspect-ratio: 1.7/1;
 }
 
 .capture.bp-4 {
     background-image: url('../assets/capture piece/capture-bp-4.png');
-    width: 42px;
+    aspect-ratio: 2.1/1;
 }
 
 .capture.bp-5 {
     background-image: url('../assets/capture piece/capture-bp-5.png');
-    width: 50px;
+    aspect-ratio: 2.5/1;
 }
 
 .capture.bp-6 {
     background-image: url('../assets/capture piece/capture-bp-6.png');
-    width: 59px;
+    aspect-ratio: 3/1;
 }
 
 .capture.bp-7 {
     background-image: url('../assets/capture piece/capture-bp-7.png');
-    width: 68px;
+    aspect-ratio: 3.4/1;
 }
 
 .capture.bp-8 {
     background-image: url('../assets/capture piece/capture-bp-8.png');
-    width: 80px;
+    aspect-ratio: 4/1;
 }
 
 .capture.wp-1 {
-    width: 16px;
+    aspect-ratio: .8/1;
     background-image: url('../assets/capture piece/capture-wp-1.png');
 }
 
 .capture.wp-2 {
     background-image: url('../assets/capture piece/capture-wp-2.png');
-    width: 25px;
+    aspect-ratio: 1.3/1;
 }
 
 .capture.wp-3 {
     background-image: url('../assets/capture piece/capture-wp-3.png');
-    width: 35px;
+    aspect-ratio: 1.8/1;
 }
 
 .capture.wp-4 {
     background-image: url('../assets/capture piece/capture-wp-4.png');
-    width: 44px;
+    aspect-ratio: 2.3/1;
 }
 
 .capture.wp-5 {
     background-image: url('../assets/capture piece/capture-wp-5.png');
-    width: 53px;
+    aspect-ratio: 2.6/1;
 }
 
 .capture.wp-6 {
     background-image: url('../assets/capture piece/capture-wp-6.png');
-    width: 61px;
+    aspect-ratio: 3.1/1;
 }
 
 .capture.wp-7 {
     background-image: url('../assets/capture piece/capture-wp-7.png');
-    width: 71px;
+    aspect-ratio: 3.5/1;
 }
 
 .capture.wp-8 {
     background-image: url('../assets/capture piece/capture-wp-8.png');
-    width: 80px;
+    aspect-ratio: 4/1;
 }
 
 .capture.wb-1 {
     background-image: url('../assets/capture piece/capture-wb-1.png');
-    width: 16px;
+    aspect-ratio: .8/1;
 }
 
 .capture.wb-2 {
     background-image: url('../assets/capture piece/capture-wb-2.png');
-    width: 24px;
+    aspect-ratio: 1.2/1;
 }
 
 .capture.wn-1 {
     background-image: url('../assets/capture piece/capture-wn-1.png');
-    width: 15px;
+    aspect-ratio: .8/1;
 }
 
 .capture.wn-2 {
     background-image: url('../assets/capture piece/capture-wn-2.png');
-    width: 24px;
+    aspect-ratio: 1.2/1;
 }
 
 .capture.wr-1 {
     background-image: url('../assets/capture piece/capture-wr-1.png');
-    width: 17px;
+    aspect-ratio: .8/1;
 }
 
 .capture.wr-2 {
     background-image: url('../assets/capture piece/capture-wr-2.png');
-    width: 26px;
+    aspect-ratio: 1.3/1;
 }
 
 .capture.wq-1 {
     background-image: url('../assets/capture piece/capture-wq-1.png');
-    width: 20px;
+    aspect-ratio: 1/1;
 }
 
 
 .capture.bb-1 {
     background-image: url('../assets/capture piece/capture-bb-1.png');
-    width: 15px;
+    aspect-ratio: .8/1;
 }
 
 .capture.bb-2 {
     background-image: url('../assets/capture piece/capture-bb-2.png');
-    width: 24px;
+    aspect-ratio: 1.2/1;
 }
 
 .capture.bn-1 {
     background-image: url('../assets/capture piece/capture-bn-1.png');
-    width: 16px;
+    aspect-ratio: .8/1;
 }
 
 .capture.bn-2 {
     background-image: url('../assets/capture piece/capture-bn-2.png');
-    width: 24px;
+    aspect-ratio: 1.2/1;
 }
 
 .capture.br-1 {
     background-image: url('../assets/capture piece/capture-br-1.png');
-    width: 17px;
+    aspect-ratio: .8/1;
 }
 
 .capture.br-2 {
     background-image: url('../assets/capture piece/capture-br-2.png');
-    width: 25px;
+    aspect-ratio: 1.3/1;
 }
 
 .capture.bq-1 {
     background-image: url('../assets/capture piece/capture-bq-1.png');
-    width: 19px;
+    aspect-ratio: 1/1;
 }
 
 
