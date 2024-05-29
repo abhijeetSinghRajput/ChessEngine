@@ -310,6 +310,7 @@ body::-webkit-scrollbar {
     color: #e2e2e2;
     color: #81b64c;
     font-weight: 600;
+    min-width: 100%;
     font-size: 12px;
     white-space: nowrap;
     margin-bottom: 5px;
