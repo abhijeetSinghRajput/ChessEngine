@@ -227,8 +227,6 @@ function quiescence(alpha, beta) {
 	let bestMove = null;
 	let moves = generateCaptureMoves();
 
-	//prioties the move having high score
-	moves.sort((a, b) => (b.score - a.score));
 
 	for (let i = 0; i < moves.length; ++i) {
 		swapWithBest(i, moves);

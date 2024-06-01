@@ -189,24 +189,19 @@ worker.onmessage = function (e) {
             mateIn.parentElement.style.display = 'none';
         }
 
-        try {
-            if (bestMove & FromBookFlag) {
-                setTimeout(() => {
-                    gui.doMove(bestMove, {
-                        userMove: false,
-                        engineMove: true,
-                    });
-                }, 200);
-            }
-            else {
+        if (bestMove & FromBookFlag) {
+            setTimeout(() => {
                 gui.doMove(bestMove, {
                     userMove: false,
                     engineMove: true,
                 });
-            }
-        } catch (e) {
-            moveDetail(bestMove);
-            console.log(e.message);
+            }, 200);
+        }
+        else {
+            gui.doMove(bestMove, {
+                userMove: false,
+                engineMove: true,
+            });
         }
     }
 }
@@ -253,24 +248,16 @@ const engine = {
         whiteBotToggle.classList.remove('active');
     },
     play: function () {
-        if (!this.isRunning) return;
+        if (!this.isRunning || this.thinking) return;
 
         if (this.side == Color.both || this.side == gameBoard.side) {
-            if(isGameOver()) return;
+            if (isGameOver()) return;
             this.thinking = true;
             worker.postMessage({
                 command: 'search',
                 searchTime: this.searchTime[gameBoard.side],
                 board: gameBoard,
             });
-            //wait 200 ms to DOM content load
-            // setTimeout(() => {
-            //     searchPosition(this.searchTime[gameBoard.side]);
-            //     gui.doMove(searchController.best, {
-            //         userMove: false,
-            //         engineMove: true,
-            //     })
-            // }, 200);
         }
     }
 }
