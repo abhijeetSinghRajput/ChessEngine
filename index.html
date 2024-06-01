@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <!-- cdn for font family -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700;800&display=swap" rel="stylesheet">
 
@@ -209,7 +209,8 @@
     <!-- ---------- END-GAME WINDOW ---------- -->
 
     <div class="game-over">
-        <dotlottie-player src="https://lottie.host/04c8f302-d1f3-40ef-b838-32097c555bce/VJmLvTkY5h.json" class="win-animation">
+        <dotlottie-player src="https://lottie.host/04c8f302-d1f3-40ef-b838-32097c555bce/VJmLvTkY5h.json"
+            class="win-animation">
         </dotlottie-player>
 
         <div class="close"><i class="uil uil-times"></i></div>
@@ -295,12 +296,45 @@
             </div>
 
             <div class="buttons">
-                <button class="btn secondary" id="cancel">Cancel</button>
+                <button class="btn secondary" id="setup-btn">set up</button>
                 <button class="btn primary" id="confirm">new game</button>
             </div>
         </div>
     </div>
+    <div class="setup-position">
+        <div class="close"><i class="uil uil-times"></i></div>
 
+        <div class="castle-permission">
+            <div class="white">white</div>
+            <div class="black">black</div>
+            <div class="checkbox-grid">
+                <label><input type="checkbox" checked id="4"> (o-o)</label>
+                <label><input type="checkbox" checked id="2"> (o-o)</label>
+                <label><input type="checkbox" checked id="8"> (o-o-o)</label>
+                <label><input type="checkbox" checked id="1"> (o-o-o)</label>
+            </div>
+        </div>
+        <div class="pieces">
+            <div class="piece wp"></div>
+            <div class="piece wr"></div>
+            <div class="piece wn"></div>
+            <div class="piece wb"></div>
+            <div class="piece wq"></div>
+            <div class="piece wk"></div>
+
+            <div class="piece bp"></div>
+            <div class="piece br"></div>
+            <div class="piece bn"></div>
+            <div class="piece bb"></div>
+            <div class="piece bq"></div>
+            <div class="piece bk"></div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn secondary" id="clear-board">clear board</button>
+            <button class="btn secondary" id="reset-board">reset board</button>
+        </div>
+    </div>
 </body>
 
 <script src="./js/defs.js"></script>

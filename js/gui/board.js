@@ -72,6 +72,49 @@ gui.movePiece = function (from, to) {
 
 let fromSq = toSq = null, moveList;
 const promotionWindow = document.querySelectorAll('.promotion-window');
+const setupPieces = document.querySelectorAll('.setup-position .piece');
+const closeSetup = document.querySelector('.setup-position .close');
+const setupPosition = document.querySelector('.setup-position');
+
+const checkboxes = document.querySelectorAll(".checkbox-grid input[type='checkbox']");
+checkboxes.forEach(checkbox => {
+    checkbox.addEventListener("change", function () {
+        let bit = +checkbox.id;
+        if (this.checked) {
+            gameBoard.castlePermission |= bit;
+        } else {
+            gameBoard.castlePermission &= ~bit;
+        }
+    });
+});
+
+let selected = Pieces.empty;
+let setup = true;
+
+closeSetup.addEventListener('click', () => {
+    if (gameBoard.pieceList[Pieces.wk].length !== 1 ||
+        gameBoard.pieceList[Pieces.bk].length !== 1
+    ) {
+        alert('invalid position');
+        return;
+    }
+    setup = false;
+    setupPosition.classList.remove('active');
+    selected = Pieces.empty;
+})
+
+setupPieces.forEach(piece => {
+    piece.addEventListener('click', () => {
+        if (piece.classList.contains('selected')) {
+            selected = Pieces.empty;
+            piece.classList.remove('selected');
+            return;
+        }
+        setupPieces.forEach(piece => piece.classList.remove('selected'));
+        selected = Pieces[piece.classList[1]];
+        piece.classList.add('selected');
+    })
+})
 
 promotionWindow.forEach(promo => {
     promo.addEventListener('click', (e) => {
@@ -94,13 +137,63 @@ function clickOnPiece(e) {
 }
 
 function clickOnSquare(e) {
+    if (setup) {
+        if (PieceType[selected] == 'k') {
+            if (gameBoard.pieceList[selected].length) {
+                alert('There is already a king present')
+                return;
+            }
+        }
+        let sq = getSquare(e);
+        if (guiPieces[sq]) {
+            removePiece(Squares[sq]);
+            gui.removePiece(sq);
+            gameBoard.castlePermission &= CastlePermission[Squares[sq]];
+        }
+        if (selected !== Pieces.empty) {
+            addPiece(Squares[sq], selected);
+            gui.addPiece(sq, selected);
+            addCastlePermission(sq);
+        }
+        updateCheckBoxes();
+        return;
+    }
+
+
     if (!e.target.classList.contains('piece')) {
         drop(e);
     }
 }
+function addCastlePermission() {
+    if (gameBoard.pieces[Squares.a1] == Pieces.wr && gameBoard.pieces[Squares.e1] == Pieces.wk) {
+        gameBoard.castlePermission |= 0b0100; // Set the bit for 'Q'
+    } else if (gameBoard.pieces[Squares.e1] == Pieces.wk && gameBoard.pieces[Squares.a1] == Pieces.wr && gameBoard.pieces[Squares.h1] == Pieces.wr) {
+        gameBoard.castlePermission |= 0b1100; // Set the bits for 'K' and 'Q'
+    } else if (gameBoard.pieces[Squares.h1] == Pieces.wr && gameBoard.pieces[Squares.e1] == Pieces.wk) {
+        gameBoard.castlePermission |= 0b1000; // Set the bit for 'K'
+    } else if (gameBoard.pieces[Squares.a8] == Pieces.br && gameBoard.pieces[Squares.e8] == Pieces.bk) {
+        gameBoard.castlePermission |= 0b0001; // Set the bit for 'q'
+    } else if (gameBoard.pieces[Squares.e8] == Pieces.bk && gameBoard.pieces[Squares.a8] == Pieces.br && gameBoard.pieces[Squares.h8] == Pieces.br) {
+        gameBoard.castlePermission |= 0b0011; // Set the bits for 'k' and 'q'
+    } else if (gameBoard.pieces[Squares.h8] == Pieces.br && gameBoard.pieces[Squares.e8] == Pieces.bk) {
+        gameBoard.castlePermission |= 0b0010; // Set the bit for 'k'
+    }
+
+}
+function updateCheckBoxes(){
+    checkboxes.forEach(checkbox=>checkbox.checked = false)
+    if(gameBoard.castlePermission & CastleBit.K) checkboxes[0].checked = true;
+    if(gameBoard.castlePermission & CastleBit.k) checkboxes[1].checked = true;
+    if(gameBoard.castlePermission & CastleBit.Q) checkboxes[2].checked = true;
+    if(gameBoard.castlePermission & CastleBit.q) checkboxes[3].checked = true;
+}
+
+
 
 
 function dragStart(e) {
+    if (setup) return;
+
     removeMarker('hint', '*');
     removeMarker('capture-hint', '*');
     removeMarker('highlight', fromSq);

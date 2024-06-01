@@ -6,7 +6,7 @@ const downloadOptions = downloadWindow.querySelectorAll('.option>*');
 const downloadBtn = downloadWindow.querySelector('.btn.download');
 
 const confirmBtn = document.getElementById('confirm');
-const cancelBtn = document.getElementById('cancel');
+const setupBtn = document.getElementById('setup-btn');
 const gameOver = document.querySelector('.game-over');
 const closeResult = gameOver.querySelector('.close');
 
@@ -19,6 +19,15 @@ const uploadPgnContainer = document.querySelector('.upload');
 const uploadFenInput = document.getElementById('upload-fen-input');
 const uploadProgressBar = document.getElementById('upload-bar');
 const winAnimation = document.querySelector('dotlottie-player.win-animation');
+
+document.getElementById('clear-board').addEventListener('click',()=>{
+    parseFen('8/8/8/8/8/8/8/8 w KQkq -');
+    gui.renderPieces();
+})
+document.getElementById('reset-board').addEventListener('click',()=>{
+    parseFen(StartingFen);
+    gui.renderPieces();
+})
 
 document.addEventListener('mousedown', (e) => {
     if (!gameOver.contains(e.target)) {
@@ -62,7 +71,8 @@ function removeBackdrop() {
     backdrop.classList.remove('active');
 }
 
-cancelBtn.addEventListener('click', () => {
+setupBtn.addEventListener('click', () => {
+    setupPosition.classList.add('active');
     removeBackdrop();
 })
 
