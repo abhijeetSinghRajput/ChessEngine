@@ -87,13 +87,12 @@ function searchPosition(thinkingTime = 2) {
 		searchController.bestScore = bestScore;
 		searchController.depthReached = depth;
 	}
-
+	console.log(searchController.nodes, searchController.depthReached);
 	searchController.thinking = false;
 }
 
 
 
-let logs = 0;
 
 function alphaBeta(alpha, beta, depth, { doNull = true } = {}) {
 	if (depth <= 0) {
@@ -149,8 +148,6 @@ function alphaBeta(alpha, beta, depth, { doNull = true } = {}) {
 
 	for (let i = 0; i < moves.length; ++i) {
 		swapWithBest(i, moves);
-		if (logs++ < 200) {
-		}
 		const move = moves[i].move;
 
 		if (!doMove(move)) continue;

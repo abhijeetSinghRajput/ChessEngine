@@ -89,7 +89,7 @@ checkboxes.forEach(checkbox => {
 });
 
 let selected = Pieces.empty;
-let setup = true;
+let setup = false;
 
 closeSetup.addEventListener('click', () => {
     if (gameBoard.pieceList[Pieces.wk].length !== 1 ||
