@@ -609,7 +609,19 @@ textarea::-webkit-scrollbar {
     visibility: hidden;
     opacity: 0;
 }
-
+.game-over::before{
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 60%;
+    background-color: #0e1514;
+    border-radius: 100%;
+    left: 50%;
+    top: 0;
+    transform: translate(-50%, -50%);
+    z-index: -2;
+    
+}
 .close {
     position: absolute;
     z-index: 10;

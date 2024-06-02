@@ -70,8 +70,11 @@ function searchPosition(thinkingTime = 2) {
 
 		bestMove = PvTable.getMove();
 
-		if (depth != 1) {
+		if (depth != 1 && searchController.fh) {
 			ordering = ((searchController.fhf / searchController.fh) * 100).toFixed(2);
+		}
+		if(ordering == 'NaN'){
+			console.log(searchController.fh, searchController.fhf);
 		}
 
 		self.postMessage({
@@ -87,7 +90,7 @@ function searchPosition(thinkingTime = 2) {
 		searchController.bestScore = bestScore;
 		searchController.depthReached = depth;
 	}
-	console.log(searchController.nodes, searchController.depthReached);
+
 	searchController.thinking = false;
 }
 
@@ -120,6 +123,19 @@ function alphaBeta(alpha, beta, depth, { doNull = true } = {}) {
 
 	let score = -Infinite;
 
+	const ttEntry = transpositionTable.get(gameBoard.positionKey);
+	let pvMove = ttEntry?.move;
+	if (ttEntry) {
+		if (ttEntry.depth >= depth) {
+			score = ttEntry.score;
+			if(score > Mate) score -= searchController.ply;
+			else if(score < -Mate) score += searchController.ply;
+			if(ttEntry.flag === AlphaFlag && score <= alpha) return alpha;
+			if(ttEntry.flag === BetaFlag && score >= beta) return beta;
+			if(ttEntry.flag === ExactFlag) return score;
+		}
+	}
+
 	//NULL Move Pruning
 	if (doNull && !inCheck && searchController.ply && depth >= 4) {
 		doNullMove();
@@ -136,7 +152,6 @@ function alphaBeta(alpha, beta, depth, { doNull = true } = {}) {
 	const prevAlpha = alpha;
 	let bestMove = null;
 
-	let pvMove = PvTable.getMove();
 	if (pvMove) {
 		for (const moveObj of moves) {
 			if (moveObj.move == pvMove) {
@@ -161,6 +176,8 @@ function alphaBeta(alpha, beta, depth, { doNull = true } = {}) {
 		if (searchController.stop) return 0;
 
 		if (score > alpha) {
+			bestMove = move;;
+			
 			if (score >= beta) {
 				if (legalMove === 1) searchController.fhf++;
 				searchController.fh++;
@@ -168,10 +185,12 @@ function alphaBeta(alpha, beta, depth, { doNull = true } = {}) {
 					searchController.killers[searchController.ply][1] = searchController.killers[searchController.ply][0];
 					searchController.killers[searchController.ply][0] = move;
 				}
+				
+				transpositionTable.add(gameBoard.positionKey, move, beta, BetaFlag, depth);
 				return beta;
 			}
+
 			alpha = score;
-			bestMove = move;
 			if (!(move & CaptureFlag)) {
 				let piece = gameBoard.pieces[moveFrom(move)];
 				let toSq = moveTo(move);
@@ -183,14 +202,17 @@ function alphaBeta(alpha, beta, depth, { doNull = true } = {}) {
 
 	if (legalMove == 0) {
 		if (inCheck) {
-			return -Mate + searchController.ply;
+			return -Infinite + searchController.ply;
 		} else {
 			return 0;
 		}
 	}
 
 	if (alpha != prevAlpha) {
-		PvTable.addMove(bestMove);
+		transpositionTable.add(gameBoard.positionKey, bestMove, score, ExactFlag, depth);
+	}
+	else {
+		transpositionTable.add(gameBoard.positionKey, bestMove, alpha, AlphaFlag, depth);
 	}
 
 	return alpha;
@@ -220,8 +242,6 @@ function quiescence(alpha, beta) {
 
 
 	let legalMove = 0;
-	let prevAlpha = alpha;
-	let bestMove = null;
 	let moves = generateCaptureMoves();
 
 
@@ -249,13 +269,9 @@ function quiescence(alpha, beta) {
 				return beta;
 			}
 			alpha = score;
-			bestMove = move;
 		}
 	}
 
-	if (alpha != prevAlpha) {
-		PvTable.addMove(bestMove);
-	}
 
 	return alpha;
 

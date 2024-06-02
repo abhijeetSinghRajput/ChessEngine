@@ -274,8 +274,8 @@ worker.onmessage = function (e) {
     //search finished
     else {
         engine.thinking = false;
-        if (Math.abs(bestScore) > Mate - MaxDepth) {
-            mateIn.textContent = Mate - Math.abs(bestScore);
+        if (Math.abs(bestScore) > Mate) {
+            mateIn.textContent = Infinite - Math.abs(bestScore);
             mateIn.parentElement.style.display = 'block';
         }
         else {
@@ -793,6 +793,7 @@ function newGame(fen) {
     }
 
     resetGui();
+    transpositionTable.clear();
     gui.renderPieces();
     GameStartSound.play();
 }

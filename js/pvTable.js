@@ -6,7 +6,9 @@ PvTable.addMove = function (move) {
     this.entries[gameBoard.positionKey] = move;
 }
 PvTable.getMove = function () {
-    return this.entries[gameBoard.positionKey];
+    let index = gameBoard.positionKey % transpositionTable.maxEntries;
+    if(transpositionTable.entries[index]?.positionKey !== gameBoard.positionKey) return null;
+    return transpositionTable.entries[index].move;
 }
 PvTable.clear = function () {
     this.entries = {};
@@ -45,7 +47,39 @@ function isMoveExists(arg) {
     return false;
 }
 
+const transpositionTable = {
+    maxEntries: 0x100000 * 16,
+    entries: new Array(this.maxEntries),
+}
+const AlphaFlag = 0;
+const BetaFlag = 1;
+const ExactFlag = 2;
 
+transpositionTable.clear = function(){
+    this.entries = new Array(this.maxEntries);
+}
+
+transpositionTable.add = function (positionKey, move, score, flag, depth) {
+    if (score > Mate) score += searchController.ply;
+    if (score < -Mate) score -= searchController.ply;
+    let index = positionKey % this.maxEntries;
+
+    this.entries[index] = {
+        positionKey,
+        move,
+        score,
+        depth,
+        flag
+    }
+}
+transpositionTable.get = function (positionKey) {
+    let index = positionKey % this.maxEntries;
+    if(this.entries[index]?.positionKey !== positionKey) return null;
+    return this.entries[index];
+}
+transpositionTable.length = function(){
+    return Object.keys(this.entries).length;
+}
 
 
 // D:1 Best:d2d4 Score:30 nodes:21 Pv: d2d4

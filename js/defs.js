@@ -337,4 +337,4 @@ function moveStr(move) {
 
 const MaxDepth = 64;
 const Infinite = 30000;
-const Mate = 29000;
+const Mate = Infinite - MaxDepth;

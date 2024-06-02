@@ -276,3 +276,12 @@ document.addEventListener('click', (e) => {
         removeDropDown();
     }
 })
+
+window.addEventListener('keydown', (e)=>{
+    if(e.keyCode === 37){
+        gui.undoMove();
+    }
+    else if(e.keyCode === 39){
+        moveForward();
+    }
+})
