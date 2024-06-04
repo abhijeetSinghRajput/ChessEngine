@@ -72,6 +72,7 @@ function removeBackdrop() {
 }
 
 setupBtn.addEventListener('click', () => {
+    setup = true;
     setupPosition.classList.add('active');
     removeBackdrop();
 })
