@@ -12,10 +12,10 @@ function generateMoves() {
             }
 
             //add capture move
-            if (sq + 9 != Squares.offBoard && PieceColor[gameBoard.pieces[sq + 9]] == Color.black) {
+            if (gameBoard.pieces[sq + 9] != Squares.offBoard && PieceColor[gameBoard.pieces[sq + 9]] == Color.black) {
                 addWhiteCaptureMove(sq, sq + 9, gameBoard.pieces[sq + 9]);
             }
-            if (sq + 11 != Squares.offBoard && PieceColor[gameBoard.pieces[sq + 11]] == Color.black) {
+            if (gameBoard.pieces[sq + 11] != Squares.offBoard && PieceColor[gameBoard.pieces[sq + 11]] == Color.black) {
                 addWhiteCaptureMove(sq, sq + 11, gameBoard.pieces[sq + 11]);
             }
 
@@ -61,10 +61,10 @@ function generateMoves() {
             }
 
             //add capture move
-            if (sq - 9 != Squares.offBoard && PieceColor[gameBoard.pieces[sq - 9]] == Color.white) {
+            if (gameBoard.pieces[sq - 9] != Squares.offBoard && PieceColor[gameBoard.pieces[sq - 9]] == Color.white) {
                 addBlackCaptureMove(sq, sq - 9, gameBoard.pieces[sq - 9]);
             }
-            if (sq - 11 != Squares.offBoard && PieceColor[gameBoard.pieces[sq - 11]] == Color.white) {
+            if (gameBoard.pieces[sq - 11] != Squares.offBoard && PieceColor[gameBoard.pieces[sq - 11]] == Color.white) {
                 addBlackCaptureMove(sq, sq - 11, gameBoard.pieces[sq - 11]);
             }
 
