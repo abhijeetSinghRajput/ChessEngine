@@ -24,6 +24,7 @@
 })();
 
 function init() {
+    console.log("hello");
     init_SquareSwitch();
     init_FileBitMask();
     init_RankBitMask();
@@ -31,7 +32,6 @@ function init() {
     init_IsolatedBitMask();
 }
 
-self.init = init;
 
 function init_FileBitMask() {
     for (let file = FileA; file <= FileH; ++file) {

@@ -10,7 +10,7 @@ importScripts(
     'main.js'
 );
 
-init();
+// init();
 
 self.onmessage = function(e){
     const {command, searchTime, board} = e.data;
