@@ -60,6 +60,11 @@ function movePiece(from, to) {
     hashPiece(to, piece);
     gameBoard.pieces[to] = piece;
 
+    if(PieceType[piece] == 'p'){
+        PawnBitBoard.clearBit(PieceColor[piece], Sq120To64[from]);
+        PawnBitBoard.setBit(PieceColor[piece], Sq120To64[to]);
+    }
+
     for (let i = 0; i < gameBoard.pieceCount[piece]; ++i) {
         if (gameBoard.pieceList[piece][i] === from) {
             gameBoard.pieceList[piece][i] = to
@@ -77,6 +82,9 @@ function addPiece(sq, piece) {
     gameBoard.material[PieceColor[piece]] += PieceValue[piece];
     gameBoard.pieceList[piece].push(sq);
     gameBoard.pieceCount[piece]++;
+    if (PieceType[piece] == 'p') {
+        PawnBitBoard.setBit(PieceColor[piece], Sq120To64[sq])
+    }
 }
 
 function removePiece(sq) {
@@ -94,6 +102,9 @@ function removePiece(sq) {
         }
     }
     gameBoard.pieceCount[piece]--;
+    if (PieceType[piece] == 'p') {
+        PawnBitBoard.clearBit(PieceColor[piece], Sq120To64[sq])
+    }
 }
 
 
@@ -261,7 +272,7 @@ function undoMove() {
 
 // NULL MOVE
 function doNullMove() {
-    if(gameBoard.checkSq != Squares.noSq) return;
+    if (gameBoard.checkSq != Squares.noSq) return;
 
     gameBoard.history.push({
         fiftyMove: gameBoard.fiftyMove,
@@ -278,7 +289,7 @@ function doNullMove() {
     hashSide();
 }
 
-function undoNullMove(){
+function undoNullMove() {
     if (gameBoard.history.length === 0) {
         return null;
     }
@@ -290,7 +301,7 @@ function undoNullMove(){
         checkSq,
     } = gameBoard.history.pop();
 
-    if(gameBoard.enPassantSq != Squares.noSq) {
+    if (gameBoard.enPassantSq != Squares.noSq) {
         hashEnPassant();
     }
 
@@ -299,7 +310,7 @@ function undoNullMove(){
     gameBoard.enPassantSq = enPassantSq;
     gameBoard.checkSq = checkSq;
 
-    if(gameBoard.enPassantSq != Squares.noSq) {
+    if (gameBoard.enPassantSq != Squares.noSq) {
         hashEnPassant();
     }
     gameBoard.side ^= 1;

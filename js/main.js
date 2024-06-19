@@ -24,7 +24,6 @@
 })();
 
 function init() {
-    console.log("hello");
     init_SquareSwitch();
     init_FileBitMask();
     init_RankBitMask();
