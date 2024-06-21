@@ -362,14 +362,16 @@ const searchDepth = [
     document.querySelector('.player.black sup#searchDepth')
 ];
 
-for (const botToggle of [whiteBotToggle, blackBotToggle]) {
-    botToggle.addEventListener('click', () => {
-        botToggle.classList.toggle('active');
-        engine.updateSide();
-        engine.play();
-    })
-}
-
+setTimeout(()=>{
+    for (const botToggle of [whiteBotToggle, blackBotToggle]) {
+        botToggle.addEventListener('click', () => {
+            botToggle.classList.toggle('active');
+            engine.updateSide();
+            engine.play();
+        })
+    }
+}, 1000);
+    
 gui.doMove = function (move, { userMove = true, engineMove = false, audio = true } = {}) {
     if (!move) return;
     if (engine.thinking) {
