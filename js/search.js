@@ -1,10 +1,12 @@
-let book;
+let book = null;
 fetch('../book.json')
 	.then(response => response.json())
 	.then(data => book = data)
 	.catch(err => console.log(err));
 
 function getMoveFromBook() {
+	//book not loaded
+	if(!book) return false;
 	const positionKey = gameBoard.positionKey.toString(16);
 	// no move present for current position
 	if (!book[positionKey]) return false;

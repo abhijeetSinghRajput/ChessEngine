@@ -127,13 +127,14 @@ function getPawnFromSq({ fromFile, toSq, capture }) {
 function getPGN() {
     let pgn = '';
     let ply = 0;
-    nodeList.forEach((node, index) => {
-        if (index % 2 == 0) {
+    for(let i = 0; i<=currMoveNode; ++i){
+        const node = nodeList[i];
+        if (i % 2 == 0) {
             pgn += ++ply + '. ';
         }
         pgn += node.textContent;
         pgn += ' ';
-    })
+    }
     if (isGameOver()) {
         let result = resultTitle.textContent;
         switch (result) {
@@ -141,9 +142,6 @@ function getPGN() {
             case 'White Won': pgn += '1-0'; break;
             case 'Black Won': pgn += '0-1'; break;
         }
-    }
-    else if (pgn) {
-        pgn += '*';
     }
     return pgn;
 }
