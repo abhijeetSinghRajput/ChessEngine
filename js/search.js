@@ -1,20 +1,14 @@
-let book = null;
-fetch('../book.json')
-	.then(response => response.json())
-	.then(data => book = data)
-	.catch(err => console.log(err));
-
 function getMoveFromBook() {
-	//book not loaded
-	if(!book) return false;
-	const positionKey = gameBoard.positionKey.toString(16);
+	const key = getPolyKey();
 	// no move present for current position
-	if (!book[positionKey]) return false;
+	if (!openingBook[key]) return false;
 
 	// pick a random move from movelist
-	const moves = Object.keys(book[positionKey]);
-	const move = moves[Math.floor(Math.random() * moves.length)];
-
+	const moves = openingBook[key];
+	let move = moves[Math.floor(Math.random() * moves.length)].move;
+	move = extractPolyMove(move);
+	if(!move) return false;
+	
 	searchController.bestMove = move | FromBookFlag;
 	searchController.thinking = false;
 	return true;

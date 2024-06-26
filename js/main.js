@@ -9,6 +9,7 @@
     // StartingFen = '2rr3k/pp3pp1/1nnqbN1p/3pN3/2pP4/2P3Q1/PPB4P/R4RK1 w - -';
     // StartingFen = 'r1bq2rk/pp3pbp/2p1p1pQ/7P/3P4/2PB1N2/PP3PPR/2KR4 w - -';
     parseFen(StartingFen);
+    readPolyBook('../gm2600.bin');
     if (typeof window !== 'undefined') {
         gui.renderPieces();
     }

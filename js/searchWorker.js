@@ -7,10 +7,9 @@ importScripts(
     'evaluation.js',
     'pvTable.js',
     'search.js',
-    'main.js'
+    'polyglot.js',
+    'main.js',
 );
-
-// init();
 
 self.onmessage = function(e){
     const {command, searchTime, board} = e.data;

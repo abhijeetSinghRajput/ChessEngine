@@ -841,32 +841,6 @@ function playSound(move, gameEnd = false) {
     else if (gameBoard.side == Color.white) SelfMoveSound.play();
     else EnemyMoveSound.play();
 }
-function parseMove(fromSq, toSq, movelist) {
-    fromSq = Squares[fromSq];
-    toSq = Squares[toSq];
-    if (!movelist) {
-        movelist = generateMoves();
-    }
-
-
-    let found = null;
-    for (const { move } of movelist) {
-        if (moveFrom(move) === fromSq && moveTo(move) === toSq) {
-            found = move;
-            break;
-        }
-    }
-
-    if (found) {
-        if (!doMove(found)) {
-            IllegalSound.play();
-            return null;
-        }
-        undoMove();
-    }
-
-    return found;
-}
 
 function showHints(fromSq, movelist) {
     fromSq = Squares[fromSq];

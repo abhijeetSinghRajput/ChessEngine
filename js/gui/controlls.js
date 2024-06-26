@@ -286,3 +286,8 @@ window.addEventListener('keydown', (e)=>{
         moveForward();
     }
 })
+
+
+function uploadBook(){
+    console.log("load book");
+}
