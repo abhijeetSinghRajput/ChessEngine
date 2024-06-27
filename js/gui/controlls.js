@@ -19,12 +19,13 @@ const uploadPgnContainer = document.querySelector('.upload');
 const uploadFenInput = document.getElementById('upload-fen-input');
 const uploadProgressBar = document.getElementById('upload-bar');
 const winAnimation = document.querySelector('dotlottie-player.win-animation');
+const uploadBookWindow = document.querySelector('.upload-book');
 
-document.getElementById('clear-board').addEventListener('click',()=>{
+document.getElementById('clear-board').addEventListener('click', () => {
     parseFen('8/8/8/8/8/8/8/8 w KQkq -');
     gui.renderPieces();
 })
-document.getElementById('reset-board').addEventListener('click',()=>{
+document.getElementById('reset-board').addEventListener('click', () => {
     parseFen(StartingFen);
     gui.renderPieces();
 })
@@ -43,14 +44,26 @@ closeResult.addEventListener('click', () => {
     gameOver.classList.remove('active');
 })
 
+const popup = document.querySelector('.popup');
+const popupMessage = popup.querySelector('.message');
+function showPopup(message, success = true) {
+    popupMessage.textContent = message;
+    popup.classList.add('active', success ? 'success' : 'danger')
+    setTimeout(()=>{
+        popup.classList.remove('active');
+    },2000);
+}
+
 function showConfirmWindow() {
     uploadPgnInput.value = '';
     confirmBtn.textContent = 'new game';
     backdrop.classList.add('active');
     confirmWindow.classList.add('active');
     downloadWindow.classList.remove('active');
+    uploadBookWindow.classList.remove('active');
     uploadProgressBar.style.width = `0%`;
 }
+
 
 function showDownloadWindow() {
     pgnOutput.value = getPGN();
@@ -59,6 +72,14 @@ function showDownloadWindow() {
     backdrop.classList.add('active');
     downloadWindow.classList.add('active');
     confirmWindow.classList.remove('active');
+    uploadBookWindow.classList.remove('active');
+}
+
+function showUploadBookWindow() {
+    backdrop.classList.add('active');
+    uploadBookWindow.classList.add('active');
+    confirmWindow.classList.remove('active');
+    downloadWindow.classList.remove('active');
 }
 
 backdrop.addEventListener('click', (e) => {
@@ -278,16 +299,125 @@ document.addEventListener('click', (e) => {
     }
 })
 
-window.addEventListener('keydown', (e)=>{
-    if(e.keyCode === 37){
+window.addEventListener('keydown', (e) => {
+    if (e.keyCode === 37) {
         gui.undoMove();
     }
-    else if(e.keyCode === 39){
+    else if (e.keyCode === 39) {
         moveForward();
     }
 })
 
+const uploadBookBtn = document.getElementById('upload-book-btn');
+const bookInput = document.getElementById('book-input');
+const bookUploadProgress = document.querySelector('.book .progress');
+const bookUploadPercent = document.querySelector('.book .percent');
+const library = document.querySelector('.library');
+const bookLoader = document.querySelector('.book');
+const uploadBookName = bookLoader.querySelector('.file-name');
+const defaultBook = library.querySelector('.book');
 
-function uploadBook(){
-    console.log("load book");
+defaultBook.addEventListener('click', selectBook(defaultBook));
+function selectBook(book) {
+    return () => {
+        document.querySelectorAll('.book').forEach(b => {
+            b.classList.remove('selected');
+        })
+        book.classList.add('selected');
+        if (book == defaultBook) {
+            readPolyBook({ path: '../gm2600.bin' });
+        }
+        else {
+            const fileName = book.querySelector('.file-name').textContent;
+            readBookFromIndexedDB(fileName);
+        }
+    }
 }
+uploadBookBtn.addEventListener('click', () => {
+    bookInput.click();
+})
+
+bookInput.addEventListener('change', uploadBook);
+
+function uploadBook() {
+    const file = bookInput.files[0];
+
+    if (!file) {
+        alert('Please select a file!');
+        return;
+    }
+    bookLoader.style.display = 'block';
+    uploadBookName.textContent = file.name;
+    const reader = new FileReader();
+
+    reader.onprogress = function (event) {
+        if (event.lengthComputable) {
+            const percentLoaded = Math.round((event.loaded / event.total) * 100);
+            console.log(percentLoaded);
+            bookUploadProgress.style.width = percentLoaded + '%';
+            bookUploadPercent.textContent = percentLoaded + '%';
+        }
+    };
+    reader.onload = function (event) {
+        const buffer = event.target.result;  // This is the ArrayBuffer
+
+        // Calculate file size
+        const fileSize = file.size;
+        let sizeText;
+        if (fileSize >= 1024 * 1024) {
+            sizeText = (fileSize / (1024 * 1024)).toFixed(2) + ' MB';
+        } else if (fileSize >= 1024) {
+            sizeText = (fileSize / 1024).toFixed(2) + ' KB';
+        } else {
+            sizeText = fileSize + ' B';
+        }
+        addBookToIndexedDB(buffer, file.name, sizeText);
+        addBook(file.name, sizeText);
+        bookLoader.style.display = 'none';
+    }
+    reader.readAsArrayBuffer(file);
+}
+
+
+function addBook(name, size, selected = false) {
+    const book = document.createElement('div');
+    const img = document.createElement('img');
+    const detail = document.createElement('div');
+    const fileName = document.createElement('div');
+    const fileSize = document.createElement('div');
+    const del = document.createElement('img');
+    if (selected) {
+        book.className.add('selected');
+    }
+    img.classList.add('icon');
+    book.classList.add('book');
+    detail.classList.add('detail');
+    fileName.classList.add('file-name');
+    fileSize.classList.add('file-size');
+    del.classList.add('icon', 'delete');
+    del.addEventListener('click', () => {
+        removeBookFromIndexedDB(fileName.textContent);
+        if (book.classList.contains('selected')) {
+            setTimeout(() => {
+                defaultBook.click();
+            }, 0);
+        }
+        book.remove();
+    })
+    img.src = "./assets/icons/book.svg"
+    del.src = "./assets/icons/delete.png"
+
+    fileSize.textContent = size;
+    fileName.textContent = name;
+
+
+    detail.appendChild(fileName);
+    detail.appendChild(fileSize);
+
+    book.appendChild(img);
+    book.appendChild(detail);
+    book.appendChild(del);
+    book.addEventListener('click', selectBook(book));
+    library.appendChild(book);
+}
+

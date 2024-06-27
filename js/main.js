@@ -1,27 +1,11 @@
 (function main() {
     init();
-    //fen for perft test
-    // StartingFen = 'r3k2r/pPppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ';
-    // StartingFen = '2k1r2r/Bpq3pp/3b4/3Bp3/8/7b/PPP1QP2/R3R1K1 w - -';
-
-    //fen for testing move ordering
-    // StartingFen = 'rnb1k2r/pp2qppp/3p1n2/2pp2B1/1bp5/2N1P3/PP2NPPP/R2QKB1R w KQkq -';
-    // StartingFen = '2rr3k/pp3pp1/1nnqbN1p/3pN3/2pP4/2P3Q1/PPB4P/R4RK1 w - -';
-    // StartingFen = 'r1bq2rk/pp3pbp/2p1p1pQ/7P/3P4/2PB1N2/PP3PPR/2KR4 w - -';
     parseFen(StartingFen);
-    readPolyBook('../gm2600.bin');
     if (typeof window !== 'undefined') {
         gui.renderPieces();
     }
-
-    // perftTest(4)
-    // for (let depth = 1; depth <= 5; depth++) {
-    //     let searchStartTime = new Date().getTime();
-    //     let visitedNodes = perft(depth);
-    //     let searchEndTime = new Date().getTime();
-    //     console.log(depth, visitedNodes, (searchEndTime - searchStartTime), 'millisecond');
-    // }
-
+    readPolyBook({path:'../gm2600.bin'});
+    loadBooksFromIndexedDB();
 })();
 
 function init() {
@@ -35,25 +19,25 @@ function init() {
 
 function init_FileBitMask() {
     for (let file = FileA; file <= FileH; ++file) {
-        for(let rank = Rank1; rank <= Rank8; ++rank) {
+        for (let rank = Rank1; rank <= Rank8; ++rank) {
             FileBitMask[file] |= (1n << BigInt(file)) << BigInt(8 * rank);
         }
     }
 }
 
-function init_RankBitMask(){
-    for(let rank = Rank1; rank <= Rank8; ++rank){
+function init_RankBitMask() {
+    for (let rank = Rank1; rank <= Rank8; ++rank) {
         RankBitMask[rank] |= 255n << BigInt(rank * 8);
     }
 }
 
-function init_IsolatedBitMask(){
-    for(let sq = 0; sq < 64; sq++){
+function init_IsolatedBitMask() {
+    for (let sq = 0; sq < 64; sq++) {
         let file = fileOf(Sq64To120[sq]);
-        if(file > FileA){
+        if (file > FileA) {
             IsolatedBitMask[sq] |= FileBitMask[file - 1];
         }
-        if(file < FileH){
+        if (file < FileH) {
             IsolatedBitMask[sq] |= FileBitMask[file + 1];
         }
     }
@@ -75,12 +59,12 @@ function init_PassedPawnBitMask() {
                 PassedPawnBitMask[i][sq] |= FileBitMask[file + 1];
             }
 
-            if(i == Color.white){
+            if (i == Color.white) {
                 while (rank >= Rank1) {
                     PassedPawnBitMask[i][sq] &= ~RankBitMask[rank--];
                 }
             }
-            else{
+            else {
                 while (rank <= Rank8) {
                     PassedPawnBitMask[i][sq] &= ~RankBitMask[rank++];
                 }

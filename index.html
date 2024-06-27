@@ -27,6 +27,11 @@
 </head>
 
 <body>
+    <div class="popup">
+        <div class="message"></div>
+        <div class="icon"></div>
+    </div>
+
     <div class="container">
         <div class="board-layout">
             <!-- ---------- BLACK PLAYER ---------- -->
@@ -172,8 +177,9 @@
                 <p id="mateIn" style="display: none;">mate in <span>5</span> moves</p>
 
                 <div class="icons">
-                    <div class="icon download" onclick="showDownloadWindow()"><img src="./assets/icons/download.png" alt=""></div>
-                    <div class="icon uploadBook" onclick="uploadBook()"><img src="./assets/icons/book.svg" alt=""></div>
+                    <div class="icon download" onclick="showDownloadWindow()"><img src="./assets/icons/download.png"
+                            alt=""></div>
+                    <div class="icon uploadBook" onclick="showUploadBookWindow()"><img src="./assets/icons/book.svg" alt=""></div>
                 </div>
             </div>
             <div class="lines">
@@ -277,7 +283,7 @@
             </div>
         </div>
 
-        <!-- ---------- CONFIRM WINDOW ---------- -->
+        <!-- ---------- UPLOAD GAME WINDOW ---------- -->
         <div class="confirm-popover">
             <div class="close" onclick="removeBackdrop()"><i class="uil uil-times"></i></div>
             <div class="message">add new game</div>
@@ -299,7 +305,48 @@
                 <button class="btn primary" id="confirm">new game</button>
             </div>
         </div>
+
+        <div class="upload-book">
+            <div class="close" onclick="removeBackdrop()"><i class="uil uil-times"></i></div>
+            <h3>Books</h3>
+
+            <li class="book" style="display: none;">
+                <img src="./assets/icons/book.svg" alt="" class="icon">
+                <div class="content">
+                    <div class="detail">
+                        <div class="file-name">book.bin</div>
+                        <div class="percent">0%</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress"></div>
+                    </div>
+                </div>
+            </li>
+
+            <section class="library">
+                <div class="book selected">
+                    <img src="./assets/icons/book.svg" alt="" class="icon">
+                    <div class="detail">
+                        <div class="file-name">gm2600.bin</div>
+                        <div class="file-size">338.61 KB</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- upload -->
+            <div class="upload">
+                <input type="file" id="book-input" accept=".bin" style="display: none;">
+                <div class="btn secondary" id="upload-book-btn">
+                    <div class="icon"><img src="./assets/icons/upload.png" alt=""></div>
+                    Upload Book
+                </div>
+            </div>
+        </div>
+
     </div>
+
+
+    <!-- ---------- SETUP GAME  ---------- -->
     <div class="setup-position">
         <div class="close"><i class="uil uil-times"></i></div>
 

@@ -201,17 +201,28 @@ function getPolyKey() {
 
     return polyKey;
 }
+//gm2600 book size 16320
 let openingBook = {};
-async function readPolyBook(path) {
+async function readPolyBook({ path = null, fileBuffer = null } = {}) {
     openingBook = {};
     try {
-        const response = await fetch(path);
-        if (!response.ok) {
-            console.error("getting error while reading");
+        let buffer;
+        if (path) {
+            const response = await fetch(path);
+            if (!response.ok) {
+                console.error("getting error while reading");
+                return;
+            }
+            buffer = await response.arrayBuffer();
+        }
+        else if (fileBuffer) {
+            buffer = fileBuffer;
+        }
+        else {
+            console.error("No path or file provided");
             return;
         }
 
-        const buffer = await response.arrayBuffer();
         const fileSize = buffer.byteLength;
 
         if (fileSize < 16) {
@@ -222,13 +233,12 @@ async function readPolyBook(path) {
         const entriesSize = fileSize / 16;
 
         const dataView = new DataView(buffer);
-        let flag = true;
         for (let i = 0; i < entriesSize; i++) {
             const offset = i * 16;
-            const key = dataView.getBigUint64(offset, true); 
+            const key = dataView.getBigUint64(offset, true);
             const entry = {
-                move: dataView.getUint16(offset + 8, true),  
-                weight: dataView.getUint16(offset + 10, true), 
+                move: dataView.getUint16(offset + 8, true),
+                weight: dataView.getUint16(offset + 10, true),
                 learn: dataView.getUint32(offset + 12, true)
             };
 
@@ -238,12 +248,14 @@ async function readPolyBook(path) {
             }
             openingBook[swappedKey].push(entry);
         }
+        showPopup(`${Object.keys(openingBook).length} position loaded`);
     } catch (error) {
+        showPopup("err", false);
         console.error("Error while reading file:", error);
     }
 }
 
-function extractPolyMove(move){
+function extractPolyMove(move) {
     // Extract components from the move using bit manipulation
     move = endian_swap_u16(move);
     const toFile = (move & 0x7);                 // bits 0,1,2
@@ -253,6 +265,124 @@ function extractPolyMove(move){
     const promotionPiece = ((move >> 12) & 0x7); // bits 12,13,14
     const fromSq = fileRank2Sq(fromFile, fromRank);
     const toSq = fileRank2Sq(toFile, toRank);
-    
+
     return parseMove(SquaresChar[fromSq], SquaresChar[toSq]);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function openDatabase() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open('ChessLibrary', 1);
+
+        request.onupgradeneeded = function (event) {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains('books')) {
+                db.createObjectStore('books', { keyPath: 'name' });
+            }
+        };
+
+        request.onsuccess = function (event) {
+            resolve(event.target.result);
+        };
+
+        request.onerror = function (event) {
+            reject(event.target.error);
+        };
+    });
+}
+
+
+function loadBooksFromIndexedDB() {
+    openDatabase().then(db => {
+        const transaction = db.transaction(['books'], 'readonly');
+        const store = transaction.objectStore('books');
+        const request = store.getAll();
+
+        request.onsuccess = async function (event) {
+            const books = event.target.result;
+            for (const book of books) {
+                addBook(book.name, book.sizeText);
+            }
+        };
+
+        request.onerror = function (event) {
+            console.error('Error loading books from IndexedDB:', event.target.error);
+        };
+    }).catch(error => {
+        console.error('Error opening IndexedDB:', error);
+    });
+}
+
+function readBookFromIndexedDB(fileName) {
+    openDatabase().then(db => {
+        const transaction = db.transaction(['books'], 'readonly');
+        const store = transaction.objectStore('books');
+        const request = store.get(fileName);
+
+        request.onsuccess = function (event) {
+            const data = event.target.result;
+            if (data) {
+                readPolyBook({fileBuffer: data.buffer});
+            } else {
+                console.error('Book not found in IndexedDB:', fileName);
+            }
+        };
+
+        request.onerror = function (event) {
+            console.error('Error reading book from IndexedDB:', event.target.error);
+        };
+    }).catch(error => {
+        console.error('Error opening IndexedDB:', error);
+    });
+}
+
+
+function addBookToIndexedDB(buffer, name, sizeText) {
+    openDatabase().then(db => {
+        const transaction = db.transaction(['books'], 'readwrite');
+        const store = transaction.objectStore('books');
+        store.put({ buffer, name, sizeText });
+
+        transaction.oncomplete = function () {
+            console.log('Book added to IndexedDB');
+        };
+
+        transaction.onerror = function (event) {
+            console.error('Error adding book to IndexedDB:', event.target.error);
+        };
+    }).catch(error => {
+        console.error('Error opening IndexedDB:', error);
+    });
+}
+
+
+
+function removeBookFromIndexedDB(bookName) {
+    openDatabase().then(db => {
+        const transaction = db.transaction(['books'], 'readwrite');
+        const store = transaction.objectStore('books');
+        const request = store.delete(bookName);
+
+        request.onsuccess = function () {
+            console.log(`Book ${bookName} removed from IndexedDB`);
+        };
+
+        request.onerror = function (event) {
+            console.error('Error removing book from IndexedDB:', event.target.error);
+        };
+    }).catch(error => {
+        console.error('Error opening IndexedDB:', error);
+    });
 }

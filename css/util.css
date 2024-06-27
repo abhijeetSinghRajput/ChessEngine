@@ -14,6 +14,40 @@
     border-bottom: 3px solid transparent;
     user-select: none;
 }
+body{
+    /* background-color: white !important; */
+}
+.popup{
+    position: fixed;
+    bottom: 100px;
+    padding: 6px 8px;
+    border-radius: 5px;
+    background-color: #e8e7e6;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transform: scale(0);
+    opacity: 0;
+    visibility: hidden;
+    transition: .2s 0s cubic-bezier(0.27, 0.63, 0.51, 1.58);
+}
+.popup.active{
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+.popup .icon{
+    background: url('../assets/icons/tick.png') no-repeat;
+    background-size: contain;
+    width: 18px;
+}
+
+.popup.danger .icon{
+    background: url('../assets/icons/cross.png') no-repeat;
+    background-size: contain;
+}
 
 .toggle-btn {
     background-color: #75757566;
