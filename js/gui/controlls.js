@@ -48,6 +48,7 @@ const popup = document.querySelector('.popup');
 const popupMessage = popup.querySelector('.message');
 function showPopup(message, success = true) {
     popupMessage.textContent = message;
+    popup.classList.remove('success', 'danger');
     popup.classList.add('active', success ? 'success' : 'danger')
     setTimeout(()=>{
         popup.classList.remove('active');

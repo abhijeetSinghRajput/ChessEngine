@@ -230,7 +230,8 @@ async function readPolyBook({ path = null, fileBuffer = null } = {}) {
             return;
         }
 
-        const entriesSize = fileSize / 16;
+        const entriesSize = Math.floor(fileSize / 16);
+        console.log(entriesSize);
 
         const dataView = new DataView(buffer);
         for (let i = 0; i < entriesSize; i++) {
