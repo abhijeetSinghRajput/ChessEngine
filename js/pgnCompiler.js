@@ -73,7 +73,7 @@ function parsePGN(pgn) {
 }
 
 function isValidPgnMove(move) {
-    const movePattern = /^(O-O-O|O-O|([NBKRQ]?)([a-h]?)([1-8]?)(x?)([a-h][1-8])(=[NBKRQ])?[+#]?)$/;
+    const movePattern = /^(O-O-O|O-O|([NBKRQ]?)([a-h]?)([1-8]?)(x?)([a-h][1-8])(=[NBKRQ])?)[+#]?$/;
     const match = move.match(movePattern);
     if (!match) return null;
     return {

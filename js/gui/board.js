@@ -612,13 +612,12 @@ function moveNotation(move, checkMate = false) {
     }
     else {
         if (move & CastleFlag) {
-            if (fileOf(to) === FileG) return 'O-O'
-            return 'O-O-O';
+            if (fileOf(to) === FileG) return 'O-O' + check;
+            return 'O-O-O' + check;
         }
         const disambiguation = getDisambiguation(from, to);
         return piece + disambiguation + capture + SquaresChar[to] + check;
     }
-    return moveStr(move);
 
     function getDisambiguation(from, to) {
         let piece = gameBoard.pieces[to];
