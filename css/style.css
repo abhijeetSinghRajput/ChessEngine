@@ -38,7 +38,7 @@
 
 .win-animation{
     position: absolute;
-    z-index: -1;
+    z-index: 999;
     display: none;
 }
 
@@ -506,7 +506,7 @@ body::-webkit-scrollbar {
 }
 
 .library{
-    height: 230px;
+    height: 312px;
     margin-bottom: 20px;
     overflow-y: scroll;
 }
@@ -795,6 +795,7 @@ textarea::-webkit-scrollbar {
     transition-delay: .7s;
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
+    visibility: visible;
 }
 
 

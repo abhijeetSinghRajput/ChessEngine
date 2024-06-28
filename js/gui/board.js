@@ -693,21 +693,24 @@ function isGameOver() {
     if (gameBoard.fiftyMove >= 100) {
         resultTitle.textContent = 'Draw';
         resultSubTitle.textContent = 'by fiftymove'
-
+        whitePlayer.classList.remove('winner');
+        blackPlayer.classList.remove('winner');
         return true;
     }
 
     if (threeFoldRep() >= 2) {
         resultTitle.textContent = 'Draw';
         resultSubTitle.textContent = 'by threefold'
-
+        whitePlayer.classList.remove('winner');
+        blackPlayer.classList.remove('winner');
         return true;
     }
 
     if (drawMaterial()) {
         resultTitle.textContent = 'Draw';
         resultSubTitle.textContent = 'by ensufficient matterial'
-
+        whitePlayer.classList.remove('winner');
+        blackPlayer.classList.remove('winner');
         return true;
     }
 
@@ -740,6 +743,8 @@ function isGameOver() {
     else {
         resultTitle.textContent = 'Draw';
         resultSubTitle.textContent = 'by Stalemate'
+        whitePlayer.classList.remove('winner');
+        blackPlayer.classList.remove('winner');
         return true;
     }
 }
