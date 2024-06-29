@@ -37,8 +37,12 @@
 }
 
 .win-animation{
-    position: absolute;
-    z-index: 999;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 100;
     display: none;
 }
 
@@ -479,6 +483,7 @@ body::-webkit-scrollbar {
     border-radius: 5px;
     display: flex;
     gap: 10px;
+    cursor: pointer;
 }
 .book.selected{
     background-color: #81b64c;

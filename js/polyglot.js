@@ -195,7 +195,6 @@ function getPolyKey() {
 
     if (gameBoard.side == Color.white) polyKey ^= sidePolyKey;
     if (gameBoard.enPassantSq != Squares.noSq && hasPawnToCapture()) {
-        printf(" 1 ");
         polyKey ^= enPassantPolyKeys[fileOf(gameBoard.enPassantSq)];
     }
 

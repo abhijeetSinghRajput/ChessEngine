@@ -180,12 +180,12 @@ function addCastlePermission() {
     }
 
 }
-function updateCheckBoxes(){
-    checkboxes.forEach(checkbox=>checkbox.checked = false)
-    if(gameBoard.castlePermission & CastleBit.K) checkboxes[0].checked = true;
-    if(gameBoard.castlePermission & CastleBit.k) checkboxes[1].checked = true;
-    if(gameBoard.castlePermission & CastleBit.Q) checkboxes[2].checked = true;
-    if(gameBoard.castlePermission & CastleBit.q) checkboxes[3].checked = true;
+function updateCheckBoxes() {
+    checkboxes.forEach(checkbox => checkbox.checked = false)
+    if (gameBoard.castlePermission & CastleBit.K) checkboxes[0].checked = true;
+    if (gameBoard.castlePermission & CastleBit.k) checkboxes[1].checked = true;
+    if (gameBoard.castlePermission & CastleBit.Q) checkboxes[2].checked = true;
+    if (gameBoard.castlePermission & CastleBit.q) checkboxes[3].checked = true;
 }
 
 
@@ -362,7 +362,7 @@ const searchDepth = [
     document.querySelector('.player.black sup#searchDepth')
 ];
 
-setTimeout(()=>{
+setTimeout(() => {
     for (const botToggle of [whiteBotToggle, blackBotToggle]) {
         botToggle.addEventListener('click', () => {
             botToggle.classList.toggle('active');
@@ -371,7 +371,7 @@ setTimeout(()=>{
         })
     }
 }, 1000);
-    
+
 gui.doMove = function (move, { userMove = true, engineMove = false, audio = true } = {}) {
     if (!move) return;
     if (engine.thinking) {
@@ -421,7 +421,7 @@ gui.doMove = function (move, { userMove = true, engineMove = false, audio = true
         addMarker('check', SquaresChar[gameBoard.checkSq]);
     }
     else {
-        document.querySelector('.check')?.remove();
+        removeMarker('check', '*');
     }
 
     if (isGameOver()) {
@@ -753,10 +753,11 @@ function playWinAnimation() {
         winAnimation.style.display = 'block';
         winAnimation.seek(0);
         winAnimation.play();
-    }, 1000);
+    }, 500);
+
     setTimeout(() => {
         winAnimation.style.display = 'none';
-    }, 3000);
+    }, 2500);
 }
 
 function drawMaterial() {

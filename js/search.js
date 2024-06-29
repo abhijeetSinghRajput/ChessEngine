@@ -8,9 +8,11 @@ function getMoveFromBook() {
 	let move = moves[Math.floor(Math.random() * moves.length)].move;
 	move = extractPolyMove(move);
 	if(!move) return false;
-	
-	searchController.bestMove = move | FromBookFlag;
+
 	searchController.thinking = false;
+	searchController.bestMove = move | FromBookFlag;
+    searchController.bestScore = 0;
+    searchController.depthReached = 0;
 	return true;
 }
 
@@ -55,6 +57,7 @@ function searchPosition(thinkingTime = 2) {
 	PvTable.clear();
 
 	if (getMoveFromBook()) return;
+
 	searchController.depth = MaxDepth;
 	searchController.start = Date.now();
 	searchController.time = thinkingTime * 1000;

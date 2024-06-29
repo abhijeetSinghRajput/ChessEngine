@@ -321,6 +321,7 @@ const defaultBook = library.querySelector('.book');
 defaultBook.addEventListener('click', selectBook(defaultBook));
 function selectBook(book) {
     return () => {
+        if(book.classList.contains("selected")) return;
         document.querySelectorAll('.book').forEach(b => {
             b.classList.remove('selected');
         })
