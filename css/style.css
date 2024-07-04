@@ -787,14 +787,9 @@ textarea::-webkit-scrollbar {
     height: 100%;
 }
 
-/* .game-over.active,
-.backdrop.active,
-.download-window.active,
-.upload-book.active,
-.setup-position.active,
-.confirm-popover.active {
+.setup-position.active{
     visibility: visible;
-} */
+}
 
 .game-over.active {
     transition-delay: .7s;
