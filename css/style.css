@@ -205,7 +205,7 @@ body::-webkit-scrollbar {
 
 #board {
     aspect-ratio: 1;
-    background: url('../assets/board.png') no-repeat;
+    background: url('../assets/theme/classic/board.png') no-repeat;
     background-size: contain;
     border-radius: 3px;
     overflow: hidden;
