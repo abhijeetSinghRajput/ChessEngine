@@ -13,6 +13,7 @@ function parsePGN(pgn) {
     
     let result = [];
     const moves = extractMoves(pgn);
+    console.log(moves);
     newGame();
     for (const move of moves) {
         const match = isValidPgnMove(move);
@@ -120,10 +121,6 @@ function getPawnFromSq({ fromFile, toSq, capture }) {
 
 
 
-
-
-
-
 function getPGN() {
     let pgn = '';
     let ply = 0;
@@ -159,26 +156,25 @@ function extractMoves(pgn) {
 
         // If movesStart is true, we process the line for moves
         if (movesStart) {
-            // Remove comments and metadata enclosed in {}
-            line = line.replace(/\{[^}]*\}/g, '').trim();
+            // Remove comments and metadata enclosed in {}, and also strip any evaluation comments
+            line = line.replace(/\{[^}]*\}|\([^\)]*\)/g, '').trim();
+
             const parts = line.split(/\s+/);
+
             for (let part of parts) {
-                // Remove move numbers and results
-                if (!part.match(/^\d+\.$|1-0|0-1|1\/2-1\/2|\*/)) {
+                // Remove invalid moves (like move numbers, result, and annotations)
+                if (!part.match(/^(\d+\.$|\d+\.\.\.$|1-0|0-1|1\/2-1\/2|\*|[\(\)]|\?\?|\!\!|\?|\!)/)) {
                     moves.push(part);
                 }
             }
 
-            // Break the loop when we reach the result of the first game
+            // Stop processing when we encounter the result of the game
             if (line.includes('1-0') || line.includes('0-1') || line.includes('1/2-1/2') || line.includes('*')) {
                 break;
             }
         }
     }
-
+    moves = moves.map(move=>move.replace(/[?()\s]+/g, ''));
     return moves;
 }
-
-
-
 
