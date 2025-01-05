@@ -142,6 +142,7 @@ body{
 
 .highlight {
     background-color: var(--highlight);
+    opacity: 0.5;
 }
 
 .capture-hint {

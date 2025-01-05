@@ -4,6 +4,9 @@
 #board.classic {
     background: url('../assets/theme/classic/board.png') no-repeat contain;
 }
+#board.classic .highlight {
+    background-color: var(--highlight);
+}
 .classic .piece.wp {
     background-image: url(../assets/theme/classic/pieces/wp.png);
 }
@@ -59,7 +62,9 @@
 #board.walnut .coordinate-light {
     fill: #835f42;
 }
-
+#board.walnut .highlight {
+    background-color: #d1a52d;
+}
 #board.walnut .coordinate-dark {
     fill: #c0a684;
 }
@@ -125,7 +130,9 @@
 #board.newspaper .coordinate-light {
     fill: #5a5956;
 }
-
+#board.newspaper .highlight {
+    background-color: #99976e;
+}
 #board.newspaper .coordinate-dark {
     fill: #5a5956;
 }
