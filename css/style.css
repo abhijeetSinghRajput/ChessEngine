@@ -452,6 +452,7 @@ body::-webkit-scrollbar {
     transition: .4s 0s cubic-bezier(0.51, 0.01, 0.47, 1.3);
     visibility: hidden;
     opacity: 0;
+    z-index: 100;
 }
 
 
