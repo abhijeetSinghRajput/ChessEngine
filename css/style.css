@@ -407,7 +407,7 @@ body::-webkit-scrollbar {
     visibility: hidden;
 }
 
-.download-window {
+.window{
     position: fixed;
     top: 50%;
     left: 50%;
@@ -452,20 +452,9 @@ body::-webkit-scrollbar {
 
 .upload-book{
     padding: 30px 14px;
-    background-color: #21201d;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    width: 100%;
-    max-width: 450px;
-    border-radius: 10px;
-    overflow: hidden;
     font-weight: 400;
-    transition: .4s 0s cubic-bezier(0.51, 0.01, 0.47, 1.3);
-    visibility: hidden;
-    opacity: 0;
 }
+
 .upload-book > h3{
     text-align: center;
     color: #fff;
@@ -602,23 +591,9 @@ textarea::-webkit-scrollbar {
 }
 
 .confirm-popover {
-    overflow: hidden;
-    position: fixed;
-    z-index: 100;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    border-radius: 10px;
     text-align: center;
-    font-weight: 600;
-    font-size: 13px;
-    background-color: #21201d;
     width: 500px;
     padding: 30px 14px;
-    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.65);
-    transition: all .4s 0s cubic-bezier(0.51, 0.01, 0.47, 1.3);
-    visibility: hidden;
-    opacity: 0;
 }
 .backdrop.active{
     visibility: visible;
@@ -678,23 +653,9 @@ textarea::-webkit-scrollbar {
 }
 
 .game-over {
-    position: fixed;
-    z-index: 100;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    border-radius: 10px;
     text-align: center;
-    font-weight: 600;
-    font-size: 13px;
-    background-color: #21201d;
-    min-width: 350px;
+    width: 350px;
     color: #e2e2e2;
-    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.65);
-    overflow: hidden;
-    transition: all .4s 0s cubic-bezier(0.51, 0.01, 0.47, 1.3);
-    visibility: hidden;
-    opacity: 0;
 }
 .game-over::before{
     content: '';

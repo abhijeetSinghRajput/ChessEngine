@@ -55,13 +55,18 @@ function showPopup(message, success = true) {
     },2000);
 }
 
+function removeAllWindows(){
+    document.querySelectorAll('.window').forEach(window=>{
+        window.classList.remove('active');
+    })
+}
 function showConfirmWindow() {
     uploadPgnInput.value = '';
     confirmBtn.textContent = 'new game';
+
+    removeAllWindows();
     backdrop.classList.add('active');
     confirmWindow.classList.add('active');
-    downloadWindow.classList.remove('active');
-    uploadBookWindow.classList.remove('active');
     uploadProgressBar.style.width = `0%`;
 }
 
@@ -70,17 +75,15 @@ function showDownloadWindow() {
     pgnOutput.value = getPGN();
     fenOutput.value = getFen();
 
+    removeAllWindows();
     backdrop.classList.add('active');
     downloadWindow.classList.add('active');
-    confirmWindow.classList.remove('active');
-    uploadBookWindow.classList.remove('active');
 }
 
 function showUploadBookWindow() {
+    removeAllWindows();
     backdrop.classList.add('active');
     uploadBookWindow.classList.add('active');
-    confirmWindow.classList.remove('active');
-    downloadWindow.classList.remove('active');
 }
 
 backdrop.addEventListener('click', (e) => {
