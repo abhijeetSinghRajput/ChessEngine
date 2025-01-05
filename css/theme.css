@@ -1,0 +1,182 @@
+/* ======================================= */
+/* =============== classic =============== */
+/* ======================================= */
+#board.classic {
+    background: url('../assets/theme/classic/board.png') no-repeat contain;
+}
+.classic .piece.wp {
+    background-image: url(../assets/theme/classic/pieces/wp.png);
+}
+
+.classic .piece.wr {
+    background-image: url(../assets/theme/classic/pieces/wr.png);
+}
+
+.classic .piece.wn {
+    background-image: url(../assets/theme/classic/pieces/wn.png);
+}
+
+.classic .piece.wb {
+    background-image: url(../assets/theme/classic/pieces/wb.png);
+}
+
+.classic .piece.wq {
+    background-image: url(../assets/theme/classic/pieces/wq.png);
+}
+
+.classic .piece.wk {
+    background-image: url(../assets/theme/classic/pieces/wk.png);
+}
+
+.classic .piece.bp {
+    background-image: url(../assets/theme/classic/pieces/bp.png);
+}
+
+.classic .piece.br {
+    background-image: url(../assets/theme/classic/pieces/br.png);
+}
+
+.classic .piece.bn {
+    background-image: url(../assets/theme/classic/pieces/bn.png);
+}
+
+.classic .piece.bb {
+    background-image: url(../assets/theme/classic/pieces/bb.png);
+}
+
+.classic .piece.bq {
+    background-image: url(../assets/theme/classic/pieces/bq.png);
+}
+
+.classic .piece.bk {
+    background-image: url(../assets/theme/classic/pieces/bk.png);
+}
+
+
+/* ======================================= */
+/* =============== walnut =============== */
+/* ======================================= */
+#board.walnut .coordinate-light {
+    fill: #835f42;
+}
+
+#board.walnut .coordinate-dark {
+    fill: #c0a684;
+}
+
+#board.walnut {
+    background: url('../assets/theme/walnut/board.png') no-repeat;
+    background-size: contain;
+}
+
+
+.walnut .piece.wp {
+    background-image: url(../assets/theme/walnut/pieces/wp.png);
+}
+
+.walnut .piece.wr {
+    background-image: url(../assets/theme/walnut/pieces/wr.png);
+}
+
+.walnut .piece.wn {
+    background-image: url(../assets/theme/walnut/pieces/wn.png);
+}
+
+.walnut .piece.wb {
+    background-image: url(../assets/theme/walnut/pieces/wb.png);
+}
+
+.walnut .piece.wq {
+    background-image: url(../assets/theme/walnut/pieces/wq.png);
+}
+
+.walnut .piece.wk {
+    background-image: url(../assets/theme/walnut/pieces/wk.png);
+}
+
+.walnut .piece.bp {
+    background-image: url(../assets/theme/walnut/pieces/bp.png);
+}
+
+.walnut .piece.br {
+    background-image: url(../assets/theme/walnut/pieces/br.png);
+}
+
+.walnut .piece.bn {
+    background-image: url(../assets/theme/walnut/pieces/bn.png);
+}
+
+.walnut .piece.bb {
+    background-image: url(../assets/theme/walnut/pieces/bb.png);
+}
+
+.walnut .piece.bq {
+    background-image: url(../assets/theme/walnut/pieces/bq.png);
+}
+
+.walnut .piece.bk {
+    background-image: url(../assets/theme/walnut/pieces/bk.png);
+}
+
+
+/* ======================================= */
+/* =============== newspaper =============== */
+/* ======================================= */
+#board.newspaper .coordinate-light {
+    fill: #5a5956;
+}
+
+#board.newspaper .coordinate-dark {
+    fill: #5a5956;
+}
+#board.newspaper{
+    background: url('../assets/theme/newspaper/board.png') no-repeat;
+    background-size: contain;
+}
+.newspaper .piece.wp {
+    background-image: url(../assets/theme/newspaper/pieces/wp.png);
+}
+
+.newspaper .piece.wr {
+    background-image: url(../assets/theme/newspaper/pieces/wr.png);
+}
+
+.newspaper .piece.wn {
+    background-image: url(../assets/theme/newspaper/pieces/wn.png);
+}
+
+.newspaper .piece.wb {
+    background-image: url(../assets/theme/newspaper/pieces/wb.png);
+}
+
+.newspaper .piece.wq {
+    background-image: url(../assets/theme/newspaper/pieces/wq.png);
+}
+
+.newspaper .piece.wk {
+    background-image: url(../assets/theme/newspaper/pieces/wk.png);
+}
+
+.newspaper .piece.bp {
+    background-image: url(../assets/theme/newspaper/pieces/bp.png);
+}
+
+.newspaper .piece.br {
+    background-image: url(../assets/theme/newspaper/pieces/br.png);
+}
+
+.newspaper .piece.bn {
+    background-image: url(../assets/theme/newspaper/pieces/bn.png);
+}
+
+.newspaper .piece.bb {
+    background-image: url(../assets/theme/newspaper/pieces/bb.png);
+}
+
+.newspaper .piece.bq {
+    background-image: url(../assets/theme/newspaper/pieces/bq.png);
+}
+
+.newspaper .piece.bk {
+    background-image: url(../assets/theme/newspaper/pieces/bk.png);
+}

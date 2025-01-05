@@ -1,5 +1,6 @@
 const backdrop = document.querySelector('.backdrop');
 const downloadWindow = backdrop.querySelector('.download-window');
+const settingWindow = backdrop.querySelector('.setting-window');
 const confirmWindow = backdrop.querySelector('.confirm-popover');
 
 const downloadOptions = downloadWindow.querySelectorAll('.option>*');
@@ -21,6 +22,14 @@ const uploadProgressBar = document.getElementById('upload-bar');
 const winAnimation = document.querySelector('dotlottie-player.win-animation');
 const uploadBookWindow = document.querySelector('.upload-book');
 
+const themes = document.querySelectorAll('.theme');
+themes.forEach(theme=>{
+    theme.addEventListener('click', ()=>{
+        themes.forEach(e=>e.classList.remove('active'));
+        theme.classList.add('active');
+        board.className = theme.textContent;
+    })
+})
 document.getElementById('clear-board').addEventListener('click', () => {
     parseFen('8/8/8/8/8/8/8/8 w KQkq -');
     gui.renderPieces();
@@ -59,6 +68,11 @@ function removeAllWindows(){
     document.querySelectorAll('.window').forEach(window=>{
         window.classList.remove('active');
     })
+}
+function showSettingWindow() {
+    removeAllWindows();
+    backdrop.classList.add('active');
+    settingWindow.classList.add('active');
 }
 function showConfirmWindow() {
     uploadPgnInput.value = '';

@@ -1,0 +1,1 @@
+const pieces = document.querySelectorAll('.piece');

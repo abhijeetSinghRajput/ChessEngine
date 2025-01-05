@@ -21,6 +21,7 @@
 
     <link rel="shortcut icon" href="./assets/icons/favIcon.png" type="image/x-icon">
     <link rel="stylesheet" href="./css/util.css">
+    <link rel="stylesheet" href="./css/theme.css">
     <link rel="stylesheet" href="./css/style.css">
 
     <title>chess league</title>
@@ -81,7 +82,7 @@
 
 
             <!-- =========== GAME BOARD =========== -->
-            <div id="board">
+            <div id="board" class="classic">
                 <!-- ---------- cordinates ---------- -->
                 <svg viewBox="0 0 100 100" class="coordinates">
                     <text x="0.75" y="3.5" font-size="2.8" class="coordinate-light">8</text>
@@ -177,9 +178,10 @@
                 <p id="mateIn" style="display: none;">mate in <span>5</span> moves</p>
 
                 <div class="icons">
-                    <div class="icon download" onclick="showDownloadWindow()"><img src="./assets/icons/download.png"
+                    <div title="download" class="icon download" onclick="showDownloadWindow()"><img src="./assets/icons/download.png"
                             alt=""></div>
-                    <div class="icon uploadBook" onclick="showUploadBookWindow()"><img src="./assets/icons/book.svg" alt=""></div>
+                    <div title="uploadBook" class="icon uploadBook" onclick="showUploadBookWindow()"><img src="./assets/icons/book.svg" alt=""></div>
+                    <div title="setting" class="icon setting" onclick="showSettingWindow()"><img src="./assets/icons/setting.svg" alt=""></div>
                 </div>
             </div>
             <div class="lines">
@@ -254,7 +256,7 @@
         </div>
     </div>
 
-    <div class="backdrop">
+    <div class="backdrop active">
         <!-- ---------- DOWNLOAD WINDOW ---------- -->
         <div class="window download-window">
             <div class="close" onclick="removeBackdrop()"><i class="uil uil-times"></i></div>
@@ -280,6 +282,35 @@
                     </div>
                     Download
                 </button>
+            </div>
+        </div>
+
+        <!-- ---------- SETTING WINDOW ---------- -->
+        <div class="window setting-window active">
+            <div class="close" onclick="removeBackdrop()"><i class="uil uil-times"></i></div>
+            <div class="message">Theme</div>
+            <div class="themes">
+                <div class="theme active">
+                    <div class="name">classic</div>
+                    <div class="preview">
+                        <img src="./assets/theme/classic/preview.png" alt="">
+                    </div>
+                </div>
+
+                <div class="theme">
+                    <div class="name">walnut</div>
+                    <div class="preview">
+                        <img src="./assets/theme/walnut/preview.png" alt="">
+                    </div>
+                </div>
+
+                <div class="theme">
+                    <div class="name">newspaper</div>
+                    <div class="preview">
+                        <img src="./assets/theme/newspaper/preview.png" alt="">
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -395,6 +426,7 @@
 <script src="./js/pvTable.js"></script>
 <script src="./js/search.js"></script>
 
+<script src="./js/gui/pieces.js"></script>
 <script src="./js/gui/board.js"></script>
 <script src="./js/gui/controlls.js"></script>
 <script src="./js/pgnCompiler.js"></script>
