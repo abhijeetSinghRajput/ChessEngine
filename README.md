@@ -34,5 +34,5 @@ This is a lightweight and powerful chess engine written in JavaScript. It includ
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your-repo-name
+   git clone https://github.com/abhijeetSinghRajput/chessEngine.git
+   cd chessEngine
