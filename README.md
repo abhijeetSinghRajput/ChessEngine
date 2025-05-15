@@ -1,4 +1,4 @@
-# JavaScript Chess Engine
+# JavaScript Chess Engine (elo 2100)
 
 This is a lightweight and powerful chess engine written in JavaScript. It includes a bitboard-based architecture, move generation, evaluation, and a basic GUI. The project is modular and structured to make learning, debugging, and extending easier.
 
